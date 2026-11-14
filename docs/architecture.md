@@ -102,10 +102,31 @@ compliance; outside the ten milestones unless added).
 | Unit tests    | Vitest + V8 coverage, Testing Library, jsdom            | 5.0.5                    |
 | End-to-end    | Playwright (Chromium; laptop 1366×768, tablet 768×1024) | 1.64.1                   |
 | Lint / format | ESLint (flat config) + typescript-eslint, Prettier      | 10.14.0 / 8.72.1, 3.9.10 |
-| Routing       | React Router                                            | added in Milestone 2     |
+| Routing       | React Router (declarative mode, lazily loaded pages)    | 7.18.5                   |
 | Graphs        | Recharts                                                | added in Milestone 3     |
 
-## 8. Folder structure
+## 8. Application shell and design system (Milestone 2)
+
+- **Routes** (`src/app/AppRoutes.tsx`): `/` welcome, `/overview`, `/modules`, `/modules/:slug`,
+  `/resources`, `/activities`, `/assessment`, `/progress`, `/reports`, and a not-found page. Every
+  page is a lazily loaded chunk. `AppRoutes` renders inside any router, so tests use
+  `MemoryRouter` and the app uses `BrowserRouter`.
+- **Layout** (`src/app/AppLayout.tsx`): skip link, header with the designer badge, primary
+  navigation (sidebar at ≥ 1024 px, Menu button below), routed page, footer disclaimer.
+- **Design system** (`src/design-system/`): `tokens.ts` is the single source of colour (Tailwind
+  reads it; `TEXT_PAIRS` lists every text/background pair, each tested at ≥ 4.5:1). Components:
+  `Button`/`LinkButton` (44 px targets), `Panel` (a named region), `PageHeader`, `StatusBadge`,
+  `MeasurementDisplay` (24 px value, "—" when there is no value), `NumberControl` (slider plus
+  number box; out-of-range input rejected with an explanation and never passed on), `Icon`
+  (inline SVG, 24 px grid).
+- **Laboratory layout** (`src/features/lab-shell/`): `LabShell` renders the seven regions in
+  reading order (theory, workspace, controls, measurements, graphs, instructions, assessment) on
+  a three-column grid at ≥ 1024 px, stacked below. Modules pass content per region; empty regions
+  show which milestone fills them.
+- **Storage** (`src/storage/localStorageRepository.ts`): implements `Repository` over any
+  `StorageLike`; `resolveStorage` falls back to memory when browser storage is blocked.
+
+## 9. Folder structure
 
 ```text
 src/

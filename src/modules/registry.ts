@@ -90,6 +90,11 @@ export const MODULES: readonly ModuleSummary[] = [
   },
 ];
 
+/** Look up a module by URL slug. Returns `undefined` for an unknown slug (a user-typed address). */
+export function findModuleBySlug(slug: string): ModuleSummary | undefined {
+  return MODULES.find((m) => m.slug === slug);
+}
+
 /** Look up a module by id. Throws for an unknown id, which indicates a programming error. */
 export function getModule(id: ModuleId): ModuleSummary {
   const found = MODULES.find((m) => m.id === id);

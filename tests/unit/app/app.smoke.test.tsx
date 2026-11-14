@@ -1,31 +1,25 @@
 // @vitest-environment jsdom
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { App } from '@/app';
 
 describe('application shell (smoke test)', () => {
-  it('renders the application name as the main heading', () => {
+  it('renders the welcome page at "/" with the browser router', async () => {
+    window.history.pushState({}, '', '/');
     render(<App />);
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Virtual Actuator and Drives Laboratory' }),
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Virtual Actuator and Drives Laboratory',
+      }),
     ).toBeInTheDocument();
-  });
-
-  it('shows the designer badge in the header (decision D6)', () => {
-    render(<App />);
     expect(screen.getByTestId('designer-badge')).toHaveTextContent('Design by Syahrul Hisham™');
   });
 
-  it('lists all ten laboratory modules from the registry', () => {
+  it('states that the model is a simplified educational simulation (NFR-12)', async () => {
+    window.history.pushState({}, '', '/');
     render(<App />);
-    const list = screen.getByRole('list', { name: 'Laboratory modules' });
-    expect(within(list).getAllByRole('listitem')).toHaveLength(10);
-    expect(within(list).getByRole('heading', { name: 'DC Motor Drives' })).toBeInTheDocument();
-    expect(within(list).getByRole('heading', { name: 'Electrohydraulics' })).toBeInTheDocument();
-  });
-
-  it('states that the model is a simplified educational simulation (NFR-12)', () => {
-    render(<App />);
+    await screen.findByRole('heading', { level: 1 });
     expect(screen.getByText(/simplified educational model/i)).toBeInTheDocument();
   });
 });

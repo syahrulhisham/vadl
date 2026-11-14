@@ -1,34 +1,19 @@
 import type { Config } from 'tailwindcss';
+import { colors } from './src/design-system/tokens';
 
 /**
- * Design tokens (master instruction, section 6): white background, navy blue
- * primary, light blue secondary. Milestone 2 extends this into the full design
- * system; components use these token names, never raw hex values.
+ * Tailwind reads its colours from src/design-system/tokens.ts, the single source
+ * of truth that the contrast tests also check. Components use these token names
+ * (navy-*, lightblue-*, status-*), never raw hex values.
  */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        navy: {
-          50: '#eef2f9',
-          100: '#d5deef',
-          200: '#aabcdf',
-          300: '#7f9bcf',
-          400: '#4f73b6',
-          500: '#2f5596',
-          600: '#1f4079',
-          700: '#17315f',
-          800: '#102447',
-          900: '#0b1a33',
-        },
-        lightblue: {
-          50: '#f0f8ff',
-          100: '#e0f0fe',
-          200: '#bae0fd',
-          300: '#7cc7fb',
-          400: '#38aaf5',
-        },
+        navy: colors.navy,
+        lightblue: colors.lightblue,
+        status: colors.status,
       },
       fontFamily: {
         sans: [
@@ -41,6 +26,12 @@ export default {
           'sans-serif',
         ],
         mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'monospace'],
+      },
+      minHeight: {
+        touch: '44px',
+      },
+      minWidth: {
+        touch: '44px',
       },
     },
   },
