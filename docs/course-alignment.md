@@ -97,8 +97,10 @@ pending confirmation (L-7).
 ## 5. Required changes to the VADL plan
 
 The approved plan (`docs/project-plan.md`, section 5) was written before the course materials
-were examined. The items below bring it into line with the course. **They are proposals until
-the project owner approves them**; the plan document itself is the owner's and is not edited.
+were examined. The items below bring it into line with the course. **All items in this section
+were approved by the project owner on 14 November 2026.** Where they differ from
+`docs/project-plan.md`, this section takes precedence; the plan document itself is the owner's
+and is not edited.
 Where the plan goes beyond the syllabus, the extra content stays but is labelled
 "beyond the BELK 3423 syllabus" on screen.
 

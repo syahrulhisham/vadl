@@ -16,7 +16,7 @@ then `docs/srs.md` and `docs/architecture.md`.
 | 3–10      | See `docs/project-plan.md` section 6          | Not started                                                        |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
-learning outcomes, the notation VADL adopts, the proposed plan changes (awaiting approval) and the
+learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the
 lecturer questions. Learning outcomes stay **provisional** until the lecturer answers.
 Still outstanding: confirmation of a fresh start (D3) and the actual UTeM bench data (D4, L-21).
 

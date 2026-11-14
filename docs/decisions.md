@@ -7,7 +7,7 @@ a dated entry below rather than editing the original text.
 | #   | Topic                         | Approved answer                                                                                              | Implementation status (Milestone 1)                                                                                                                                                  |
 | --- | ----------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | D1  | Development environment       | Claude Code against the GitHub repository `syahrulhisham/vadl`                                               | In use: branch `milestone-1`                                                                                                                                                         |
-| D2  | BELK 3423 course materials    | Owner to supply course outline with CLOs, lecture notes, lab sheets and tutorials; needed before Milestone 4 | **Supplied and examined 14 Nov 2026.** Findings, proposed plan changes and 27 lecturer questions in `docs/course-alignment.md`; outcomes stay provisional until the lecturer answers |
+| D2  | BELK 3423 course materials    | Owner to supply course outline with CLOs, lecture notes, lab sheets and tutorials; needed before Milestone 4 | **Supplied and examined 14 Nov 2026.** Findings, approved plan changes and 27 lecturer questions in `docs/course-alignment.md`; outcomes stay provisional until the lecturer answers |
 | D3  | Existing work to reuse        | Owner to supply any existing files, or confirm a fresh start                                                 | **Not yet supplied.** Repository inspection found no application code (see `docs/verification/milestone-1.md`)                                                                       |
 | D4  | Component data                | Use nameplate data of the physical UTeM lab equipment where supplied                                         | **Partly supplied.** Festo TP101/201/501/601 workbook data received; actual UTeM bench models and cylinder strokes still to confirm (L-21)                                           |
 | D5  | Interface language            | English first; all text in language files so Malay can be added without code changes                         | Done: `src/i18n/en.ts`, `t()` helper                                                                                                                                                 |
@@ -21,9 +21,10 @@ a dated entry below rather than editing the original text.
 
 ## Changes after approval
 
-| Date        | Change                                                                                                                                                                                        |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 14 Nov 2026 | D2 materials examined. `docs/course-alignment.md` §5 proposes changes to the plan's module scope, notation and reference cases. **Awaiting owner approval**; `docs/project-plan.md` unchanged |
+| Date        | Change                                                                                                                                                           |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14 Nov 2026 | D2 materials examined. `docs/course-alignment.md` §5 proposes changes to the plan's module scope, notation and reference cases; `docs/project-plan.md` unchanged |
+| 14 Nov 2026 | **All §5 changes approved by the owner.** `docs/course-alignment.md` §5 takes precedence over `docs/project-plan.md` §5 where they differ                        |
 
 ## Implementation choices made in Milestone 1 (within the approved plan)
 
