@@ -3,7 +3,8 @@
  * experiment activities, assessment centre, student progress and laboratory
  * reports. Each states what it will contain and when, and invents nothing.
  */
-import { LinkButton, PageHeader, Panel, StatusBadge } from '@/design-system';
+import { Link } from 'react-router';
+import { Icon, LinkButton, PageHeader, Panel, StatusBadge } from '@/design-system';
 import { t } from '@/i18n';
 import { useDocumentTitle } from '../useDocumentTitle';
 
@@ -22,9 +23,23 @@ export function ResourcesPage() {
       <PageHeader title={t('resources.title')} intro={t('resources.intro')} icon="resources">
         <ComingIn milestone={4} />
       </PageHeader>
-      <Panel title={t('resources.symbolsTitle')} tone="info">
-        <p>{t('resources.symbols')}</p>
-      </Panel>
+      <div className="space-y-4">
+        <Panel title={t('resources.workedTitle')}>
+          <Link
+            to="/resources/rl-circuit"
+            className="flex min-h-touch items-start gap-3 rounded-md p-2 hover:bg-navy-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-lightblue-400"
+          >
+            <Icon name="arrowRight" className="mt-0.5 h-5 w-5 shrink-0 text-navy-600" />
+            <span>
+              <span className="block font-medium text-navy-800">{t('resources.rlLink')}</span>
+              <span className="block text-sm text-navy-700">{t('resources.rlLinkHint')}</span>
+            </span>
+          </Link>
+        </Panel>
+        <Panel title={t('resources.symbolsTitle')} tone="info">
+          <p>{t('resources.symbols')}</p>
+        </Panel>
+      </div>
     </>
   );
 }

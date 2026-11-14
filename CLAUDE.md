@@ -9,11 +9,12 @@ then `docs/srs.md` and `docs/architecture.md`.
 
 ## Current status
 
-| Milestone | Scope                                         | Status                                                             |
-| --------- | --------------------------------------------- | ------------------------------------------------------------------ |
-| 1         | Requirements, architecture, project structure | Done and approved; tag `milestone-1`                               |
-| 2         | Dashboard, navigation, design system          | Done on branch `milestone-2`, tag `milestone-2`; awaiting approval |
-| 3–10      | See `docs/project-plan.md` section 6          | Not started                                                        |
+| Milestone | Scope                                                                  | Status                                                             |
+| --------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 1         | Requirements, architecture, project structure                          | Done and approved; tag `milestone-1`                               |
+| 2         | Dashboard, navigation, design system                                   | Done and approved; tag `milestone-2`                               |
+| 3         | Simulation engine and graphing                                         | Done on branch `milestone-3`, tag `milestone-3`; awaiting approval |
+| 4–10      | See `docs/project-plan.md` section 6 and `docs/course-alignment.md` §5 | Not started                                                        |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
 learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the

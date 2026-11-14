@@ -94,16 +94,16 @@ compliance; outside the ten milestones unless added).
 
 ## 7. Technology
 
-| Concern       | Choice                                                  | Version (pinned)         |
-| ------------- | ------------------------------------------------------- | ------------------------ |
-| UI            | React, TypeScript strict                                | 18.3.1, 5.9.3            |
-| Build         | Vite                                                    | 8.3.5                    |
-| Styling       | Tailwind CSS with tokens in `tailwind.config.ts`        | 3.4.19                   |
-| Unit tests    | Vitest + V8 coverage, Testing Library, jsdom            | 5.0.5                    |
-| End-to-end    | Playwright (Chromium; laptop 1366×768, tablet 768×1024) | 1.64.1                   |
-| Lint / format | ESLint (flat config) + typescript-eslint, Prettier      | 10.14.0 / 8.72.1, 3.9.10 |
-| Routing       | React Router (declarative mode, lazily loaded pages)    | 7.18.5                   |
-| Graphs        | Recharts                                                | added in Milestone 3     |
+| Concern       | Choice                                                                    | Version (pinned)         |
+| ------------- | ------------------------------------------------------------------------- | ------------------------ |
+| UI            | React, TypeScript strict                                                  | 18.3.1, 5.9.3            |
+| Build         | Vite                                                                      | 8.3.5                    |
+| Styling       | Tailwind CSS with tokens in `tailwind.config.ts`                          | 3.4.19                   |
+| Unit tests    | Vitest + V8 coverage, Testing Library, jsdom                              | 5.0.5                    |
+| End-to-end    | Playwright (Chromium; laptop 1366×768, tablet 768×1024)                   | 1.64.1                   |
+| Lint / format | ESLint (flat config) + typescript-eslint, Prettier                        | 10.14.0 / 8.72.1, 3.9.10 |
+| Routing       | React Router (declarative mode, lazily loaded pages)                      | 7.18.5                   |
+| Graphs        | Recharts (animations off), wrapped with a text description and data table | 3.10.1                   |
 
 ## 8. Application shell and design system (Milestone 2)
 
@@ -126,7 +126,30 @@ compliance; outside the ten milestones unless added).
 - **Storage** (`src/storage/localStorageRepository.ts`): implements `Repository` over any
   `StorageLike`; `resolveStorage` falls back to memory when browser storage is blocked.
 
-## 9. Folder structure
+## 9. Simulation engine and graphs (Milestone 3)
+
+- **Integrators** (`sim-core/engine/integrators.ts`): `eulerStep`, `rk4Step`, `step`, `integrate`
+  over any numeric state vector. Verified against analytic solutions and for order of accuracy.
+- **Clock** (`clock.ts`): `advanceClock` turns real elapsed time × time scale into whole fixed
+  steps with an accumulator; caps steps per frame and reports `lagging`.
+- **Recorder** (`recorder.ts`): fixed-capacity ring buffer of `{ t, values }` samples;
+  `downsample` keeps per-bucket minimum and maximum for plotting.
+- **Runner** (`runner.ts`): `SimulationRunner` with `start`, `pause`, `stop`, `reset`, `tick`,
+  `runFor`, validated `setParams`, `setMethod`, `setTimeScale`, `setEndTime`. Effective step
+  Δt = min(maxDt, τ_min/10). Status: idle, running, paused, stopped, finished. A `version`
+  counter changes whenever anything observable changes.
+- **Hook** (`src/hooks/useSimulation.ts`): owns one runner, ticks it from animation frames
+  (frames injectable for tests), credits at most 0.1 s per frame, re-renders on change.
+- **Graphs** (`src/features/graphs`): `toTimeRows` (SI → display rows, downsampled to 600
+  points), `TimeTraceChart` (live trace, optional dashed reference curves), `CharacteristicChart`
+  (curve plus operating point), `ChartFigure` (caption, screen-reader description, data table).
+- **Recording** (`src/features/recording`): `ResultsTable` shows `RecordedRow`s captured when the
+  student presses Record; no value is computed there.
+- **Proving model**: `engine.rl-circuit` (`sim-core/models/rlCircuit.ts`), shown at
+  `/resources/rl-circuit` in the seven-region layout. Recharts is loaded only with pages that
+  chart (about 116 kB gzipped).
+
+## 10. Folder structure
 
 ```text
 src/

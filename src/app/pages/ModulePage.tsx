@@ -45,7 +45,7 @@ export default function ModulePage() {
           <span className="text-sm text-navy-600">{t('module.courseRef', { ref: courseRef })}</span>
         </div>
       </PageHeader>
-      <LabShell module={module} />
+      <LabShell placeholderMilestone={module.milestone} />
     </>
   );
 }

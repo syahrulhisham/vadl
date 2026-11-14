@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { MeasurementDisplay, Panel } from '@/design-system';
 import { t } from '@/i18n';
-import type { ModuleSummary } from '@/modules/types';
 import { LAB_REGIONS, type LabRegion } from './regions';
 
 /** Grid placement at ≥ 1024 px. Below that the regions stack in reading order. */
@@ -16,7 +15,8 @@ const SPAN: Record<LabRegion, string> = {
 };
 
 export interface LabShellProps {
-  readonly module: ModuleSummary;
+  /** Milestone named in the placeholders of regions that have no content yet. */
+  readonly placeholderMilestone: number;
   /**
    * Content for each region. Regions without content show a placeholder that
    * states which milestone fills them. Milestone 4 onward supplies content.
@@ -48,7 +48,7 @@ function Placeholder({
  * The standard laboratory layout. Every module page renders this, so the
  * layout is identical across the ten laboratories (master instruction §6).
  */
-export function LabShell({ module, regions = {} }: LabShellProps) {
+export function LabShell({ placeholderMilestone, regions = {} }: LabShellProps) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-3" data-testid="lab-shell">
       {LAB_REGIONS.map((region) => (
@@ -58,7 +58,7 @@ export function LabShell({ module, regions = {} }: LabShellProps) {
             tone={regions[region] ? 'plain' : 'info'}
             className="h-full"
           >
-            {regions[region] ?? <Placeholder region={region} milestone={module.milestone} />}
+            {regions[region] ?? <Placeholder region={region} milestone={placeholderMilestone} />}
           </Panel>
         </div>
       ))}

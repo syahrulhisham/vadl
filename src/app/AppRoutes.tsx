@@ -10,6 +10,7 @@ const WelcomePage = lazy(() => import('./pages/WelcomePage'));
 const OverviewPage = lazy(() => import('./pages/OverviewPage'));
 const ModulesPage = lazy(() => import('./pages/ModulesPage'));
 const ModulePage = lazy(() => import('./pages/ModulePage'));
+const RlCircuitPage = lazy(() => import('./pages/rl/RlCircuitPage'));
 const info = () => import('./pages/InfoPages');
 const ResourcesPage = lazy(() => info().then((m) => ({ default: m.ResourcesPage })));
 const ActivitiesPage = lazy(() => info().then((m) => ({ default: m.ActivitiesPage })));
@@ -28,6 +29,7 @@ export function AppRoutes() {
         <Route path="modules" element={<ModulesPage />} />
         <Route path="modules/:slug" element={<ModulePage />} />
         <Route path="resources" element={<ResourcesPage />} />
+        <Route path="resources/rl-circuit" element={<RlCircuitPage />} />
         <Route path="activities" element={<ActivitiesPage />} />
         <Route path="assessment" element={<AssessmentPage />} />
         <Route path="progress" element={<ProgressPage />} />

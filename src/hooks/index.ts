@@ -1,5 +1,7 @@
-/**
- * React hooks that connect the UI to services: useSimulation, useRecorder,
- * useProgress. Added from Milestone 3.
- */
-export {};
+/** React hooks that connect the UI to services. */
+export {
+  useSimulation,
+  animationFrames,
+  MAX_FRAME_SECONDS,
+  type FrameSource,
+} from './useSimulation';

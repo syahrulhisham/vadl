@@ -16,6 +16,7 @@ automated tests check against. Rules:
 | Case                                                                   | Module | Status                                                                         | Test                                    |
 | ---------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------ | --------------------------------------- |
 | [DC motor, separately excited, steady state](dc-motor-steady-state.md) | M01    | Hand calculation done; test written in Milestone 4 with the equation functions | `tests/reference/dc-motor.test.ts` (M4) |
+| [RL circuit step response (RC-ENG-01)](rl-circuit-step.md)             | Engine | Hand calculation done; test passing                                            | `tests/reference/rl-circuit.test.ts`    |
 
 Of the values in that case, only the rad/s ↔ rpm conversion (175 rad/s = 1671.127 rpm) is already
 tested in Milestone 1, in `tests/unit/sim-core/units.test.ts`.

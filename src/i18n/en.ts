@@ -180,6 +180,85 @@ export const en = {
   'module.m08.lab': 'Lab 2 — Pneumatics',
   'module.m09.lab': 'Lab 3 — Electro-pneumatics',
   'module.m10.lab': 'Labs 4 and 5 — Hydraulics and electrohydraulics',
+
+  // Worked example: first-order RL circuit (Milestone 3 engine proving model)
+  'resources.workedTitle': 'Worked examples',
+  'resources.rlLink': 'First-order RL circuit: current rise and the time constant',
+  'resources.rlLinkHint':
+    'The same equation as the DC motor armature circuit. Runs on the VADL simulation engine.',
+  'rl.title': 'First-order RL circuit',
+  'rl.eyebrow': 'Worked example',
+  'rl.intro':
+    'Close the switch and watch the current rise through a resistor and an inductor. The time constant τ = L/R sets how fast it happens.',
+  'rl.back': 'Learning resources',
+  'rl.learnTitle': 'What you will learn',
+  'rl.learn1': 'Explain why an inductor makes current rise gradually instead of instantly.',
+  'rl.learn2': 'Calculate the time constant τ = L/R and the final current V/R.',
+  'rl.learn3': 'Show that the current reaches 63.2 % of its final value at one time constant.',
+  'rl.learn4': 'Compare a first-order (Euler) and a fourth-order (RK4) numerical method.',
+  'rl.equationsTitle': 'Equations',
+  'rl.eqKvl': 'Kirchhoff voltage law: V = R·i + L·di/dt',
+  'rl.eqSolution': 'Solution from i(0) = 0: i(t) = (V/R)·(1 − e^(−t/τ)), with τ = L/R',
+  'rl.eqMotor':
+    'The DC motor armature obeys Va = Eg + Ia·Ra + La·dIa/dt: the same equation with the back-emf Eg added.',
+  'rl.assumptionsTitle': 'Model assumptions',
+  'rl.diagramLabel':
+    'Circuit diagram: a DC source V, a switch, a resistor R and an inductor L in series, with an ammeter reading the current i.',
+  'rl.switchOpen': 'Switch open',
+  'rl.switchClosed': 'Switch closed',
+  'rl.start': 'Start',
+  'rl.resume': 'Resume',
+  'rl.pause': 'Pause',
+  'rl.stop': 'Stop',
+  'rl.reset': 'Reset',
+  'rl.status.idle': 'Ready. Press Start to close the switch.',
+  'rl.status.running': 'Running',
+  'rl.status.paused': 'Paused',
+  'rl.status.stopped': 'Stopped. Press Reset to run again.',
+  'rl.status.finished': 'Finished at five time constants. Press Reset to run again.',
+  'rl.lagging': 'The display is running slower than requested to keep the calculation accurate.',
+  'rl.voltage': 'Supply voltage V',
+  'rl.resistance': 'Resistance R',
+  'rl.inductance': 'Inductance L',
+  'rl.method': 'Numerical method',
+  'rl.methodRk4': 'Runge–Kutta, 4th order (RK4)',
+  'rl.methodEuler': 'Forward Euler, 1st order',
+  'rl.speed': 'Playback: five time constants take',
+  'rl.speedSeconds': '{s} s',
+  'rl.lockedHint': 'Reset to change parameters. Each run starts from the switch closing at t = 0.',
+  'rl.stepInfo':
+    'Integration step Δt = τ/10 = {dt} {unit} (the engine never uses more than one tenth of the time constant).',
+  'rl.time': 'Time',
+  'rl.current': 'Current',
+  'rl.vR': 'Resistor voltage',
+  'rl.vL': 'Inductor voltage',
+  'rl.tau': 'Time constant',
+  'rl.iFinal': 'Final current',
+  'rl.fraction': 'Fraction of final current',
+  'rl.record': 'Record measurement',
+  'rl.clear': 'Clear table',
+  'rl.tableCaption':
+    'Recorded measurements. Each row holds the values at the moment you pressed Record.',
+  'rl.traceTitle': 'Current against time',
+  'rl.traceDesc':
+    'Simulated current rising from zero towards V/R, with the analytic solution as a dashed line.',
+  'rl.simulated': 'Simulated',
+  'rl.analytic': 'Analytic',
+  'rl.universalTitle': 'Universal time-constant curve with the operating point',
+  'rl.universalDesc':
+    'Percentage of final current against time in time constants; the dot marks the present simulated state.',
+  'rl.xTau': 'Time (multiples of τ)',
+  'rl.yPercent': 'i/I∞ (%)',
+  'rl.instructionsTitle': 'Guided experiment',
+  'rl.step1':
+    'With the default values (V = 10 V, R = 10 Ω, L = 0.1 H), predict τ and the final current.',
+  'rl.step2':
+    'Press Start. Pause near t = τ and press Record. The current should be close to 63.2 % of its final value.',
+  'rl.step3':
+    'Let the run finish and record again. How close is the current to V/R after five time constants?',
+  'rl.step4': 'Reset, double L, and repeat. What happens to τ and to the final current?',
+  'rl.step5':
+    'Reset, choose forward Euler, and run again. Compare the simulated line with the dashed analytic line.',
 } as const;
 
 export type MessageKey = keyof typeof en;
