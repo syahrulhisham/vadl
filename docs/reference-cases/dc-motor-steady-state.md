@@ -70,6 +70,11 @@ n = 60 × 175 / (2π) = 10 500 / 6.283 185 3 = **1671.127 rpm** (1671.1 rpm to 5
 
 η = P_out / P_in = 4200 / 4400 = 0.954 545… = **95.45 %**
 
+**Step 7 — overall efficiency including the field (added 15 Nov 2026 for the laboratory model).**
+The VADL laboratory supplies the field at Vf = 220 V through Rf = 220 Ω, so If = 1 A and
+Kv = 1.2 V/(A·rad/s) gives Kv·If = 1.2 as above. Field power Vf·If = **220 W**.
+Total input 4400 + 220 = **4620 W**; overall η = 4200 / 4620 = 0.909 091 = **90.91 %**.
+
 **Supplementary check — starting current** (ω = 0 at standstill, so E_b = 0):
 
 I_a,start = V_a / R_a = 220 / 0.5 = **440 A**, i.e. 22 times the loaded current. This is the

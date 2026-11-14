@@ -13,3 +13,14 @@ export {
   type StorageLike,
   type RepositoryOptions,
 } from './localStorageRepository';
+export { RepositoryProvider } from './RepositoryProvider';
+export { createBrowserRepository } from './browserRepository';
+export { useRepository, RepositoryContext, type RepositoryHandle } from './repositoryContext';
+export {
+  PROFILE_KEY,
+  PROGRESS_KEY,
+  SETTINGS_KEY,
+  sessionsKey,
+  attemptsKey,
+  reportKey,
+} from './keys';

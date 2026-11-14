@@ -120,15 +120,22 @@ describe('module pages (FR-02)', () => {
     },
   );
 
-  it('shows the module title, course reference and placeholder milestone', async () => {
-    renderAt('/modules/dc-motor-drives');
+  it('a planned module shows its title, course reference and placeholder milestone', async () => {
+    renderAt('/modules/ac-motor-drives');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'DC Motor Drives' }),
+      await screen.findByRole('heading', { level: 1, name: 'AC Motor Drives' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Course reference: Chapter 1, Parts I–III/)).toBeInTheDocument();
+    expect(screen.getByText(/Course reference: Chapter 1, Part IV/)).toBeInTheDocument();
     expect(
-      screen.getAllByText('This region is filled when the laboratory is built in Milestone 4.'),
+      screen.getAllByText('This region is filled when the laboratory is built in Milestone 5.'),
     ).toHaveLength(7);
+  });
+
+  it('the DC motor module shows its built laboratory, not placeholders', async () => {
+    renderAt('/modules/dc-motor-drives');
+    expect(await screen.findByTestId('dc-diagram')).toBeInTheDocument();
+    expect(screen.getByText(/Course reference: Chapter 1, Parts I–III/)).toBeInTheDocument();
+    expect(screen.queryByText(/This region is filled when the laboratory is built/)).toBeNull();
   });
 
   it('never shows an invented measurement value', async () => {

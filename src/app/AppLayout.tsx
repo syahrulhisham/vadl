@@ -30,7 +30,7 @@ export function AppLayout() {
         {t('app.skipToContent')}
       </a>
 
-      <header className="bg-navy-800 text-white">
+      <header className="bg-navy-800 text-white print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
             <button
@@ -71,7 +71,7 @@ export function AppLayout() {
         <nav
           id="primary-nav"
           aria-label={t('nav.label')}
-          className={`${menuOpen ? 'block' : 'hidden'} absolute inset-x-0 z-40 border-b border-navy-100 bg-white shadow-lg lg:static lg:block lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r lg:shadow-none`}
+          className={`${menuOpen ? 'block' : 'hidden'} print:hidden absolute inset-x-0 z-40 border-b border-navy-100 bg-white shadow-lg lg:static lg:block lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r lg:shadow-none`}
         >
           <ul className="space-y-1 p-3">
             {NAV_ITEMS.map((item) => (
@@ -109,7 +109,7 @@ export function AppLayout() {
         </main>
       </div>
 
-      <footer className="border-t border-navy-100 bg-lightblue-50">
+      <footer className="border-t border-navy-100 bg-lightblue-50 print:hidden">
         <div className="space-y-1 px-4 py-4 text-sm text-navy-700 lg:px-8">
           <p>{t('app.disclaimer')}</p>
           <p>{t('app.privacy')}</p>

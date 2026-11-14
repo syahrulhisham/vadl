@@ -5,3 +5,4 @@ export {
   MAX_FRAME_SECONDS,
   type FrameSource,
 } from './useSimulation';
+export { useStoredValue } from './useStoredValue';

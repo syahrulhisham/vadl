@@ -4,3 +4,5 @@
  * and assumptions. Each has a reference test in tests/reference.
  */
 export * from './circuits';
+export * from './converters';
+export * from './dcMachines';

@@ -18,6 +18,8 @@ export interface TimeTraceChartProps {
   readonly yLabel: string;
   /** Fixed x-axis end so the axis does not rescale while a run progresses. */
   readonly xMax?: number;
+  /** Fixed x-axis start, e.g. for a rolling window. Default 0. */
+  readonly xMin?: number;
   readonly height?: number;
   /**
    * Curves with their own x values, e.g. an analytic solution drawn dashed
@@ -41,6 +43,7 @@ export function TimeTraceChart({
   timeUnit,
   yLabel,
   xMax,
+  xMin = 0,
   height = 280,
   referenceLines = [],
 }: TimeTraceChartProps) {
@@ -51,7 +54,7 @@ export function TimeTraceChart({
         <XAxis
           dataKey="t"
           type="number"
-          domain={[0, xMax ?? 'auto']}
+          domain={[xMin, xMax ?? 'auto']}
           allowDataOverflow
           stroke={colors.navy[600]}
           label={{

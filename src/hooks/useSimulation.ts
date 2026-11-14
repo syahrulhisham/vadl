@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import { startTransition, useCallback, useEffect, useReducer, useState } from 'react';
 import {
   SimulationRunner,
   type IntegratorName,
@@ -46,7 +46,9 @@ export function useSimulation<P, O extends Outputs, S extends readonly number[] 
       last = now;
       if (runner.version !== seen) {
         seen = runner.version;
-        rerender();
+        // Live display updates are non-urgent: as a transition they never starve
+        // a navigation (React Router navigates in a transition) or typing in a control.
+        startTransition(() => rerender());
       }
       if (runner.status === 'running') id = frames.request(frame);
     });

@@ -1,0 +1,89 @@
+/**
+ * Marking for the assessment engine (FR-10). Pure functions; the UI only displays
+ * the result. Tolerances follow docs/course-alignment.md §5.11: relative ±2 % on
+ * derived values unless a question states otherwise.
+ */
+import type { CalculationInstance, MultipleChoiceQuestion } from './types';
+
+export interface MarkResult {
+  readonly correct: boolean;
+  /** Feedback shown immediately. */
+  readonly feedback: string;
+  /** Worked explanation, always shown after an answer. */
+  readonly explanation: string;
+}
+
+/**
+ * Parse a typed number. Accepts spaces and thousands commas ("1,671.1"),
+ * a leading +, and e-notation. Returns NaN for anything else.
+ */
+export function parseAnswer(text: string): number {
+  const cleaned = text
+    .trim()
+    .replace(/\s+/g, '')
+    .replace(/,(?=\d{3}(\D|$))/g, '');
+  if (!/^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(cleaned)) return Number.NaN;
+  return Number(cleaned);
+}
+
+/** True when `given` is within the relative tolerance of `answer` (absolute 1e−9 near zero). */
+export function withinTolerance(given: number, answer: number, relativeTolerance: number): boolean {
+  if (!Number.isFinite(given)) return false;
+  const scale = Math.max(Math.abs(answer), 1e-9);
+  return Math.abs(given - answer) <= relativeTolerance * scale + 1e-12;
+}
+
+/** Number shown back to the student, to 4 significant figures. */
+function show(v: number): string {
+  return String(Number(v.toPrecision(4)));
+}
+
+export function markCalculation(text: string, instance: CalculationInstance): MarkResult {
+  const given = parseAnswer(text);
+  if (Number.isNaN(given)) {
+    return {
+      correct: false,
+      feedback: 'Enter a number, without the unit.',
+      explanation: instance.explanation,
+    };
+  }
+  const pct = instance.relativeTolerance * 100;
+  if (withinTolerance(given, instance.answer, instance.relativeTolerance)) {
+    return {
+      correct: true,
+      feedback: `Correct: ${show(instance.answer)} ${instance.unit} (within ±${pct} %).`,
+      explanation: instance.explanation,
+    };
+  }
+  const ratio = given / instance.answer;
+  let hint = '';
+  const near = (target: number) =>
+    Number.isFinite(ratio) && Math.abs(ratio / target - 1) <= instance.relativeTolerance;
+  if (near(1000) || near(0.001)) hint = ' Check the unit: you may be out by a factor of 1000.';
+  else if (near(30 / Math.PI) || near(Math.PI / 30)) {
+    hint = ' Check whether the answer is wanted in rad/s or rpm.';
+  } else if (ratio < 0 && Math.abs(Math.abs(ratio) - 1) < instance.relativeTolerance) {
+    hint = ' Check the sign.';
+  }
+  return {
+    correct: false,
+    feedback: `Not correct. The answer is ${show(instance.answer)} ${instance.unit}.${hint}`,
+    explanation: instance.explanation,
+  };
+}
+
+export function markChoice(question: MultipleChoiceQuestion, choiceId: string): MarkResult {
+  const chosen = question.choices.find((c) => c.id === choiceId);
+  if (!chosen) {
+    return { correct: false, feedback: 'Choose an answer.', explanation: question.explanation };
+  }
+  if (choiceId === question.correctChoiceId) {
+    return { correct: true, feedback: 'Correct.', explanation: question.explanation };
+  }
+  const right = question.choices.find((c) => c.id === question.correctChoiceId);
+  return {
+    correct: false,
+    feedback: `Not correct.${chosen.explanationIfChosen ? ` ${chosen.explanationIfChosen}` : ''} The correct answer is: ${right?.text ?? ''}`,
+    explanation: question.explanation,
+  };
+}

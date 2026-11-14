@@ -15,8 +15,9 @@ const info = () => import('./pages/InfoPages');
 const ResourcesPage = lazy(() => info().then((m) => ({ default: m.ResourcesPage })));
 const ActivitiesPage = lazy(() => info().then((m) => ({ default: m.ActivitiesPage })));
 const AssessmentPage = lazy(() => info().then((m) => ({ default: m.AssessmentPage })));
-const ProgressPage = lazy(() => info().then((m) => ({ default: m.ProgressPage })));
-const ReportsPage = lazy(() => info().then((m) => ({ default: m.ReportsPage })));
+const ProgressPage = lazy(() => import('./pages/ProgressPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
+const ReportPage = lazy(() => import('./pages/ReportPage'));
 const NotFoundPage = lazy(() => info().then((m) => ({ default: m.NotFoundPage })));
 
 /** All routes. Rendered inside a router: BrowserRouter in the app, MemoryRouter in tests. */
@@ -34,6 +35,7 @@ export function AppRoutes() {
         <Route path="assessment" element={<AssessmentPage />} />
         <Route path="progress" element={<ProgressPage />} />
         <Route path="reports" element={<ReportsPage />} />
+        <Route path="reports/:moduleId" element={<ReportPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

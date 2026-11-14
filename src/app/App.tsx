@@ -1,4 +1,5 @@
 import { BrowserRouter } from 'react-router';
+import { RepositoryProvider } from '@/storage';
 import { AppRoutes } from './AppRoutes';
 
 /**
@@ -7,8 +8,10 @@ import { AppRoutes } from './AppRoutes';
  */
 export function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <RepositoryProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </RepositoryProvider>
   );
 }

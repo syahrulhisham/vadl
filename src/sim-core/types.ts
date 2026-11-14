@@ -58,6 +58,12 @@ export interface SimModel<P, O, S extends readonly number[] = number[]> extends 
    * The engine keeps the step at or below one tenth of it (plan section 5, step-size rule).
    */
   fastestTimeConstant(p: P): number;
+  /**
+   * Optional physical constraint applied after every integration step, e.g. a
+   * converter that cannot carry negative current holds the current at zero.
+   * Must return a state of the same length.
+   */
+  project?(s: S, p: P): S;
 }
 
 /** An algebraic steady-state model (mechanical transmission, converter averages). */

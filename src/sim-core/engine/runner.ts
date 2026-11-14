@@ -253,7 +253,8 @@ export class SimulationRunner<P, O extends Outputs, S extends readonly number[] 
     }
     const f = (t: number, s: readonly number[]) =>
       this.model.derivatives(t, s as S, this.params) as readonly number[];
-    this.stateVec = step(this.methodValue, f, this.t, this.stateVec, hStep) as unknown as S;
+    const next = step(this.methodValue, f, this.t, this.stateVec, hStep) as unknown as S;
+    this.stateVec = this.model.project ? this.model.project(next, this.params) : next;
     this.t += hStep;
     this.record(false);
     if (this.endTimeValue !== undefined && this.endTimeValue - this.t <= h * 1e-9) {

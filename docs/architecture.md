@@ -149,7 +149,32 @@ compliance; outside the ten milestones unless added).
   `/resources/rl-circuit` in the seven-region layout. Recharts is loaded only with pages that
   chart (about 116 kB gzipped).
 
-## 10. Folder structure
+## 10. Laboratory pattern (Milestone 4, the reference module)
+
+- **Model contract addition:** optional `project(state, params)` applied by the runner after each
+  step, for physical constraints (a single-quadrant converter holds the armature current at zero).
+- **Module files** (`src/modules/m01-dc-motor/`): `content.en.ts` (outcomes, theory, activities,
+  labels — a per-module language file, D5), `questions.ts` (bank; calculation keys computed by
+  sim-core functions), `results.ts` (results-table columns), `report.ts` (report definition),
+  `DcMotorDiagram.tsx`, `DcMotorLab.tsx` (the seven regions).
+- **Registration** (`src/modules/labs.ts`): one entry per built laboratory — lazily loaded UI,
+  report definition, questions, activity count. The module page renders the laboratory when an
+  entry exists, otherwise the placeholder layout.
+- **Storage** (`src/storage`): `RepositoryProvider` (browser storage, memory fallback),
+  `useRepository`, stable keys in `keys.ts`, and `useStoredValue` in `src/hooks` (changes made
+  before loading finishes are queued and replayed on the stored value).
+- **Assessment** (`src/features/assessment`): `mulberry32` seeded generator, `markCalculation`
+  (±2 %, unit and sign hints), `markChoice` (per-choice explanations), `QuestionCard`,
+  `AssessmentPanel` (level filter, attempts saved).
+- **Reports** (`src/features/reports`): `ReportView` renders the ten sections from stored rows,
+  attempts, profile and the student's text only; `graphPoints` and `summariseAttempts` are pure.
+  Print stylesheet via Tailwind `print:` variants; export through the browser print dialog (D7).
+- **Progress** (`src/features/progress`): per-module activities completed, reports printed, last
+  opened; the progress page adds rows recorded and answers from storage.
+- **Rendering:** live simulation re-renders run as React transitions so they never starve a
+  navigation or typing.
+
+## 11. Folder structure
 
 ```text
 src/

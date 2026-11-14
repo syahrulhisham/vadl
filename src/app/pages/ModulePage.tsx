@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import { Link, useParams } from 'react-router';
 import { LinkButton, PageHeader, StatusBadge } from '@/design-system';
 import { LabShell } from '@/features/lab-shell';
 import { t } from '@/i18n';
 import { moduleChapter, moduleCourseLab, moduleSummary, moduleTitle } from '@/modules/courseRefs';
+import { builtLab } from '@/modules/labs';
 import { findModuleBySlug } from '@/modules/registry';
 import { useDocumentTitle } from '../useDocumentTitle';
 
@@ -45,7 +47,16 @@ export default function ModulePage() {
           <span className="text-sm text-navy-600">{t('module.courseRef', { ref: courseRef })}</span>
         </div>
       </PageHeader>
-      <LabShell placeholderMilestone={module.milestone} />
+      {(() => {
+        const lab = builtLab(module.id);
+        if (!lab) return <LabShell placeholderMilestone={module.milestone} />;
+        const { Lab } = lab;
+        return (
+          <Suspense fallback={<p role="status">{t('app.loading')}</p>}>
+            <Lab />
+          </Suspense>
+        );
+      })()}
     </>
   );
 }

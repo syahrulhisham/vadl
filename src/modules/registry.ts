@@ -14,7 +14,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'dc-motor-drives',
     titleKey: 'module.m01.title',
     milestone: 4,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm02-ac-motor',

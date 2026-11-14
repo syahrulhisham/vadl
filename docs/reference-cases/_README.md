@@ -13,10 +13,13 @@ automated tests check against. Rules:
 
 `dc-motor-steady-state.md` is the worked template for every later case.
 
-| Case                                                                   | Module | Status                                                                         | Test                                    |
-| ---------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------ | --------------------------------------- |
-| [DC motor, separately excited, steady state](dc-motor-steady-state.md) | M01    | Hand calculation done; test written in Milestone 4 with the equation functions | `tests/reference/dc-motor.test.ts` (M4) |
-| [RL circuit step response (RC-ENG-01)](rl-circuit-step.md)             | Engine | Hand calculation done; test passing                                            | `tests/reference/rl-circuit.test.ts`    |
+| Case                                                                                            | Module   | Status                              | Test                                                           |
+| ----------------------------------------------------------------------------------------------- | -------- | ----------------------------------- | -------------------------------------------------------------- |
+| [DC motor, separately excited, steady state](dc-motor-steady-state.md)                          | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
+| [RL circuit step response (RC-ENG-01)](rl-circuit-step.md)                                      | Engine   | Hand calculation done; test passing | `tests/reference/rl-circuit.test.ts`                           |
+| [DC drive, converter-fed (RC-M01-02)](dc-drive-converter.md)                                    | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
+| [Converter averages (RC-M01-04)](dc-converter-voltages.md)                                      | M01, M03 | Test passing                        | `tests/reference/dc-converters.test.ts`                        |
+| [Tutorial 1 cases, series motor, field weakening, load law (RC-M01-03, -05)](dc-motor-other.md) | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
 
 Of the values in that case, only the rad/s ↔ rpm conversion (175 rad/s = 1671.127 rpm) is already
 tested in Milestone 1, in `tests/unit/sim-core/units.test.ts`.

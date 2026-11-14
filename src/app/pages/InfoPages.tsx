@@ -1,18 +1,28 @@
 /**
- * Dashboard areas that hold no laboratory data yet: learning resources,
- * experiment activities, assessment centre, student progress and laboratory
- * reports. Each states what it will contain and when, and invents nothing.
+ * Learning resources, experiment activities and assessment centre. Activities and
+ * questions live inside each laboratory; these areas lead students to them.
  */
 import { Link } from 'react-router';
-import { Icon, LinkButton, PageHeader, Panel, StatusBadge } from '@/design-system';
+import { Icon, LinkButton, PageHeader, Panel } from '@/design-system';
 import { t } from '@/i18n';
+import { moduleTitle } from '@/modules/courseRefs';
+import { builtLab } from '@/modules/labs';
+import { MODULES } from '@/modules/registry';
 import { useDocumentTitle } from '../useDocumentTitle';
 
-function ComingIn({ milestone }: { readonly milestone: number }) {
+/** Links to every built laboratory, so these areas lead students to the work. */
+function LabLinks({ suffix }: { readonly suffix: string }) {
+  const built = MODULES.filter((m) => builtLab(m.id));
   return (
-    <div className="mt-3">
-      <StatusBadge>{t('comingIn', { m: milestone })}</StatusBadge>
-    </div>
+    <ul className="space-y-2">
+      {built.map((m) => (
+        <li key={m.id}>
+          <LinkButton to={`/modules/${m.slug}`} variant="secondary">
+            {m.number}. {moduleTitle(m)} — {suffix}
+          </LinkButton>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -20,9 +30,11 @@ export function ResourcesPage() {
   useDocumentTitle(t('resources.title'));
   return (
     <>
-      <PageHeader title={t('resources.title')} intro={t('resources.intro')} icon="resources">
-        <ComingIn milestone={4} />
-      </PageHeader>
+      <PageHeader
+        title={t('resources.title')}
+        intro={t('resources.intro')}
+        icon="resources"
+      ></PageHeader>
       <div className="space-y-4">
         <Panel title={t('resources.workedTitle')}>
           <Link
@@ -48,9 +60,10 @@ export function ActivitiesPage() {
   useDocumentTitle(t('activities.title'));
   return (
     <>
-      <PageHeader title={t('activities.title')} intro={t('activities.intro')} icon="activities">
-        <ComingIn milestone={4} />
-      </PageHeader>
+      <PageHeader title={t('activities.title')} intro={t('activities.intro')} icon="activities" />
+      <Panel title={t('info.availableLabs')} className="mb-4">
+        <LabLinks suffix={t('info.activitiesSuffix')} />
+      </Panel>
       <Panel title={t('activities.levelsTitle')}>
         <ul className="list-disc space-y-1 pl-5">
           <li>{t('activities.beginner')}</li>
@@ -66,37 +79,12 @@ export function AssessmentPage() {
   useDocumentTitle(t('assessment.title'));
   return (
     <>
-      <PageHeader title={t('assessment.title')} intro={t('assessment.intro')} icon="assessment">
-        <ComingIn milestone={4} />
-      </PageHeader>
+      <PageHeader title={t('assessment.title')} intro={t('assessment.intro')} icon="assessment" />
+      <Panel title={t('info.availableLabs')} className="mb-4">
+        <LabLinks suffix={t('info.questionsSuffix')} />
+      </Panel>
       <Panel title={t('nav.assessment')} tone="info">
         <p>{t('assessment.purpose')}</p>
-      </Panel>
-    </>
-  );
-}
-
-export function ProgressPage() {
-  useDocumentTitle(t('progress.title'));
-  return (
-    <>
-      <PageHeader title={t('progress.title')} intro={t('progress.intro')} icon="progress" />
-      <Panel title={t('progress.title')} tone="info">
-        <p>{t('progress.empty')}</p>
-        <p className="mt-2">{t('app.privacy')}</p>
-      </Panel>
-    </>
-  );
-}
-
-export function ReportsPage() {
-  useDocumentTitle(t('reports.title'));
-  return (
-    <>
-      <PageHeader title={t('reports.title')} intro={t('reports.intro')} icon="reports" />
-      <Panel title={t('reports.title')} tone="info">
-        <p>{t('reports.empty')}</p>
-        <p className="mt-2">{t('reports.honesty')}</p>
       </Panel>
     </>
   );
