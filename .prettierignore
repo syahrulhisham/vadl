@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+test-results
+playwright-report
+package-lock.json
+docs/project-plan.md
+docs/master-instruction.md
+docs/New Text Document.txt
+README.md

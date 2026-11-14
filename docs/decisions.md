@@ -1,0 +1,34 @@
+# Decision record
+
+Decisions from `docs/project-plan.md` section 11. **All twelve were approved as recommended by the
+project owner on 14 November 2026.** Change a decision only with the owner's agreement, and add
+a dated entry below rather than editing the original text.
+
+| #   | Topic                         | Approved answer                                                                                              | Implementation status (Milestone 1)                                                                                            |
+| --- | ----------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| D1  | Development environment       | Claude Code against the GitHub repository `syahrulhisham/vadl`                                               | In use: branch `milestone-1`                                                                                                   |
+| D2  | BELK 3423 course materials    | Owner to supply course outline with CLOs, lecture notes, lab sheets and tutorials; needed before Milestone 4 | **Not yet supplied.** Outcomes and notation are provisional; `docs/course-alignment.md` records that nothing has been examined |
+| D3  | Existing work to reuse        | Owner to supply any existing files, or confirm a fresh start                                                 | **Not yet supplied.** Repository inspection found no application code (see `docs/verification/milestone-1.md`)                 |
+| D4  | Component data                | Use nameplate data of the physical UTeM lab equipment where supplied                                         | **Not yet supplied.** Textbook-typical values will be used and labelled as such until then                                     |
+| D5  | Interface language            | English first; all text in language files so Malay can be added without code changes                         | Done: `src/i18n/en.ts`, `t()` helper                                                                                           |
+| D6  | Branding                      | "Design by Syahrul Hisham™" badge in every page header; UTeM logo only once permission is confirmed          | Badge done in header; no UTeM logo used                                                                                        |
+| D7  | PDF export                    | Print stylesheet and the browser's Save as PDF; a PDF library only if browser differences require it         | Recorded; implemented in Milestone 4 (thin) and 9                                                                              |
+| D8  | Three.js                      | Deferred; SVG and Canvas first; revisit for the rotating magnetic field in Module 2                          | Not installed                                                                                                                  |
+| D9  | Assessment and report timing  | Thin version inside Milestone 4, completed in Milestone 9                                                    | Contracts defined (`features/assessment/types.ts`, `features/reports/types.ts`)                                                |
+| D10 | Student identification fields | Name, matric number, programme, section, lecturer name, date                                                 | Encoded in `StudentIdentification`                                                                                             |
+| D11 | Purpose of assessment scores  | Self-study and formative feedback only; official marks need a Stage C backend and institutional approval     | Recorded in `CLAUDE.md` and `docs/srs.md`                                                                                      |
+| D12 | Hosting                       | Decide by Milestone 10; a static host is enough for the prototype                                            | Open until Milestone 10                                                                                                        |
+
+## Implementation choices made in Milestone 1 (within the approved plan)
+
+These are engineering choices inside the approved decisions, recorded so they can be reviewed.
+
+| Choice                                                                                                                                                                    | Reason                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| React 18.3.1 (as written in the plan), not React 19                                                                                                                       | The plan specifies React 18; an upgrade can be a separate, tested change                                 |
+| Tooling pinned to current majors, each release at least two weeks old: Vite 8.3.5, Vitest 5.0.5, ESLint 10.14.0, TypeScript 5.9.3, Tailwind CSS 3.4.19, Playwright 1.64.1 | A first install with older majors (Vitest 3) reported two critical advisories; current majors clear them |
+| TypeScript 5.9, not 7                                                                                                                                                     | `typescript-eslint` 8.x supports TypeScript below 6.1                                                    |
+| Tailwind CSS 3 with `tailwind.config.ts`                                                                                                                                  | Matches the folder structure in the plan; design tokens in one TypeScript file                           |
+| Playwright runs Chromium only, at two viewports                                                                                                                           | One browser download in Milestone 1; Firefox and WebKit added in Milestone 10                            |
+| `src/i18n/` folder added to the plan's structure                                                                                                                          | Needed to implement D5                                                                                   |
+| No React Router or Recharts yet                                                                                                                                           | Not needed until Milestones 2 and 3; avoids unused dependencies                                          |
