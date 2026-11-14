@@ -15,9 +15,14 @@ then `docs/srs.md` and `docs/architecture.md`.
 | 2         | Dashboard, navigation, design system          | Not started — needs approval                                       |
 | 3–10      | See `docs/project-plan.md` section 6          | Not started                                                        |
 
-Outstanding inputs from the project owner: BELK 3423 course materials (D2), existing files to
-reuse or confirmation of a fresh start (D3), lab equipment nameplate data (D4).
-Until D2 is supplied, all learning outcomes and notation are **provisional**.
+Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
+learning outcomes, the notation VADL adopts, the proposed plan changes (awaiting approval) and the
+lecturer questions. Learning outcomes stay **provisional** until the lecturer answers.
+Still outstanding: confirmation of a fresh start (D3) and the actual UTeM bench data (D4, L-21).
+
+**Course materials are confidential.** They live in the git-ignored `course-materials/`. Never
+commit them, never quote examination questions or answer schemes in the repository, and keep
+examination-derived analysis in `course-materials/_vadl-analysis/` only.
 
 ## Commands
 

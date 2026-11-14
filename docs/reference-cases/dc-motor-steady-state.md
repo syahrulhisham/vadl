@@ -1,13 +1,13 @@
 # Reference case RC-M01-01: separately excited DC motor, steady state
 
-| Field            | Value                                                                                             |
-| ---------------- | ------------------------------------------------------------------------------------------------- |
-| Module           | M01 – DC Motor Drives                                                                             |
-| Model            | `dc-motor.separately-excited` (Milestone 4)                                                       |
-| Source of case   | Project plan, section 7, "Reference cases" (first row)                                            |
-| Course alignment | Provisional (D2): notation follows common textbook usage, not yet checked against BELK 3423 notes |
-| Worked by        | Hand calculation, 14 November 2026                                                                |
-| Status           | Calculated; automated test to be written with the equation functions in Milestone 4               |
+| Field            | Value                                                                                                                                                          |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Module           | M01 – DC Motor Drives                                                                                                                                          |
+| Model            | `dc-motor.separately-excited` (Milestone 4)                                                                                                                    |
+| Source of case   | Project plan, section 7, "Reference cases" (first row)                                                                                                         |
+| Course alignment | Checked against LN Ch1 Part II p15 (D2): course writes Eg = Va − Ia·Ra, Eg = Kv·ω·If, Td = Kv·If·Ia; Kφ here = Kv·If. Course analysis is steady state, as here |
+| Worked by        | Hand calculation, 14 November 2026                                                                                                                             |
+| Status           | Calculated; automated test to be written with the equation functions in Milestone 4                                                                            |
 
 ## 1. Given
 
@@ -91,5 +91,5 @@ reason for starting resistance or reduced-voltage starting, and will be a Milest
 ## 6. Independent check
 
 Values agree with the plan's reference table (I_a = 20 A; E_b = 210 V; ω = 175 rad/s =
-1671.1 rpm; armature efficiency 95.45 %). To be cross-checked against a worked example in the
-BELK 3423 lecture notes once supplied (D2).
+1671.1 rpm; armature efficiency 95.45 %). A course-sourced companion case, RC-M01-02 (Tutorial 2 Q2,
+converter-fed drive), is listed in `docs/course-alignment.md` §6.

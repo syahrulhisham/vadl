@@ -8,7 +8,7 @@ automated tests check against. Rules:
 3. State the tolerance the test will use and why.
 4. Tests copy the expected values here as **literal numbers**. They never recompute the
    expected value with the formula under test.
-5. When BELK 3423 materials are supplied (D2), their worked examples become additional cases and
+5. Course worked examples (listed in `docs/course-alignment.md` §6) become additional cases and
    take priority.
 
 `dc-motor-steady-state.md` is the worked template for every later case.

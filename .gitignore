@@ -24,3 +24,7 @@ playwright/.cache/
 .DS_Store
 Thumbs.db
 *.log
+
+# BELK 3423 course materials: UTeM-internal / copyrighted, never committed.
+# Only derived notes with citations go into docs/ (see docs/course-alignment.md).
+course-materials/
