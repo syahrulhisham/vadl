@@ -44,7 +44,7 @@ const SIM_CORE_FORBIDDEN_GLOBALS = [
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'coverage', 'test-results', 'playwright-report', 'node_modules'],
+    ignores: ['dist', 'dist-base', 'coverage', 'test-results', 'playwright-report', 'node_modules'],
   },
   js.configs.recommended,
   ...tseslint.configs.strict,

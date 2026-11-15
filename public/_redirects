@@ -1,0 +1,3 @@
+# Netlify and Cloudflare Pages: serve the application for every path, so deep
+# links such as /modules/pneumatics open the right page (docs/guides/deployment.md).
+/*    /index.html   200

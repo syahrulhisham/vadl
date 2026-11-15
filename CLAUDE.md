@@ -9,23 +9,24 @@ then `docs/srs.md` and `docs/architecture.md`.
 
 ## Current status
 
-| Milestone | Scope                                                                     | Status                                                                 |
-| --------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| 1         | Requirements, architecture, project structure                             | Done and approved; tag `milestone-1`                                   |
-| 2         | Dashboard, navigation, design system                                      | Done and approved; tag `milestone-2`                                   |
-| 3         | Simulation engine and graphing                                            | Done and approved; tag `milestone-3`                                   |
-| 4         | DC motor laboratory (reference module), thin assessment, report, progress | Done and approved; tag `milestone-4`                                   |
-| 5         | AC motor drives (M02) and power converters (M03) laboratories             | Done and approved; tag `milestone-5`                                   |
-| 6         | Stepper motors (M04) and servo motors (M05) laboratories                  | Done and approved; tag `milestone-6`                                   |
-| 7         | Mechanical transmission (M06) and cam and follower (M07) laboratories     | Done and approved; tag `milestone-7`                                   |
-| 8         | Pneumatics (M08), electro-pneumatics (M09), electrohydraulics (M10)       | Done and approved; tag `milestone-8`                                   |
-| 9         | Assessment centre, student progress, report generation (all ten labs)     | Done on branch `milestone-9`, tag `milestone-9`; awaiting owner review |
-| 10        | Integration testing, documentation, deployment                            | Not started                                                            |
+| Milestone | Scope                                                                     | Status                                                                   |
+| --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 1         | Requirements, architecture, project structure                             | Done and approved; tag `milestone-1`                                     |
+| 2         | Dashboard, navigation, design system                                      | Done and approved; tag `milestone-2`                                     |
+| 3         | Simulation engine and graphing                                            | Done and approved; tag `milestone-3`                                     |
+| 4         | DC motor laboratory (reference module), thin assessment, report, progress | Done and approved; tag `milestone-4`                                     |
+| 5         | AC motor drives (M02) and power converters (M03) laboratories             | Done and approved; tag `milestone-5`                                     |
+| 6         | Stepper motors (M04) and servo motors (M05) laboratories                  | Done and approved; tag `milestone-6`                                     |
+| 7         | Mechanical transmission (M06) and cam and follower (M07) laboratories     | Done and approved; tag `milestone-7`                                     |
+| 8         | Pneumatics (M08), electro-pneumatics (M09), electrohydraulics (M10)       | Done and approved; tag `milestone-8`                                     |
+| 9         | Assessment centre, student progress, report generation (all ten labs)     | Done and approved; tag `milestone-9`                                     |
+| 10        | Integration testing, documentation, deployment                            | Done on branch `milestone-10`, tag `milestone-10`; awaiting owner review |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
 learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the
 lecturer questions. Learning outcomes stay **provisional** until the lecturer answers.
-Still outstanding: confirmation of a fresh start (D3) and the actual UTeM bench data (D4, L-21).
+Still outstanding: confirmation of a fresh start (D3), the actual UTeM bench data (D4, L-21)
+and the choice of host (D12; `docs/guides/deployment.md`).
 
 **Course materials are confidential.** They live in the git-ignored `course-materials/`. Never
 commit them, never quote examination questions or answer schemes in the repository, and keep
@@ -42,7 +43,9 @@ npm run format:check     # Prettier
 npm test                 # Vitest unit + reference tests
 npm run test:coverage    # with coverage; sim-core gate >= 90 % lines
 npm run build            # type check + production build to dist/
-npm run test:e2e         # Playwright (builds, then serves dist/ on :4173)
+npm run test:e2e         # Playwright, laptop + tablet (builds, then serves dist/ on :4173)
+npm run test:e2e:browsers  # integration pass in Edge, Firefox, WebKit
+npm run test:e2e:base    # sub-folder build (/vadl/) served on :4174
 npm run check            # everything above, in order
 npx playwright install chromium   # one-time browser download for e2e
 ```

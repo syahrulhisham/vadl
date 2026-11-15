@@ -269,7 +269,27 @@ compliance; outside the ten milestones unless added).
   two components holding one list (assessment panel, design tasks) cannot overwrite each other.
 - `downloadText` (in `src/hooks`) saves CSV and backup files locally; nothing is transmitted.
 
-## 16. Folder structure
+## 16. Integration, deployment and documentation (Milestone 10)
+
+- **Integration pass** (`tests/e2e/integration.spec.ts`): every laboratory starts, runs,
+  records a row and stops without page overflow, and its report shows the ten sections and the
+  recorded row, with no console error; every dashboard area opens from a deep link.
+- **Browsers (NFR-11):** Chromium at laptop and tablet sizes runs every test; the integration
+  pass also runs in Edge, Firefox and WebKit (`npm run test:e2e:browsers`).
+- **Accessibility (NFR-10):** axe-core audits twenty pages against WCAG 2.1 A and AA rules;
+  serious and critical violations fail (`tests/e2e/accessibility.spec.ts`).
+- **Base path:** `vite.config.ts` reads `VADL_BASE` at build time (build setting, not in the
+  bundle); `BrowserRouter` takes its basename from `import.meta.env.BASE_URL` (`basenameFrom`).
+  `playwright.base.config.ts` builds and tests a `/vadl/` sub-folder build.
+- **Deep links on static hosts:** the build writes `404.html` (copy of `index.html`) and ships
+  `_redirects`; server rules for Apache, IIS, nginx and Azure are in `docs/guides/deployment.md`.
+- **Unit-test speed:** in jsdom, `ResponsiveContainer` from Recharts is replaced by a placeholder
+  (`tests/setup.ts`); charts are tested in real browsers.
+- **CI:** `.github/workflows/ci.yml` runs every check plus Firefox, WebKit and the sub-folder
+  build on Ubuntu. It deploys nothing.
+- **Guides:** `docs/guides/` (student, lecturer, maintainer, deployment).
+
+## 17. Folder structure
 
 ```text
 src/
@@ -295,11 +315,14 @@ tests/
 ├── setup.ts
 ├── unit/                   mirrors src
 ├── reference/              verification against docs/reference-cases (M4+)
-└── e2e/                    Playwright
+├── e2e/                    Playwright
+└── e2e-base/               sub-folder deployment check (M10)
 docs/
 ├── master-instruction.md, project-plan.md   owner's source documents
 ├── srs.md, architecture.md, decisions.md, course-alignment.md
 ├── simulation-models/      one document per model (template in _template.md)
 ├── reference-cases/        hand calculations behind each reference test
+├── milestones/             per-milestone plans
+├── guides/                 student, lecturer, maintainer and deployment guides (M10)
 └── verification/           per-milestone verification reports
 ```

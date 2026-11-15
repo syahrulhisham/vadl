@@ -6,9 +6,11 @@ const PORT = 4173;
  * End-to-end tests run against the production build (`vite preview`), so the
  * bundle that would be deployed is the bundle that is tested.
  *
- * Viewports follow NFR-03 in docs/srs.md: a laptop and a tablet in portrait.
- * Both use Chromium so only one browser download is needed in Milestone 1;
- * Firefox and WebKit projects are added in Milestone 10 (cross-browser pass).
+ * Viewports follow NFR-03 in docs/srs.md: a laptop and a tablet in portrait, in
+ * Chromium, run every test. The cross-browser projects (NFR-11: Edge, Firefox and
+ * Safari's engine WebKit) run the integration pass through all ten laboratories.
+ * One-time setup: `npx playwright install chromium firefox webkit` (Edge is the
+ * installed Microsoft Edge).
  */
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -35,6 +37,25 @@ export default defineConfig({
         viewport: { width: 768, height: 1024 },
         hasTouch: true,
       },
+    },
+    {
+      name: 'edge',
+      testMatch: /integration\.spec\.ts/,
+      use: {
+        ...devices['Desktop Edge'],
+        channel: 'msedge',
+        viewport: { width: 1366, height: 768 },
+      },
+    },
+    {
+      name: 'firefox',
+      testMatch: /integration\.spec\.ts/,
+      use: { ...devices['Desktop Firefox'], viewport: { width: 1366, height: 768 } },
+    },
+    {
+      name: 'webkit',
+      testMatch: /integration\.spec\.ts/,
+      use: { ...devices['Desktop Safari'], viewport: { width: 1366, height: 768 } },
     },
   ],
   webServer: {

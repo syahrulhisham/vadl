@@ -306,7 +306,12 @@ export default function CamLab() {
                   options={STEPS.map((s) => ({ value: s, label: `${s}°` }))}
                   onChange={setStep}
                 />
-                <div className="max-h-72 overflow-auto">
+                <div
+                  className="max-h-72 overflow-auto"
+                  tabIndex={0}
+                  role="group"
+                  aria-label={L.tableTitle}
+                >
                   <table className="text-sm" data-testid="displacement-table">
                     <caption className="mb-1 text-left">
                       <span className="font-semibold text-navy-800">{L.tableTitle}. </span>

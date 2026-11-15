@@ -33,6 +33,7 @@
     "vite.config.ts",
     "vitest.config.ts",
     "playwright.config.ts",
+    "playwright.base.config.ts",
     "tailwind.config.ts"
   ]
 }

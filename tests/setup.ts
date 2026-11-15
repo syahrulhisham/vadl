@@ -1,7 +1,8 @@
 // Adds DOM matchers (toBeInTheDocument, toHaveTextContent, ...) to Vitest's expect.
 import '@testing-library/jest-dom/vitest';
 import { configure } from '@testing-library/dom';
-import { afterEach } from 'vitest';
+import type * as Recharts from 'recharts';
+import { afterEach, vi } from 'vitest';
 
 // Pages are lazily loaded chunks. Under the parallel coverage run a cold import
 // of a laboratory (five of them since Milestone 6) can take several seconds, so
@@ -15,4 +16,17 @@ afterEach(async () => {
     const { cleanup } = await import('@testing-library/react');
     cleanup();
   }
+});
+
+// Charts are drawn and checked in real browsers by the Playwright tests. In jsdom
+// the chart container renders an empty placeholder, which makes the laboratory
+// page tests several times faster. Chart data comes from the same model outputs
+// that the unit and reference tests check directly.
+vi.mock('recharts', async (importOriginal) => {
+  const actual = await importOriginal<typeof Recharts>();
+  const { createElement } = await import('react');
+  return {
+    ...actual,
+    ResponsiveContainer: () => createElement('div', { 'data-testid': 'chart-placeholder' }),
+  };
 });
