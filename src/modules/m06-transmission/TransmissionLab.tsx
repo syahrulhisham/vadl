@@ -438,7 +438,7 @@ export default function TransmissionLab() {
             <div className="space-y-4">
               {view === 'train' ? (
                 <>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     <MeasurementDisplay
                       label={L.measurements.overallRatio}
                       symbol="G"
@@ -505,7 +505,7 @@ export default function TransmissionLab() {
                   </div>
                 </>
               ) : view === 'belt' ? (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                   <MeasurementDisplay
                     label={L.measurements.beltTorqueDriver}
                     symbol="T_A"
@@ -532,7 +532,7 @@ export default function TransmissionLab() {
                   />
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                   <MeasurementDisplay
                     label={L.measurements.liftEffort}
                     symbol="E"

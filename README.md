@@ -52,6 +52,8 @@ Then open http://localhost:5173. `npm run check` runs every quality check; see t
 
 - [Software requirements](docs/srs.md) and [architecture](docs/architecture.md)
 - [Decision record](docs/decisions.md)
+- [Course alignment](docs/course-alignment.md): course learning outcomes, notation and the
+  questions for the lecturer
 - [Simulation models](docs/simulation-models/) and their
   [hand-worked reference cases](docs/reference-cases/)
 - [Verification reports](docs/verification/), one per milestone

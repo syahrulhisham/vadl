@@ -398,7 +398,7 @@ export default function ServoLab() {
 
           measurements: (
             <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 <MeasurementDisplay
                   label={L.measurements.time}
                   symbol="t"
@@ -513,7 +513,7 @@ export default function ServoLab() {
                 <section aria-label={L.metricsTitle} className="space-y-2">
                   <h3 className="text-sm font-semibold text-navy-800">{L.metricsTitle}</h3>
                   <p className="text-xs text-navy-600">{L.metricsNote}</p>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     <MeasurementDisplay
                       label={L.measurements.riseTime}
                       symbol="tr"

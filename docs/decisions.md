@@ -21,11 +21,12 @@ a dated entry below rather than editing the original text.
 
 ## Changes after approval
 
-| Date        | Change                                                                                                                                                                                                                                 |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 14 Nov 2026 | D2 materials examined. `docs/course-alignment.md` §5 proposes changes to the plan's module scope, notation and reference cases; `docs/project-plan.md` unchanged                                                                       |
-| 14 Nov 2026 | **All §5 changes approved by the owner.** `docs/course-alignment.md` §5 takes precedence over `docs/project-plan.md` §5 where they differ                                                                                              |
-| 15 Nov 2026 | Milestone 10: VADL prepared for any static host (sub-folder build, deep-link fallbacks, server rules, CI workflow; `docs/guides/deployment.md`). **D12 itself, the choice of host, remains with the owner**; nothing has been deployed |
+| Date        | Change                                                                                                                                                                                                                                                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14 Nov 2026 | D2 materials examined. `docs/course-alignment.md` §5 proposes changes to the plan's module scope, notation and reference cases; `docs/project-plan.md` unchanged                                                                                                                                            |
+| 14 Nov 2026 | **All §5 changes approved by the owner.** `docs/course-alignment.md` §5 takes precedence over `docs/project-plan.md` §5 where they differ                                                                                                                                                                   |
+| 15 Nov 2026 | Milestone 10: VADL prepared for any static host (sub-folder build, deep-link fallbacks, server rules, CI workflow; `docs/guides/deployment.md`). **D12 itself, the choice of host, remains with the owner**; nothing has been deployed                                                                      |
+| 15 Nov 2026 | **D3 resolved by the owner: fresh start confirmed.** No earlier simulator source files exist, so none are available for reuse; the VADL implementation began from scratch, as the Milestone 1 repository inspection found (`docs/verification/milestone-1.md`). The D3 row above keeps its original wording |
 
 ## Implementation choices made in Milestone 1 (within the approved plan)
 

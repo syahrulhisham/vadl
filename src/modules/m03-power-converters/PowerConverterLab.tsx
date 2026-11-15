@@ -480,7 +480,7 @@ export default function PowerConverterLab() {
 
           measurements: (
             <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 <MeasurementDisplay
                   label={m.vAverage}
                   symbol="Vavg"

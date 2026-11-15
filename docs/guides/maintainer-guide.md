@@ -65,7 +65,13 @@ Steps for a new laboratory:
 4. Register it: one entry in `src/modules/registry.ts` (summary and status) and one in
    `src/modules/labs.ts` (lazy page, questions, report, activities, outcomes). The dashboard,
    assessment centre, progress and reports pick it up from there (NFR-09).
-5. Add it to the lists in `tests/e2e/integration.spec.ts` and `tests/e2e/accessibility.spec.ts`.
+5. Add it to the lists in `tests/e2e/integration.spec.ts` and `tests/e2e/accessibility.spec.ts`,
+   and to the `LABS` list in `tests/e2e/projector.spec.ts`. That list sets which laboratories
+   receive the laboratory layout checks at the projector sizes and the measurement-grid checks at
+   all four sizes (1024 × 768, 1280 × 800, 1366 × 768 and 1920 × 1080). A laboratory left out of
+   it receives none of those checks, and no test fails to warn you. In the same file, also list
+   its meters in `LONG_READINGS` and its number of meter grids in `GRIDS_PER_LAB`; the
+   measurement-grid tests fail until both are listed.
 
 ## 4. Changing stored data
 

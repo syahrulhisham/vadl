@@ -156,6 +156,11 @@ Run 43687894677, test results (abridged from the job log):
 unverified on the development machine (section 5). With this, the open item "Firefox" in section
 6 is closed and "All checks" pass.
 
+**Run 43688571117 (commit 56bcf64, 15 November 2026):** passed. Its job log shows all 11 Firefox
+integration tests passing. This is later CI evidence only. It does not change the historical
+record that Firefox was not verified locally during the original Milestone 10 verification
+(sections 1 and 5).
+
 **Workflow update:** the first run warned that `actions/checkout@v4` and `actions/setup-node@v4`
 target the deprecated Node.js 20. The workflow now uses `actions/checkout@v7`,
 `actions/setup-node@v7` and `actions/upload-artifact@v7`, which run on Node.js 24; run
