@@ -3,6 +3,7 @@
  * attempts; nothing here creates a measurement (master instruction §8: "Do not
  * invent experimental results").
  */
+import { isAutoMarked, toCsv } from '@/features/assessment/analytics';
 import type { Attempt, Question } from '@/features/assessment/types';
 import type { ResultsColumn } from '@/features/recording';
 import type { RecordedRow } from './types';
@@ -42,12 +43,29 @@ export interface AttemptSummary {
   }[];
 }
 
-/** Summarise attempts per question, in bank order, with a short label for each question. */
+/**
+ * Summarise automatically marked attempts per question, in bank order, with a
+ * short label for each question; attempts at ids outside the bank (laboratory
+ * design tasks) follow, labelled by their id. Lecturer-marked answers are excluded.
+ */
 export function summariseAttempts(
-  attempts: readonly Attempt[],
+  allAttempts: readonly Attempt[],
   questions: readonly Question[],
 ): AttemptSummary {
-  const byQuestion = questions
+  const attempts = allAttempts.filter(isAutoMarked);
+  const known = new Set(questions.map((q) => q.id));
+  const extraIds = [...new Set(attempts.map((a) => a.questionId).filter((id) => !known.has(id)))];
+  const extra = extraIds.map((id) => {
+    const mine = attempts.filter((a) => a.questionId === id);
+    return {
+      questionId: id,
+      label: `Task ${id}`,
+      attempts: mine.length,
+      correct: mine.filter((a) => a.correct).length,
+      latestCorrect: mine.at(-1)?.correct ?? false,
+    };
+  });
+  const inBank = questions
     .map((q, i) => {
       const mine = attempts.filter((a) => a.questionId === q.id);
       return {
@@ -62,6 +80,25 @@ export function summariseAttempts(
   return {
     total: attempts.length,
     correct: attempts.filter((a) => a.correct).length,
-    byQuestion,
+    byQuestion: [...inBank, ...extra],
   };
+}
+
+/**
+ * Recorded rows as CSV: one column per report column, values in the column's
+ * display unit (scaled from SI), header "label (unit)". Rows the student
+ * recorded only; nothing is added.
+ */
+export function rowsToCsv(rows: readonly RecordedRow[], columns: readonly ResultsColumn[]): string {
+  const seen = new Set<string>();
+  const unique = columns.filter((c) => {
+    const k = `${c.source}:${c.key}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  return toCsv(
+    ['row', ...unique.map((c) => `${c.label} (${c.unit})`)],
+    rows.map((r, i) => [i + 1, ...unique.map((c) => columnValue(r, c) ?? Number.NaN)]),
+  );
 }

@@ -133,6 +133,7 @@ describe('M02 and M03 question banks', () => {
             if (c.id !== q.correctChoiceId) expect(c.explanationIfChosen).toBeTruthy();
           continue;
         }
+        if (q.kind !== 'calculation') continue;
         expect(q.generate(9)).toEqual(q.generate(9));
         for (let seed = 0; seed < 200; seed += 1) {
           const inst = q.generate(seed);

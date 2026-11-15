@@ -97,7 +97,7 @@ describe('M01 question bank', () => {
       new Set(['beginner', 'intermediate', 'advanced']),
     );
     expect(new Set(M01_QUESTIONS.map((q) => q.kind))).toEqual(
-      new Set(['multiple-choice', 'calculation', 'troubleshooting']),
+      new Set(['multiple-choice', 'calculation', 'troubleshooting', 'chain', 'explanation']),
     );
     for (const q of M01_QUESTIONS) {
       expect(q.moduleId).toBe('m01-dc-motor');

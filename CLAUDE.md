@@ -18,8 +18,9 @@ then `docs/srs.md` and `docs/architecture.md`.
 | 5         | AC motor drives (M02) and power converters (M03) laboratories             | Done and approved; tag `milestone-5`                                   |
 | 6         | Stepper motors (M04) and servo motors (M05) laboratories                  | Done and approved; tag `milestone-6`                                   |
 | 7         | Mechanical transmission (M06) and cam and follower (M07) laboratories     | Done and approved; tag `milestone-7`                                   |
-| 8         | Pneumatics (M08), electro-pneumatics (M09), electrohydraulics (M10)       | Done on branch `milestone-8`, tag `milestone-8`; awaiting owner review |
-| 9–10      | See `docs/project-plan.md` section 6 and `docs/course-alignment.md` §5    | Not started                                                            |
+| 8         | Pneumatics (M08), electro-pneumatics (M09), electrohydraulics (M10)       | Done and approved; tag `milestone-8`                                   |
+| 9         | Assessment centre, student progress, report generation (all ten labs)     | Done on branch `milestone-9`, tag `milestone-9`; awaiting owner review |
+| 10        | Integration testing, documentation, deployment                            | Not started                                                            |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
 learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the

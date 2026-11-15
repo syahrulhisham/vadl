@@ -4,6 +4,7 @@
  */
 import { mulberry32, pick } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -304,6 +305,21 @@ const tableQuestion: TableQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm07.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'beginner',
+  outcomeIds: ['m07.lo3'],
+  stem: 'Compare knife-edge, roller and flat-faced followers.',
+  markingGuide: [
+    'Knife-edge: follows any profile exactly but wears quickly; light loads and low speeds.',
+    'Roller: rolls on the cam with low friction and wear; used at higher loads and speeds; its centre follows the pitch curve.',
+    'Flat-faced: compact and robust (e.g. engine valves); the cam profile must be convex.',
+    'All need a spring or gravity to keep contact.',
+  ],
+};
+
 export const M07_QUESTIONS: readonly Question[] = [
   dwellMcq,
   rateCalc,
@@ -314,4 +330,5 @@ export const M07_QUESTIONS: readonly Question[] = [
   velocityCalc,
   shmCalc,
   shockTs,
+  explainQuestion,
 ];

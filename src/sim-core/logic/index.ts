@@ -4,3 +4,4 @@
  */
 export * from './ladder';
 export * from './pneumaticLogic';
+export * from './ladderTasks';

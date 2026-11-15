@@ -4,6 +4,7 @@
  */
 import { mulberry32, pick, randInt, randStep } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -293,6 +294,21 @@ const liftEfficiencyCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm06.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m06.lo2'],
+  stem: 'Explain why belts can slip and when a timing belt or chain is used instead.',
+  markingGuide: [
+    'A flat or V-belt transmits power by friction; the torque it can carry is limited by the tension difference T1 − T2 the friction allows.',
+    'Overload makes the belt slip (which can protect the machine), so the speed ratio is not exact.',
+    'A timing belt or chain has teeth that engage the pulley or sprocket: no slip, a constant ratio.',
+    'They are used where the speed ratio or timing must be exact, e.g. camshaft drives, positioning.',
+  ],
+};
+
 export const M06_QUESTIONS: readonly Question[] = [
   idlerMcq,
   pairCalc,
@@ -304,4 +320,5 @@ export const M06_QUESTIONS: readonly Question[] = [
   beltPowerCalc,
   liftEfficiencyCalc,
   slipTs,
+  explainQuestion,
 ];

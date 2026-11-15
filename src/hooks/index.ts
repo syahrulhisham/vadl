@@ -6,3 +6,4 @@ export {
   type FrameSource,
 } from './useSimulation';
 export { useStoredValue } from './useStoredValue';
+export { downloadText } from './downloadText';

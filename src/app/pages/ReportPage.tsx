@@ -21,7 +21,7 @@ export default function ReportPage() {
         </Link>
       </nav>
       <PageHeader title={lab.report.title} />
-      <ReportView definition={lab.report} questions={lab.questions} />
+      <ReportView definition={lab.report} questions={lab.questions} outcomes={lab.outcomes} />
     </>
   );
 }

@@ -4,6 +4,7 @@
  */
 import { mulberry32, pick } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -238,6 +239,21 @@ const pressureCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm08.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m08.lo4'],
+  stem: 'Explain why exhaust-air (meter-out) throttling is preferred for controlling the speed of a double-acting cylinder.',
+  markingGuide: [
+    'The piston is held between two air cushions: the supply side at full pressure, the exhaust side throttled.',
+    'The speed is set by how fast the exhaust air can escape, so it changes little with the load.',
+    'With supply-air throttling the speed depends on the load and the piston can jerk (stick-slip).',
+    'Supply-air throttling is used for single-acting cylinders, which have no exhaust on the driven side.',
+  ],
+};
+
 export const M08_QUESTIONS: readonly Question[] = [
   shuttleMcq,
   forceCalc,
@@ -247,4 +263,5 @@ export const M08_QUESTIONS: readonly Question[] = [
   memoryMcq,
   pressureCalc,
   throttleTs,
+  explainQuestion,
 ];

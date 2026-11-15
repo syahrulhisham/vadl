@@ -8,6 +8,8 @@ export {
   markCalculation,
   markChoice,
   markSequence,
+  markChain,
+  type ChainMark,
   markTable,
   emptySequenceAnswer,
   sequenceAnswerText,
@@ -20,3 +22,17 @@ export { QuestionCard, type QuestionCardProps } from './QuestionCard';
 export { SequenceTableInput, type SequenceTableInputProps } from './SequenceTableInput';
 export { NumericTableInput } from './NumericTableInput';
 export { AssessmentPanel, type AssessmentPanelProps } from './AssessmentPanel';
+export {
+  bankStats,
+  buildPracticeSet,
+  csvField,
+  isAutoMarked,
+  LEVELS,
+  percent,
+  scoreSummary,
+  sumTallies,
+  toCsv,
+  type OutcomeRef,
+  type ScoreSummary,
+  type Tally,
+} from './analytics';

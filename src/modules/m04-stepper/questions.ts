@@ -5,6 +5,8 @@
  */
 import { mulberry32, pick, randInt } from '@/features/assessment/rng';
 import type {
+  ChainQuestion,
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -26,6 +28,7 @@ import {
   vrPhaseCount,
   type StepMode,
   type StepperParams,
+  stepTime,
 } from '@/sim-core';
 
 const MODULE = 'm04-stepper';
@@ -344,6 +347,74 @@ const bipolarSequence: SequenceQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm04.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'beginner',
+  outcomeIds: ['m04.lo1'],
+  stem: 'Compare a stepper motor and a servo motor for positioning a machine axis.',
+  markingGuide: [
+    'A stepper is open loop: position is set by counting pulses, with no sensor; simple and cheap; full torque at standstill.',
+    'A stepper can lose steps if overloaded or driven too fast, and nothing detects it.',
+    'A servo is closed loop: a sensor (encoder or resolver) measures the position and the amplifier corrects any error.',
+    'A servo gives higher speed and torque at speed and recovers from disturbances, but costs more and needs tuning.',
+  ],
+};
+
+const stepperChain: ChainQuestion = {
+  id: 'm04.chain.vr-drive',
+  moduleId: MODULE,
+  kind: 'chain',
+  level: 'intermediate',
+  outcomeIds: ['m04.lo2'],
+  generate(seed) {
+    const rng = mulberry32(seed);
+    const [ns, nr] = pick(rng, VR_TEETH);
+    const n = pick(rng, [50, 60, 100, 120, 150, 200]);
+    const sa = radToDeg(stepAngleFromTeeth(ns, nr));
+    const prOf = (saDeg: number) => pulseRateForSpeed(degToRad(saDeg), rpmToRadPerSec(n));
+    return {
+      stem: `A variable-reluctance stepper motor has ${ns} stator poles and ${nr} rotor teeth and must turn at ${n} rpm in full-step drive. Later parts are marked on your own earlier answers.`,
+      parts: [
+        {
+          label: '(a)',
+          prompt: 'Step angle Sa',
+          unit: '°',
+          relativeTolerance: TOL,
+          answer: sa,
+          compute: () => sa,
+        },
+        {
+          label: '(b)',
+          prompt: 'Pulses per revolution',
+          unit: 'pulses',
+          relativeTolerance: TOL,
+          answer: pulsesPerRevolution(degToRad(sa)),
+          compute: (e) => pulsesPerRevolution(degToRad(e[0] ?? Number.NaN)),
+        },
+        {
+          label: '(c)',
+          prompt: 'Pulse rate PR',
+          unit: 'pulses/s',
+          relativeTolerance: TOL,
+          answer: prOf(sa),
+          compute: (e) => prOf(e[0] ?? Number.NaN),
+        },
+        {
+          label: '(d)',
+          prompt: 'Time per step',
+          unit: 's',
+          relativeTolerance: TOL,
+          answer: stepTime(prOf(sa)),
+          compute: (e) => stepTime(e[2] ?? Number.NaN),
+        },
+      ],
+      explanation: `(a) Sa = (Ns − Nr)/(Ns·Nr) × 360° = ${f(sa)}°. (b) PPR = 360/Sa = ${f(pulsesPerRevolution(degToRad(sa)))}. (c) PR = 6N/Sa = ${f(prOf(sa))} pulses/s. (d) t = 1/PR = ${f(stepTime(prOf(sa)))} s.`,
+    };
+  },
+};
+
 export const M04_QUESTIONS: readonly Question[] = [
   teethMcq,
   stepAngleCalc,
@@ -355,4 +426,6 @@ export const M04_QUESTIONS: readonly Question[] = [
   vrSequence,
   bipolarSequence,
   lostStepsTs,
+  explainQuestion,
+  stepperChain,
 ];

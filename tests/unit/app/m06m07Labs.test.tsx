@@ -187,6 +187,7 @@ describe('M06 and M07 question banks', () => {
             if (c.id !== q.correctChoiceId) expect(c.explanationIfChosen).toBeTruthy();
           continue;
         }
+        if (q.kind === 'explanation') continue;
         expect(q.generate(9)).toEqual(q.generate(9));
         for (let seed = 0; seed < 200; seed += 1) {
           if (q.kind === 'calculation') {

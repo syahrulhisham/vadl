@@ -8,6 +8,8 @@
  */
 import { mulberry32, randStep, pick } from '@/features/assessment/rng';
 import type {
+  ChainQuestion,
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -339,6 +341,80 @@ const startingCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm01.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m01.lo1'],
+  stem: 'Explain why a DC motor draws a very large current at starting, and describe two ways of limiting it.',
+  markingGuide: [
+    'At standstill there is no back-emf (Eg = Kv·If·ω = 0), so Ia = Va/Ra, and Ra is small.',
+    'The current can be many times the rated value: it can damage the commutator and windings and trip the supply.',
+    'Limit it with a series starting resistance, cut out in steps as the speed (and Eg) rises.',
+    'Or start with a reduced armature voltage (a controlled converter with a large firing angle αa) and raise it as the motor accelerates.',
+  ],
+};
+
+const driveChain: ChainQuestion = {
+  id: 'm01.chain.converter-drive',
+  moduleId: MODULE,
+  kind: 'chain',
+  level: 'advanced',
+  outcomeIds: ['m01.lo4', 'm01.lo2'],
+  generate(seed) {
+    const rng = mulberry32(seed);
+    const vs = pick(rng, [220, 240]);
+    const rf = pick(rng, [150, 175, 200]);
+    const kv = randStep(rng, 1, 1.6, 0.1);
+    const ra = randStep(rng, 0.2, 0.6, 0.05);
+    const aa = randStep(rng, 30, 70, 5);
+    const ia = randStep(rng, 10, 30, 5);
+    const vm = peakFromRms(vs);
+    const vf = converterAverageVoltage('single-full', vm, 0);
+    const va = converterAverageVoltage('single-full', vm, degToRad(aa));
+    const speed = (vaGiven: number, ifGiven: number) => (vaGiven - ia * ra) / (kv * ifGiven);
+    return {
+      stem: `A separately excited DC motor is fed by two single-phase full converters from a ${vs} V rms supply: the field converter at αf = 0° with Rf = ${rf} Ω, the armature converter at αa = ${aa}°. Ra = ${f(ra)} Ω, Kv = ${f(kv)} V/(A·rad/s), Ia = ${ia} A (continuous). Work through the parts; later parts are marked on your own earlier answers.`,
+      parts: [
+        {
+          label: '(a)',
+          prompt: 'Output of the field converter, Vf',
+          unit: 'V',
+          relativeTolerance: TOL,
+          answer: vf,
+          compute: () => vf,
+        },
+        {
+          label: '(b)',
+          prompt: 'Field current If',
+          unit: 'A',
+          relativeTolerance: TOL,
+          answer: fieldCurrent(vf, rf),
+          compute: (e) => fieldCurrent(e[0] ?? Number.NaN, rf),
+        },
+        {
+          label: '(c)',
+          prompt: 'Output of the armature converter, Va',
+          unit: 'V',
+          relativeTolerance: TOL,
+          answer: va,
+          compute: () => va,
+        },
+        {
+          label: '(d)',
+          prompt: 'Speed ω',
+          unit: 'rad/s',
+          relativeTolerance: TOL,
+          answer: speed(va, fieldCurrent(vf, rf)),
+          compute: (e) => speed(e[2] ?? Number.NaN, e[1] ?? Number.NaN),
+        },
+      ],
+      explanation: `Vm = √2 × ${vs} = ${f(vm)} V. (a) Vf = (2Vm/π)cos 0° = ${f(vf)} V. (b) If = Vf/Rf = ${f(fieldCurrent(vf, rf))} A. (c) Va = (2Vm/π)cos ${aa}° = ${f(va)} V. (d) ω = (Va − Ia·Ra)/(Kv·If) = ${f(speed(va, fieldCurrent(vf, rf)))} rad/s.`,
+    };
+  },
+};
+
 export const M01_QUESTIONS: readonly Question[] = [
   backEmfMcq,
   startingMcq,
@@ -351,4 +427,6 @@ export const M01_QUESTIONS: readonly Question[] = [
   faultMcq,
   driveCalc,
   startingCalc,
+  explainQuestion,
+  driveChain,
 ];

@@ -248,7 +248,28 @@ compliance; outside the ten milestones unless added).
   activity) and a hidden-fault troubleshooting exercise.
 - **Units:** `mpaToPa`, `paToMpa`, `cm2ToM2`, `cm3ToM3` added. All ten laboratories are now built.
 
-## 15. Folder structure
+## 15. Assessment, progress and reports (Milestone 9)
+
+- **Question kinds** (`src/features/assessment/types.ts`): multiple choice, troubleshooting,
+  calculation, sequence table, numeric table, **chain** (multi-part, marked with error carried
+  forward by `markChain`; each part has a `compute` from earlier values built on sim-core
+  functions) and **explanation** (saved with `marking: 'lecturer'`, never scored by VADL).
+- **Analytics** (`analytics.ts`, pure): `bankStats`, `buildPracticeSet` (seeded shuffle: a set
+  code reproduces a set), `scoreSummary` (auto-marked only; by level and by course LO through
+  each laboratory's outcomes), CSV helpers. `BuiltLab` now carries `outcomes`.
+- **Pages:** `AssessmentCentrePage` (bank overview, practice sets; answers appended to each
+  laboratory's attempts in order), `ProgressPage` (all laboratories, totals, by level and LO,
+  CSV summary, backup/restore via `exportAll`/`importAll`, delete with confirmation via
+  `clearAll`), `ReportsPage` (status of each report). `ReportView` adds results by level and
+  LO, lecturer-marked answers and a CSV download of the recorded rows (`rowsToCsv`).
+- **Design tasks checked by simulation** (`src/sim-core/logic/ladderTasks.ts`): a task is a
+  sequence of button states and required coil states; `checkLadderTask` runs the student's
+  ladder through it (and can require indirect control). Used in M09.
+- **Shared stored values:** `useStoredValue` instances with the same key now share changes, so
+  two components holding one list (assessment panel, design tasks) cannot overwrite each other.
+- `downloadText` (in `src/hooks`) saves CSV and backup files locally; nothing is transmitted.
+
+## 16. Folder structure
 
 ```text
 src/

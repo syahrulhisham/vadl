@@ -4,6 +4,7 @@
  */
 import { mulberry32, pick } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -192,6 +193,21 @@ const voltageCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm09.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m09.lo2'],
+  stem: 'Explain how a self-holding (latching) relay circuit works and why the reset is usually made dominant.',
+  markingGuide: [
+    'Pressing the set button energises relay K1; a K1 contact in parallel with the button keeps the coil energised after the button is released.',
+    'The NC contact of the reset button opens the circuit and releases K1.',
+    'With reset dominant (NC reset in series with both set and hold), pressing both buttons leaves K1 off.',
+    'This is safer: a stop or reset command always wins over a start command.',
+  ],
+};
+
 export const M09_QUESTIONS: readonly Question[] = [
   indirectMcq,
   currentCalc,
@@ -200,4 +216,5 @@ export const M09_QUESTIONS: readonly Question[] = [
   powerCalc,
   voltageCalc,
   faultTs,
+  explainQuestion,
 ];

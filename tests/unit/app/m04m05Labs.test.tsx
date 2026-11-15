@@ -148,6 +148,8 @@ describe('M04 and M05 question banks', () => {
             if (c.id !== q.correctChoiceId) expect(c.explanationIfChosen).toBeTruthy();
           continue;
         }
+        // Chain instances hold functions; they are covered in assessmentEngine.test.ts.
+        if (q.kind === 'explanation' || q.kind === 'chain') continue;
         expect(q.generate(9)).toEqual(q.generate(9));
         for (let seed = 0; seed < 200; seed += 1) {
           if (q.kind === 'calculation') {

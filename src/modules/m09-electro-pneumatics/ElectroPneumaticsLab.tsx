@@ -32,6 +32,7 @@ import {
   type Valve2Kind,
 } from '@/sim-core';
 import { M09_ACTIVITIES, M09_LABELS as L, M09_OUTCOMES, M09_THEORY } from './content.en';
+import { DesignTasks } from './DesignTasks';
 import { LadderEditor } from './LadderEditor';
 import { M09_QUESTIONS } from './questions';
 import { M09_RESULT_COLUMNS, numericParameters } from './results';
@@ -295,6 +296,14 @@ export default function ElectroPneumaticsLab() {
                     disabled={locked}
                     onChange={(ladder) => set('ladder', ladder)}
                   />
+                </div>
+              </details>
+              <details className="rounded-md border border-navy-100 p-3">
+                <summary className="min-h-touch cursor-pointer py-2 text-sm font-semibold text-navy-800">
+                  {L.designTitle}
+                </summary>
+                <div className="mt-2">
+                  <DesignTasks ladder={p.ladder} />
                 </div>
               </details>
               <details className="rounded-md border border-navy-100 p-3" open={hidden}>

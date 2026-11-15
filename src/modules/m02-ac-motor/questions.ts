@@ -4,6 +4,7 @@
  */
 import { mulberry32, pick, randStep } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -252,6 +253,21 @@ const tmaxVfCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm02.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m02.lo3'],
+  stem: 'Explain why constant V/f control is used to reduce the speed of an induction motor below its rated frequency.',
+  markingGuide: [
+    'Synchronous speed Ns = 120f/p, so lowering f lowers the speed.',
+    'The air-gap flux is proportional to V/f; reducing f at constant V would over-flux and saturate the iron, drawing a large magnetising current.',
+    'Keeping V/f constant keeps the flux, and so the maximum torque (with Rs neglected), about constant.',
+    'At very low frequency the stator resistance drop matters and a voltage boost is needed.',
+  ],
+};
+
 export const M02_QUESTIONS: readonly Question[] = [
   syncMcq,
   slipCalc,
@@ -261,4 +277,5 @@ export const M02_QUESTIONS: readonly Question[] = [
   torqueCalc,
   rotorRMcq,
   tmaxVfCalc,
+  explainQuestion,
 ];

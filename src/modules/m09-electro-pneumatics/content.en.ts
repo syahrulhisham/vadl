@@ -192,6 +192,45 @@ export const M09_LABELS = {
     s1Current: 'Current through S1',
     timer: 'Timer elapsed',
   },
+  designTitle: 'Design tasks (checked by simulation)',
+  designIntro:
+    'Build a ladder in the editor that meets the task, then check it. VADL runs your circuit through each step and compares the coils with what the task requires — it does not matter how the ladder is drawn, only how it behaves.',
+  designTask: 'Task',
+  designCheck: 'Check my ladder',
+  designPass: 'Passed: the circuit behaves as required in every step.',
+  designFail: 'Not yet: see the steps marked ✗.',
+  designIndirect:
+    'A push button drives a solenoid directly; this task asks for indirect control through a relay.',
+  designUnstable: 'The circuit does not settle in some step.',
+  designStep: 'Pressed: {pressed} — required {expected}; your circuit {got}',
+  designNone: 'none',
+  on: 'on',
+  off: 'off',
+  designTasks: {
+    or: {
+      title: 'OR: either button',
+      brief: 'Solenoid 1M1 must be energised while S1 or S2 (or both) is pressed, and only then.',
+    },
+    'and-indirect': {
+      title: 'AND with indirect control (two-hand operation)',
+      brief:
+        'Solenoid 1M1 must be energised only while S1 and S2 are both pressed. The push buttons must switch a relay, which switches 1M1 (indirect control).',
+    },
+    'latch-reset': {
+      title: 'Latch, reset dominant',
+      brief:
+        'Pressing S1 briefly switches 1M1 on and it stays on after S1 is released; S2 switches it off. If S1 and S2 are pressed together, 1M1 must be off.',
+    },
+    'latch-set': {
+      title: 'Latch, set dominant',
+      brief: 'As the reset-dominant latch, but if S1 and S2 are pressed together, 1M1 must be on.',
+    },
+    guard: {
+      title: 'Safety interlock',
+      brief:
+        'Solenoid 1M1 must be energised while S1 is pressed, but never while the guard switch S3 is actuated.',
+    },
+  } as Record<string, { title: string; brief: string }>,
   positionTitle: 'Cylinder positions against time (displacement-step diagram)',
   positionDesc: 'Positions of 1A1 and 2A1.',
 };

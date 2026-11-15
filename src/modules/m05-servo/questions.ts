@@ -5,6 +5,7 @@
  */
 import { mulberry32, pick, randInt, randStep } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -294,6 +295,21 @@ const overshootCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm05.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'beginner',
+  outcomeIds: ['m05.lo1'],
+  stem: 'Describe the three main blocks of a servo system and the job of each.',
+  markingGuide: [
+    'Servo amplifier: compares the command (Vcs) with the feedback (Vfc) and amplifies the difference to drive the motor.',
+    'Motor: produces the torque that moves the load (DC armature-controlled or AC two-phase servo).',
+    'Feedback sensor (potentiometer, tachometer, encoder or resolver): measures position or speed and returns Vfc.',
+    'The loop drives the error Vcs − Vfc towards zero.',
+  ],
+};
+
 export const M05_QUESTIONS: readonly Question[] = [
   driveSignalMcq,
   encoderLinesCalc,
@@ -305,4 +321,5 @@ export const M05_QUESTIONS: readonly Question[] = [
   loadErrorCalc,
   overshootCalc,
   huntingTs,
+  explainQuestion,
 ];

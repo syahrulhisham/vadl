@@ -10,7 +10,13 @@
 export type LearningLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export type QuestionKind =
-  'multiple-choice' | 'calculation' | 'troubleshooting' | 'sequence' | 'table';
+  | 'multiple-choice'
+  | 'calculation'
+  | 'troubleshooting'
+  | 'sequence'
+  | 'table'
+  | 'chain'
+  | 'explanation';
 
 interface QuestionBase {
   /** Stable identifier, unique across all modules, e.g. `m01.q-back-emf-1`. */
@@ -107,8 +113,58 @@ export interface TableQuestion extends QuestionBase {
   generate(seed: number): TableInstance;
 }
 
+/** One part of a numeric chain. `compute` gives the value expected from earlier part values. */
+export interface ChainPart {
+  readonly label: string;
+  readonly prompt: string;
+  readonly unit: string;
+  readonly relativeTolerance: number;
+  /** Correct value (from the correct earlier values). */
+  readonly answer: number;
+  /**
+   * The value this part should have, given values for the earlier parts (the
+   * student's own, for error carried forward). Computed by sim-core functions.
+   */
+  readonly compute: (earlier: readonly number[]) => number;
+}
+
+/**
+ * A multi-part numeric problem in which later parts use earlier results
+ * (course-alignment §5.11). Marked with error carried forward.
+ */
+export interface ChainInstance {
+  readonly stem: string;
+  readonly parts: readonly ChainPart[];
+  readonly explanation: string;
+}
+
+export interface ChainQuestion extends QuestionBase {
+  readonly kind: 'chain';
+  generate(seed: number): ChainInstance;
+}
+
+/**
+ * A short written explanation, marked by the lecturer (course-alignment §5.11).
+ * VADL saves the answer and shows a marking guide for self-checking; it never
+ * scores it automatically.
+ */
+export interface ExplanationQuestion extends QuestionBase {
+  readonly kind: 'explanation';
+  readonly stem: string;
+  /** Points a good answer covers (shown after submitting). */
+  readonly markingGuide: readonly string[];
+}
+
 export type Question =
-  MultipleChoiceQuestion | CalculationQuestion | SequenceQuestion | TableQuestion;
+  | MultipleChoiceQuestion
+  | CalculationQuestion
+  | SequenceQuestion
+  | TableQuestion
+  | ChainQuestion
+  | ExplanationQuestion;
+
+/** Result of one chain part: correct, correct with error carried forward, or wrong. */
+export type PartResult = 'correct' | 'ecf' | 'wrong';
 
 /** One recorded answer (stored under `vadl.v1.attempts.<module>`). */
 export interface Attempt {
@@ -120,4 +176,8 @@ export interface Attempt {
   readonly correct: boolean;
   /** ISO 8601 timestamp. */
   readonly answeredAt: string;
+  /** 'lecturer' for answers VADL does not mark (explanations); absent or 'auto' otherwise. */
+  readonly marking?: 'auto' | 'lecturer';
+  /** Chain questions: the result of each part. */
+  readonly partResults?: readonly PartResult[];
 }

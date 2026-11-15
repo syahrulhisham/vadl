@@ -14,7 +14,7 @@ const RlCircuitPage = lazy(() => import('./pages/rl/RlCircuitPage'));
 const info = () => import('./pages/InfoPages');
 const ResourcesPage = lazy(() => info().then((m) => ({ default: m.ResourcesPage })));
 const ActivitiesPage = lazy(() => info().then((m) => ({ default: m.ActivitiesPage })));
-const AssessmentPage = lazy(() => info().then((m) => ({ default: m.AssessmentPage })));
+const AssessmentPage = lazy(() => import('./pages/AssessmentCentrePage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const ReportPage = lazy(() => import('./pages/ReportPage'));

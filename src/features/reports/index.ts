@@ -4,5 +4,5 @@
  */
 export * from './types';
 export { EMPTY_DRAFT, type ReportDefinition, type ReportDraft } from './definition';
-export { graphPoints, summariseAttempts, type AttemptSummary } from './reportData';
+export { graphPoints, rowsToCsv, summariseAttempts, type AttemptSummary } from './reportData';
 export { ReportView, type ReportViewProps } from './ReportView';

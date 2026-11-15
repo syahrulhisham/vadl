@@ -4,6 +4,8 @@
  */
 import { mulberry32, pick } from '@/features/assessment/rng';
 import type {
+  ChainQuestion,
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -236,6 +238,77 @@ const pumpCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm10.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m10.lo1'],
+  stem: 'Explain the job of the pressure-relief valve in a hydraulic system with a fixed-displacement pump.',
+  markingGuide: [
+    'A fixed-displacement pump delivers its flow whenever it turns; if the cylinder stops, the pressure would rise without limit.',
+    'The relief valve opens near its setting and returns the surplus flow to the tank, limiting the maximum pressure and so the force.',
+    'It protects the pump, hoses and components (system limit 6 MPa in the lab).',
+    'Flow over the relief valve wastes power as heat (P = p·q), so a pump bypass is used at rest.',
+  ],
+};
+
+const hydraulicChain: ChainQuestion = {
+  id: 'm10.chain.lifting',
+  moduleId: MODULE,
+  kind: 'chain',
+  level: 'advanced',
+  outcomeIds: ['m10.lo2'],
+  generate(seed) {
+    const rng = mulberry32(seed);
+    const F = pick(rng, [60, 90, 120, 150]);
+    const apr = pick(rng, [1.2, 1.5, 2.0]);
+    const q = pick(rng, [1.5, 2, 2.2, 3]);
+    const s = pick(rng, [150, 200, 250]);
+    const pL = paToMpa(loadPressure(F, cm2ToM2(apr)));
+    const v = cylinderSpeed(litresPerMinToCubicMetresPerSec(q), cm2ToM2(apr));
+    const P = (pMpa: number) => drivePower(mpaToPa(pMpa), litresPerMinToCubicMetresPerSec(q), 0.7);
+    return {
+      stem: `A ${F} N load hangs on the annulus (${apr} cm²) of a vertical cylinder and is raised over ${s} mm by a pump delivering ${q} L/min. Neglect losses in the lines. Later parts are marked on your own earlier answers.`,
+      parts: [
+        {
+          label: '(a)',
+          prompt: 'Load pressure',
+          unit: 'MPa',
+          relativeTolerance: TOL,
+          answer: pL,
+          compute: () => pL,
+        },
+        {
+          label: '(b)',
+          prompt: 'Raising speed',
+          unit: 'm/s',
+          relativeTolerance: TOL,
+          answer: v,
+          compute: () => v,
+        },
+        {
+          label: '(c)',
+          prompt: 'Raising time',
+          unit: 's',
+          relativeTolerance: TOL,
+          answer: mmToM(s) / v,
+          compute: (e) => mmToM(s) / (e[1] ?? Number.NaN),
+        },
+        {
+          label: '(d)',
+          prompt: 'Drive power at the load pressure (η = 0.7)',
+          unit: 'W',
+          relativeTolerance: TOL,
+          answer: P(pL),
+          compute: (e) => P(e[0] ?? Number.NaN),
+        },
+      ],
+      explanation: `(a) p = F/A_PR = ${f(pL)} MPa. (b) v = q/A_PR = ${f(v)} m/s. (c) t = s/v = ${f(mmToM(s) / v)} s. (d) P = p·q/η = ${f(P(pL))} W.`,
+    };
+  },
+};
+
 export const M10_QUESTIONS: readonly Question[] = [
   reliefMcq,
   loadPressureCalc,
@@ -245,4 +318,6 @@ export const M10_QUESTIONS: readonly Question[] = [
   powerCalc,
   meterOutMcq,
   backPressureCalc,
+  explainQuestion,
+  hydraulicChain,
 ];

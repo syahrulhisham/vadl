@@ -4,6 +4,7 @@
  */
 import { mulberry32, pick, randStep } from '@/features/assessment/rng';
 import type {
+  ExplanationQuestion,
   CalculationQuestion,
   MultipleChoiceQuestion,
   Question,
@@ -234,6 +235,21 @@ const lminCalc: CalculationQuestion = {
   },
 };
 
+const explainQuestion: ExplanationQuestion = {
+  id: 'm03.explain',
+  moduleId: MODULE,
+  kind: 'explanation',
+  level: 'intermediate',
+  outcomeIds: ['m03.lo1'],
+  stem: 'Explain how increasing the firing angle α reduces the average output voltage of a single-phase controlled rectifier with a resistive load.',
+  markingGuide: [
+    'The thyristor conducts only from α until the current falls to zero at π.',
+    'A larger α removes more of each half-cycle from the output.',
+    'Vavg = (Vm/π)(1 + cos α) for the full-wave R-load converter (half-wave: (Vm/2π)(1 + cos α)), which falls from its maximum at α = 0 to zero at α = 180°.',
+    'The rms voltage and power also fall; the input power factor gets worse.',
+  ],
+};
+
 export const M03_QUESTIONS: readonly Question[] = [
   alphaMcq,
   halfWaveCalc,
@@ -243,4 +259,5 @@ export const M03_QUESTIONS: readonly Question[] = [
   pwmMcq,
   dcmMcq,
   lminCalc,
+  explainQuestion,
 ];

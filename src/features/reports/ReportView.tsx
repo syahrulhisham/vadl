@@ -1,14 +1,22 @@
 import { useId, type ReactNode } from 'react';
 import { Button } from '@/design-system';
+import {
+  LEVELS,
+  percent,
+  scoreSummary,
+  type OutcomeRef,
+  type Tally,
+} from '@/features/assessment/analytics';
 import type { Attempt, Question } from '@/features/assessment/types';
 import { CharacteristicChart } from '@/features/graphs';
 import { withModuleProgress, type ProgressRecord } from '@/features/progress';
 import { ResultsTable } from '@/features/recording';
-import { useStoredValue } from '@/hooks';
+import { downloadText, useStoredValue } from '@/hooks';
+import { formatSignificant } from '@/sim-core';
 import { t } from '@/i18n';
 import { attemptsKey, PROFILE_KEY, PROGRESS_KEY, reportKey, sessionsKey } from '@/storage';
 import { EMPTY_DRAFT, type ReportDefinition, type ReportDraft } from './definition';
-import { graphPoints, summariseAttempts } from './reportData';
+import { graphPoints, rowsToCsv, summariseAttempts } from './reportData';
 import {
   REPORT_SECTIONS,
   type ExperimentSession,
@@ -49,6 +57,8 @@ function Section({ id, n, children }: { id: ReportSection; n: number; children: 
 export interface ReportViewProps {
   readonly definition: ReportDefinition;
   readonly questions: readonly Question[];
+  /** Module outcomes, for results by course learning outcome. */
+  readonly outcomes?: readonly OutcomeRef[];
   /** Printing hook, injectable for tests. Defaults to the browser print dialog (D7). */
   readonly print?: () => void;
 }
@@ -61,6 +71,7 @@ export interface ReportViewProps {
 export function ReportView({
   definition: d,
   questions,
+  outcomes = [],
   print = () => window.print(),
 }: ReportViewProps) {
   const student = useStoredValue<StudentIdentification>(PROFILE_KEY, EMPTY_STUDENT);
@@ -71,6 +82,23 @@ export function ReportView({
   const rows = sessions.value.flatMap((s) => s.rows);
   const points = graphPoints(rows, d.graph.x, d.graph.y);
   const summary = summariseAttempts(attempts.value, questions);
+  const score = scoreSummary(attempts.value, questions, outcomes);
+  const stemOf = (id: string) => {
+    const q = questions.find((x) => x.id === id);
+    return q && 'stem' in q ? q.stem : id;
+  };
+  const tally = (x: Tally) => {
+    const p = percent(x);
+    return `${x.correct} / ${x.attempts}${Number.isNaN(p) ? '' : ` (${formatSignificant(p, 3)} %)`}`;
+  };
+
+  function downloadCsv() {
+    downloadText(
+      `vadl-${d.moduleId}-data.csv`,
+      rowsToCsv(rows, [...d.parameterColumns, ...d.measurementColumns]),
+      'text/csv',
+    );
+  }
   const fieldClass =
     'mt-1 block min-h-touch w-full rounded-md border border-navy-200 px-2 text-navy-900 print:border-0 print:px-0';
 
@@ -195,43 +223,96 @@ export function ReportView({
       />
     ),
     'assessment-results':
-      summary.total === 0 ? (
+      summary.total === 0 && score.lecturer.length === 0 ? (
         <p>{t('report.noAttempts')}</p>
       ) : (
         <>
           <p data-testid="report-score">
             {t('report.score', { correct: summary.correct, total: summary.total })}
           </p>
-          <table className="min-w-full border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-navy-200">
-                <th scope="col" className="py-1 pr-3">
-                  {t('report.colQuestion')}
-                </th>
-                <th scope="col" className="py-1 pr-3">
-                  {t('report.colAttempts')}
-                </th>
-                <th scope="col" className="py-1 pr-3">
-                  {t('report.colCorrect')}
-                </th>
-                <th scope="col" className="py-1">
-                  {t('report.colLatest')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {summary.byQuestion.map((q) => (
-                <tr key={q.questionId} className="border-b border-navy-100">
-                  <th scope="row" className="py-1 pr-3 font-normal">
-                    {q.label}
+          {summary.total > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <table className="text-left text-sm" data-testid="report-levels">
+                <caption className="text-left font-semibold text-navy-800">
+                  {t('progress.byLevel')}
+                </caption>
+                <tbody>
+                  {LEVELS.map((l) => (
+                    <tr key={l} className="border-b border-navy-100">
+                      <th scope="row" className="py-1 pr-3 font-normal">
+                        {t(`level.${l}`)}
+                      </th>
+                      <td className="py-1">{tally(score.byLevel[l])}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {outcomes.length > 0 ? (
+                <table className="text-left text-sm" data-testid="report-los">
+                  <caption className="text-left font-semibold text-navy-800">
+                    {t('progress.byLo')}
+                  </caption>
+                  <tbody>
+                    {(['LO1', 'LO2'] as const).map((lo) => (
+                      <tr key={lo} className="border-b border-navy-100">
+                        <th scope="row" className="py-1 pr-3 font-normal">
+                          {t(`progress.${lo}`)}
+                        </th>
+                        <td className="py-1">{tally(score.byCourseLo[lo])}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : null}
+            </div>
+          ) : null}
+          {summary.byQuestion.length > 0 ? (
+            <table className="min-w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-navy-200">
+                  <th scope="col" className="py-1 pr-3">
+                    {t('report.colQuestion')}
                   </th>
-                  <td className="py-1 pr-3">{q.attempts}</td>
-                  <td className="py-1 pr-3">{q.correct}</td>
-                  <td className="py-1">{q.latestCorrect ? t('report.yes') : t('report.no')}</td>
+                  <th scope="col" className="py-1 pr-3">
+                    {t('report.colAttempts')}
+                  </th>
+                  <th scope="col" className="py-1 pr-3">
+                    {t('report.colCorrect')}
+                  </th>
+                  <th scope="col" className="py-1">
+                    {t('report.colLatest')}
+                  </th>
                 </tr>
+              </thead>
+              <tbody>
+                {summary.byQuestion.map((q) => (
+                  <tr key={q.questionId} className="border-b border-navy-100">
+                    <th scope="row" className="py-1 pr-3 font-normal">
+                      {q.label}
+                    </th>
+                    <td className="py-1 pr-3">{q.attempts}</td>
+                    <td className="py-1 pr-3">{q.correct}</td>
+                    <td className="py-1">{q.latestCorrect ? t('report.yes') : t('report.no')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : null}
+          {score.lecturer.length > 0 ? (
+            <div className="space-y-2" data-testid="report-lecturer">
+              <h3 className="font-semibold text-navy-800">{t('report.lecturerTitle')}</h3>
+              {score.lecturer.map((a) => (
+                <div
+                  key={`${a.questionId}-${a.answeredAt}`}
+                  className="break-inside-avoid rounded border border-navy-100 p-2 text-sm"
+                >
+                  <p className="font-medium text-navy-900">{stemOf(a.questionId)}</p>
+                  <p className="whitespace-pre-line text-navy-900">{a.answerGiven}</p>
+                  <p className="text-xs text-navy-600">{new Date(a.answeredAt).toLocaleString()}</p>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          ) : null}
           <p className="text-sm text-navy-600">{t('quiz.purpose')}</p>
         </>
       ),
@@ -241,6 +322,9 @@ export function ReportView({
     <article className="space-y-6" data-testid="lab-report">
       <div className="flex flex-wrap items-center gap-3 print:hidden">
         <Button onClick={exportPdf}>{t('report.print')}</Button>
+        <Button variant="secondary" onClick={downloadCsv} disabled={rows.length === 0}>
+          {t('report.downloadCsv')}
+        </Button>
         <span className="text-sm text-navy-600">{t('report.printHint')}</span>
       </div>
       {REPORT_SECTIONS.map((s, i) => (

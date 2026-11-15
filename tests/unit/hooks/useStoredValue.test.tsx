@@ -76,4 +76,18 @@ describe('useStoredValue', () => {
     await waitFor(() => expect(result.current.loaded).toBe(true));
     expect(result.current.value).toBe(7);
   });
+
+  it('two instances with the same key share changes, so neither overwrites the other', async () => {
+    const repo = createLocalStorageRepository(createMemoryStorage());
+    const { result } = renderHook(
+      () => ({ a: useStoredValue<number[]>(KEY, []), b: useStoredValue<number[]>(KEY, []) }),
+      { wrapper: wrapperFor(repo) },
+    );
+    await waitFor(() => expect(result.current.a.loaded && result.current.b.loaded).toBe(true));
+    act(() => result.current.a.update((l) => [...l, 1]));
+    expect(result.current.b.value).toEqual([1]);
+    act(() => result.current.b.update((l) => [...l, 2]));
+    expect(result.current.a.value).toEqual([1, 2]);
+    await waitFor(async () => expect(await repo.get(KEY)).toEqual([1, 2]));
+  });
 });

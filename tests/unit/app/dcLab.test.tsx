@@ -160,7 +160,7 @@ describe('laboratory report (thin, D9)', () => {
     expect(await screen.findByTestId('report-graph')).toBeInTheDocument();
     expect(screen.getByText('Drawn from your 2 recorded rows only.')).toBeInTheDocument();
     expect(screen.getByTestId('report-score')).toHaveTextContent(
-      'Correct answers: 1 of 2 attempts.',
+      'Correct answers (marked by VADL): 1 of 2 attempts.',
     );
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Test Student' } });
     fireEvent.change(screen.getByRole('textbox', { name: 'Conclusion' }), {

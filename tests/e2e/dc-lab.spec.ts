@@ -83,7 +83,9 @@ test('assessment gives immediate feedback; report and progress use the recorded 
   await expect(page.getByTestId('lab-report')).toBeVisible();
   await expect(page.getByTestId('report-graph')).toBeVisible();
   await expect(page.getByText('Drawn from your 2 recorded rows only.')).toBeVisible();
-  await expect(page.getByTestId('report-score')).toHaveText('Correct answers: 1 of 1 attempts.');
+  await expect(page.getByTestId('report-score')).toHaveText(
+    'Correct answers (marked by VADL): 1 of 1 attempts.',
+  );
 
   // The print dialog cannot be driven headless; replace it and check the button calls it.
   await page.evaluate(() => {

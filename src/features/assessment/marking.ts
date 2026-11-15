@@ -7,6 +7,8 @@ import type {
   CalculationInstance,
   MultipleChoiceQuestion,
   SequenceAnswer,
+  ChainInstance,
+  PartResult,
   SequenceInstance,
   TableInstance,
 } from './types';
@@ -168,5 +170,43 @@ export function markTable(given: readonly string[], instance: TableInstance): Ma
     correct: false,
     feedback: `Not correct: check the value${wrong.length > 1 ? 's' : ''} at ${wrong.join(', ')}.`,
     explanation,
+  };
+}
+
+export interface ChainMark extends MarkResult {
+  readonly parts: readonly PartResult[];
+}
+
+/**
+ * Mark a numeric chain with error carried forward: part i is correct if it is
+ * within tolerance of the true value, or "ecf" if it is within tolerance of the
+ * value that follows from the student's own earlier answers. The whole answer
+ * counts as correct when every part is correct or ecf.
+ */
+export function markChain(given: readonly string[], instance: ChainInstance): ChainMark {
+  const values = given.map((g) => parseAnswer(g));
+  const parts: PartResult[] = instance.parts.map((part, i) => {
+    const v = values[i] ?? Number.NaN;
+    if (withinTolerance(v, part.answer, part.relativeTolerance)) return 'correct';
+    const earlier = values.slice(0, i);
+    if (earlier.every(Number.isFinite)) {
+      const carried = part.compute(earlier);
+      if (Number.isFinite(carried) && withinTolerance(v, carried, part.relativeTolerance))
+        return 'ecf';
+    }
+    return 'wrong';
+  });
+  const describe = (r: PartResult, i: number) => {
+    const label = instance.parts[i]?.label ?? '';
+    if (r === 'correct') return `${label} correct`;
+    if (r === 'ecf') return `${label} correct for your earlier answers (error carried forward)`;
+    return `${label} not correct (${show(instance.parts[i]?.answer ?? Number.NaN)} ${instance.parts[i]?.unit ?? ''})`;
+  };
+  const correct = parts.every((r) => r !== 'wrong');
+  return {
+    correct,
+    parts,
+    feedback: `${correct ? 'Accepted' : 'Not all parts accepted'}: ${parts.map(describe).join('; ')}.`,
+    explanation: instance.explanation,
   };
 }

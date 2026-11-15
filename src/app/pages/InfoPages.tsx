@@ -1,6 +1,6 @@
 /**
- * Learning resources, experiment activities and assessment centre. Activities and
- * questions live inside each laboratory; these areas lead students to them.
+ * Learning resources and experiment activities. Activities live inside each
+ * laboratory; these areas lead students to them. The assessment centre has its own page.
  */
 import { Link } from 'react-router';
 import { Icon, LinkButton, PageHeader, Panel } from '@/design-system';
@@ -70,21 +70,6 @@ export function ActivitiesPage() {
           <li>{t('activities.intermediate')}</li>
           <li>{t('activities.advanced')}</li>
         </ul>
-      </Panel>
-    </>
-  );
-}
-
-export function AssessmentPage() {
-  useDocumentTitle(t('assessment.title'));
-  return (
-    <>
-      <PageHeader title={t('assessment.title')} intro={t('assessment.intro')} icon="assessment" />
-      <Panel title={t('info.availableLabs')} className="mb-4">
-        <LabLinks suffix={t('info.questionsSuffix')} />
-      </Panel>
-      <Panel title={t('nav.assessment')} tone="info">
-        <p>{t('assessment.purpose')}</p>
       </Panel>
     </>
   );
