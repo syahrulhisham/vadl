@@ -205,6 +205,12 @@ interface Reading {
   readonly columns: number | null;
   /** The grid's identity for counting grids: the labels of the meters in it, or null. */
   readonly grid: string | null;
+  /** The value text alone, as rendered. */
+  readonly valueBox: Box;
+  /** The unit text alone, as rendered (zero-sized when the unit is empty). */
+  readonly unitBox: Box;
+  /** Horizontal gap between value and unit on one line [px]. */
+  readonly gap: number;
 }
 
 /**
@@ -212,74 +218,89 @@ interface Reading {
  * Without `samples`, one reading per meter with the value the page shows. With
  * `samples[i]`, meter i's value text is replaced in the DOM, in memory only, by each
  * string in turn and one reading is taken per string; the original text is put back.
- * Entries are null where a value has no labelled meter around it.
+ * Entries are null where a value has no labelled meter around it. With `font`, the
+ * reading row is drawn in that font family while it is measured (in memory only; the
+ * row's own style is put back afterwards).
  */
 async function readMeters(
   page: Page,
   samples?: readonly (readonly string[])[],
+  font?: string,
 ): Promise<(Reading | null)[]> {
-  return page.evaluate((perMeter) => {
-    const toPage = (r: DOMRect) => ({
-      x: r.x + window.scrollX,
-      y: r.y + window.scrollY,
-      width: r.width,
-      height: r.height,
-    });
-    const out: (Reading | null)[] = [];
-    const values = [...document.querySelectorAll<HTMLElement>('[data-testid="measurement-value"]')];
-    values.forEach((el, i) => {
-      const meter = el.closest('[role="group"]');
-      const row = el.parentElement;
-      if (!meter || !row) {
-        out.push(null);
-        return;
-      }
-      const grid = meter.parentElement;
-      const gridStyle = grid ? getComputedStyle(grid) : null;
-      const isGrid = !!grid && gridStyle?.display === 'grid';
-      const columns =
-        isGrid && gridStyle
-          ? gridStyle.gridTemplateColumns.split(' ').filter(Boolean).length
-          : null;
-      const gridId =
-        isGrid && grid
-          ? [...grid.querySelectorAll(':scope > [role="group"]')]
-              .map((m) => m.getAttribute('aria-label') ?? '')
-              .join(' | ')
-          : null;
-      const original = el.textContent ?? '';
-      const strings = perMeter ? (perMeter[i] ?? []) : [original];
-      for (const s of strings) {
-        el.textContent = s;
-        const cs = getComputedStyle(meter);
-        const r = meter.getBoundingClientRect();
-        const left = parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft);
-        const right = parseFloat(cs.borderRightWidth) + parseFloat(cs.paddingRight);
-        const top = parseFloat(cs.borderTopWidth) + parseFloat(cs.paddingTop);
-        const bottom = parseFloat(cs.borderBottomWidth) + parseFloat(cs.paddingBottom);
-        const range = document.createRange();
-        range.selectNodeContents(row);
-        out.push({
-          name: meter.getAttribute('aria-label') ?? 'measurement',
-          unit: (el.nextElementSibling?.textContent ?? '').trim(),
-          valueText: (el.textContent ?? '').trim(),
-          fontPx: parseFloat(getComputedStyle(el).fontSize),
-          text: toPage(range.getBoundingClientRect()),
-          content: {
-            x: r.x + window.scrollX + left,
-            y: r.y + window.scrollY + top,
-            width: r.width - left - right,
-            height: r.height - top - bottom,
-          },
-          meter: toPage(r),
-          columns,
-          grid: gridId,
-        });
-      }
-      el.textContent = original;
-    });
-    return out;
-  }, samples);
+  return page.evaluate(
+    ([perMeter, fontFamily]) => {
+      const toPage = (r: DOMRect) => ({
+        x: r.x + window.scrollX,
+        y: r.y + window.scrollY,
+        width: r.width,
+        height: r.height,
+      });
+      const out: (Reading | null)[] = [];
+      const values = [
+        ...document.querySelectorAll<HTMLElement>('[data-testid="measurement-value"]'),
+      ];
+      values.forEach((el, i) => {
+        const meter = el.closest('[role="group"]');
+        const row = el.parentElement;
+        if (!meter || !row) {
+          out.push(null);
+          return;
+        }
+        const grid = meter.parentElement;
+        const gridStyle = grid ? getComputedStyle(grid) : null;
+        const isGrid = !!grid && gridStyle?.display === 'grid';
+        const columns =
+          isGrid && gridStyle
+            ? gridStyle.gridTemplateColumns.split(' ').filter(Boolean).length
+            : null;
+        const gridId =
+          isGrid && grid
+            ? [...grid.querySelectorAll(':scope > [role="group"]')]
+                .map((m) => m.getAttribute('aria-label') ?? '')
+                .join(' | ')
+            : null;
+        const original = el.textContent ?? '';
+        const originalFont = row.style.fontFamily;
+        if (fontFamily) row.style.fontFamily = fontFamily;
+        const unitEl = el.nextElementSibling;
+        const strings = perMeter ? (perMeter[i] ?? []) : [original];
+        for (const s of strings) {
+          el.textContent = s;
+          const cs = getComputedStyle(meter);
+          const r = meter.getBoundingClientRect();
+          const left = parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft);
+          const right = parseFloat(cs.borderRightWidth) + parseFloat(cs.paddingRight);
+          const top = parseFloat(cs.borderTopWidth) + parseFloat(cs.paddingTop);
+          const bottom = parseFloat(cs.borderBottomWidth) + parseFloat(cs.paddingBottom);
+          const range = document.createRange();
+          range.selectNodeContents(row);
+          out.push({
+            name: meter.getAttribute('aria-label') ?? 'measurement',
+            unit: (el.nextElementSibling?.textContent ?? '').trim(),
+            valueText: (el.textContent ?? '').trim(),
+            fontPx: parseFloat(getComputedStyle(el).fontSize),
+            text: toPage(range.getBoundingClientRect()),
+            content: {
+              x: r.x + window.scrollX + left,
+              y: r.y + window.scrollY + top,
+              width: r.width - left - right,
+              height: r.height - top - bottom,
+            },
+            meter: toPage(r),
+            columns,
+            grid: gridId,
+            valueBox: toPage(el.getBoundingClientRect()),
+            unitBox: unitEl ? toPage(unitEl.getBoundingClientRect()) : toPage(new DOMRect()),
+            gap: parseFloat(getComputedStyle(row).columnGap) || 0,
+          });
+        }
+        el.textContent = original;
+        row.style.fontFamily = originalFont;
+      });
+      return out;
+    },
+    [samples, font] as const,
+  );
 }
 
 /**
@@ -610,6 +631,20 @@ const GRID_SIZES = [
   { width: 1920, height: 1080, columns: 4 },
 ] as const;
 
+/**
+ * Font passes for the long-reading checks. The page's own font is what a student on
+ * this machine sees. Fonts differ between systems (Ubuntu's default sans-serif font,
+ * used by CI, renders these readings about 21 % wider than Windows' Segoe UI), so a
+ * second pass draws the reading rows in a wide font. Verdana is a STRESS font here,
+ * not a copy of any system's font: it measured about 2-3 % wider than the Ubuntu CI
+ * rendering. Where Verdana is not installed (Ubuntu), DejaVu Sans or the system's
+ * sans-serif font is used instead.
+ */
+const FONT_PASSES = [
+  { name: 'page font', font: undefined },
+  { name: 'wide stress font', font: 'Verdana, "DejaVu Sans", sans-serif' },
+] as const;
+
 /** Meter grids per laboratory (13 in all); the test fails if it reaches fewer or more. */
 const GRIDS_PER_LAB: Readonly<Record<string, number>> = {
   'dc-motor-drives': 1,
@@ -653,21 +688,45 @@ async function checkMeterGrids(
   }
 
   // DETERMINISTIC fit check: each meter with its long, physically valid test readings
-  // (written into the page in memory only; the original text is put back).
+  // (written into the page in memory only; the original text is put back), first in the
+  // page's own font, then in a wide stress font.
   const samples = live.map((r) => (r ? longReadings(slug, r.name) : []));
-  const long = await readMeters(page, samples);
-  expect(long.length, `${state}: one reading per sample`).toBe(
-    samples.reduce((n, s) => n + s.length, 0),
-  );
-  for (const reading of long) {
-    if (!reading) continue;
-    const what = `${state}: ${reading.name}: "${reading.valueText} ${reading.unit}"`;
-    expect(reading.fontPx, `${what}: value font size`).toBeGreaterThanOrEqual(VALUE_PX);
-    expectNonEmptyExtent(reading.text, what);
-    expectContained(reading.text, reading.content, `${what} in the meter's content area`);
-    expectInsideWidth(reading.meter, width, `${what}: meter`);
+  for (const pass of FONT_PASSES) {
+    const long = await readMeters(page, samples, pass.font);
+    expect(long.length, `${state}, ${pass.name}: one reading per sample`).toBe(
+      samples.reduce((n, s) => n + s.length, 0),
+    );
+    for (const reading of long) {
+      if (!reading) continue;
+      const what = `${state}, ${pass.name}: ${reading.name}: "${reading.valueText} ${reading.unit}"`;
+      expect(reading.fontPx, `${what}: value font size`).toBeGreaterThanOrEqual(VALUE_PX);
+      expectNonEmptyExtent(reading.text, what);
+      // The whole reading, and the value and the unit each on their own, inside the
+      // meter's content area; the value and the unit never overlap.
+      expectContained(reading.text, reading.content, `${what} in the meter's content area`);
+      expectNonEmptyExtent(reading.valueBox, `${what}: value`);
+      expectContained(reading.valueBox, reading.content, `${what}: value in the content area`);
+      if (reading.unit !== '') {
+        expectNonEmptyExtent(reading.unitBox, `${what}: unit`);
+        expectContained(reading.unitBox, reading.content, `${what}: unit in the content area`);
+        expect(overlaps(reading.valueBox, reading.unitBox), `${what}: value overlaps unit`).toBe(
+          false,
+        );
+        // When value, gap and unit are wider than the content area, the unit must have
+        // wrapped onto its own line below the value.
+        if (reading.valueBox.width + reading.gap + reading.unitBox.width > reading.content.width) {
+          expect(
+            reading.unitBox.y,
+            `${what}: unit wraps below the value when the line is too long`,
+          ).toBeGreaterThanOrEqual(reading.valueBox.y + reading.valueBox.height - 0.5);
+        }
+      }
+      expectInsideWidth(reading.meter, width, `${what}: meter`);
+    }
+    expect(await overflow(page), `${state}, ${pass.name}: horizontal scroll`).toBeLessThanOrEqual(
+      0,
+    );
   }
-  expect(await overflow(page), `${state}: horizontal scroll`).toBeLessThanOrEqual(0);
   return [...grids];
 }
 

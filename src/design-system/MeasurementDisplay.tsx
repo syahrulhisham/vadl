@@ -39,7 +39,7 @@ export function MeasurementDisplay({
         {label}
         {symbol ? <span className="ml-1 font-mono text-navy-500">({symbol})</span> : null}
       </p>
-      <p className="mt-1 flex items-baseline gap-1.5">
+      <p className="mt-1 flex flex-wrap items-baseline gap-1.5">
         <span
           data-testid="measurement-value"
           className="text-2xl font-semibold tabular-nums text-navy-900"
