@@ -12,3 +12,4 @@ export * from './servo';
 export * from './stepper';
 export * from './transmission';
 export * from './cam';
+export * from './fluidPower';

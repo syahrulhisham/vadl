@@ -206,6 +206,9 @@ describe('progress and reports areas', () => {
       '/reports/m05-servo',
       '/reports/m06-transmission',
       '/reports/m07-cam-follower',
+      '/reports/m08-pneumatics',
+      '/reports/m09-electro-pneumatics',
+      '/reports/m10-electrohydraulics',
     ]);
   });
 });

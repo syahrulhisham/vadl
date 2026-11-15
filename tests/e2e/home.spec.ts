@@ -96,13 +96,15 @@ test('deep links to module pages work after a reload', async ({ page }) => {
   await expect(page.getByTestId('lab-shell').getByRole('region')).toHaveCount(7);
 });
 
-test('measurement values are at least 20 px and show no invented number (NFR-04)', async ({
+test('measurement values are at least 20 px and show the model state, not invented numbers (NFR-04)', async ({
   page,
 }) => {
-  // A planned module: its sample readout must show a dash, never a number.
-  await page.goto('/modules/pneumatics');
-  const value = page.getByTestId('measurement-value').first();
-  await expect(value).toHaveText('—');
+  // Before Start the hydraulics lab shows the model at rest: piston at 0 mm.
+  await page.goto('/modules/electrohydraulics');
+  const value = page
+    .getByRole('group', { name: 'Piston position (extension)', exact: true })
+    .getByTestId('measurement-value');
+  await expect(value).toHaveText('0');
   const px = await value.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
   expect(px).toBeGreaterThanOrEqual(20);
 });

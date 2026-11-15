@@ -229,7 +229,26 @@ compliance; outside the ten milestones unless added).
   `NumericTableInput`): numeric rows each within max(absolute, relative) tolerance, used for
   cam displacement tables (course-alignment §5.11).
 
-## 14. Folder structure
+## 14. Fluid-power laboratories (Milestone 8)
+
+- **Equations** (`equations/fluidPower.ts`): areas, course forces (10 % friction, spring),
+  compressible and incompressible orifice flow, `pneumaticStroke`, `springStroke` and
+  `hydraulicStroke` (VADL's quasi-static flow models), pump flow, relief characteristic (course
+  measurement), powers, coil current and power.
+- **Logic** (`src/sim-core/logic`): `ladder.ts` — relay-ladder evaluator (series/parallel
+  contacts, NO/NC, relays settling within a scan, chatter detection, on-delay timer, fault
+  injection) with Lab 3 presets; `pneumaticLogic.ts` — Lab 2 signal networks (shuttle OR,
+  dual-pressure AND, double-pilot memory).
+- **Models:** `pneumatics.ts` (M08), `electroPneumatics.ts` (M09, two cylinders under a ladder),
+  `hydraulics.ts` (M10, Lab 4a lever and Lab 4b solenoid circuits); `pneumaticCylinder.ts`
+  shares the cylinder and caches stroke speeds per parameter set. Discrete states (memory
+  valve, relays, timer) live in the state vector and are updated in `project`.
+- **UI parts** (`src/features/fluid-power`): `HoldButton` (momentary push button), `Lamp`,
+  `CylinderView`, `LadderDiagram`, `SignalChain`; M09 adds an editable ladder (connection
+  activity) and a hidden-fault troubleshooting exercise.
+- **Units:** `mpaToPa`, `paToMpa`, `cm2ToM2`, `cm3ToM3` added. All ten laboratories are now built.
+
+## 15. Folder structure
 
 ```text
 src/

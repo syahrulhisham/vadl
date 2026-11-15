@@ -1,6 +1,5 @@
 /**
- * Laboratory module: Pneumatics.
- * Built in Milestone 8. Will contain definition.ts, theory.tsx, Workspace.tsx,
- * activities.ts and questions.ts (docs/architecture.md, folder structure).
+ * Laboratory module: Pneumatics (Lab 2). Built in Milestone 8: content.en.ts,
+ * questions.ts, results.ts and PneumaticsLab.tsx, registered in src/modules/labs.ts.
  */
 export {};

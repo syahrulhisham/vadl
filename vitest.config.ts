@@ -12,6 +12,10 @@ export default mergeConfig(
       restoreMocks: true,
       // The lint-boundary test starts ESLint, which is slow on a cold cache.
       testTimeout: 30_000,
+      // Each jsdom app test imports the whole application; with ten laboratories, more
+      // than about six parallel workers starve each other on first import and lazy
+      // page loads time out (seen in Milestones 7 and 8). Six workers pass reliably.
+      maxWorkers: 6,
       coverage: {
         provider: 'v8',
         reporter: ['text', 'html', 'json-summary'],

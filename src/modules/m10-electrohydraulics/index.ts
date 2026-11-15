@@ -1,6 +1,6 @@
 /**
- * Laboratory module: Electrohydraulics.
- * Built in Milestone 8. Will contain definition.ts, theory.tsx, Workspace.tsx,
- * activities.ts and questions.ts (docs/architecture.md, folder structure).
+ * Laboratory module: Electrohydraulics (Labs 4a and 4b). Built in Milestone 8:
+ * content.en.ts, questions.ts, results.ts and HydraulicsLab.tsx, registered in
+ * src/modules/labs.ts.
  */
 export {};

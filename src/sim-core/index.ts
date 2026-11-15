@@ -7,3 +7,4 @@ export * from './units';
 export * from './engine';
 export * from './equations';
 export * from './models';
+export * from './logic';

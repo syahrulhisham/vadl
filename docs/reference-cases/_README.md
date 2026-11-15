@@ -26,6 +26,7 @@ automated tests check against. Rules:
 | [Servo: encoder, resolver, DC servo loop, metrics (RC-M05-01 … -05)](servo-motor.md)             | M05      | Test passing                        | `tests/reference/servo-motor.test.ts`                          |
 | [Gear, belt and chain trains, belt tensions, lifting pulleys (RC-M06-01 … -06)](transmission.md) | M06      | Test passing                        | `tests/reference/transmission.test.ts`                         |
 | [Cam motion laws, displacement tables, profiles (RC-M07-01 … -04)](cam-follower.md)              | M07      | Test passing                        | `tests/reference/cam-follower.test.ts`                         |
+| [Pneumatics, electro-pneumatics, hydraulics (RC-M08-01 … RC-M10-02)](fluid-power.md)             | M08–M10  | Test passing                        | `tests/reference/fluid-power.test.ts`                          |
 
 Of the values in that case, only the rad/s ↔ rpm conversion (175 rad/s = 1671.127 rpm) is already
 tested in Milestone 1, in `tests/unit/sim-core/units.test.ts`.

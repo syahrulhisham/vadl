@@ -28,6 +28,15 @@ import { M06_REPORT } from './m06-transmission/results';
 import { M07_ACTIVITIES } from './m07-cam-follower/content.en';
 import { M07_QUESTIONS } from './m07-cam-follower/questions';
 import { M07_REPORT } from './m07-cam-follower/results';
+import { M08_ACTIVITIES } from './m08-pneumatics/content.en';
+import { M08_QUESTIONS } from './m08-pneumatics/questions';
+import { M08_REPORT } from './m08-pneumatics/results';
+import { M09_ACTIVITIES } from './m09-electro-pneumatics/content.en';
+import { M09_QUESTIONS } from './m09-electro-pneumatics/questions';
+import { M09_REPORT } from './m09-electro-pneumatics/results';
+import { M10_ACTIVITIES } from './m10-electrohydraulics/content.en';
+import { M10_QUESTIONS } from './m10-electrohydraulics/questions';
+import { M10_REPORT } from './m10-electrohydraulics/results';
 import type { ModuleId } from './types';
 
 export interface BuiltLab {
@@ -79,6 +88,24 @@ export const LABS: Partial<Record<ModuleId, BuiltLab>> = {
     report: M07_REPORT,
     questions: M07_QUESTIONS,
     activityCount: M07_ACTIVITIES.length,
+  },
+  'm08-pneumatics': {
+    Lab: lazy(() => import('./m08-pneumatics/PneumaticsLab')),
+    report: M08_REPORT,
+    questions: M08_QUESTIONS,
+    activityCount: M08_ACTIVITIES.length,
+  },
+  'm09-electro-pneumatics': {
+    Lab: lazy(() => import('./m09-electro-pneumatics/ElectroPneumaticsLab')),
+    report: M09_REPORT,
+    questions: M09_QUESTIONS,
+    activityCount: M09_ACTIVITIES.length,
+  },
+  'm10-electrohydraulics': {
+    Lab: lazy(() => import('./m10-electrohydraulics/HydraulicsLab')),
+    report: M10_REPORT,
+    questions: M10_QUESTIONS,
+    activityCount: M10_ACTIVITIES.length,
   },
 };
 

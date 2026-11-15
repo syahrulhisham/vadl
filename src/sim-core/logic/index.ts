@@ -1,5 +1,6 @@
 /**
- * Discrete-state logic: valve port connectivity, relay-ladder evaluator and
- * cylinder sequences (Modules 8 to 10). Added in Milestone 8.
+ * Discrete-state logic: relay-ladder evaluator and pneumatic valve logic
+ * (Modules 8 to 10). Added in Milestone 8.
  */
-export {};
+export * from './ladder';
+export * from './pneumaticLogic';

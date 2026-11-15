@@ -1,6 +1,6 @@
 /**
- * Laboratory module: Electro-Pneumatics.
- * Built in Milestone 8. Will contain definition.ts, theory.tsx, Workspace.tsx,
- * activities.ts and questions.ts (docs/architecture.md, folder structure).
+ * Laboratory module: Electro-pneumatics (Lab 3). Built in Milestone 8: content.en.ts,
+ * questions.ts, results.ts, LadderEditor.tsx and ElectroPneumaticsLab.tsx,
+ * registered in src/modules/labs.ts.
  */
 export {};

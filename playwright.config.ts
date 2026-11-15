@@ -13,6 +13,9 @@ const PORT = 4173;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
+  // Every laboratory animates its simulation; more parallel browsers than this starve
+  // each other of CPU and time out on slower machines (seen in Milestones 7 and 8).
+  workers: 3,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],

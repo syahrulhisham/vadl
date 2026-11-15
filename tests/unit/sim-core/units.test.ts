@@ -6,6 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   cleanResidue,
+  mpaToPa,
+  paToMpa,
   barToPa,
   cubicMetresPerSecToLitresPerMin,
   degToRad,
@@ -119,5 +121,12 @@ describe('cleanResidue', () => {
     expect(cleanResidue(2e-6)).toBe(2e-6);
     expect(cleanResidue(5e-4, 1e-3)).toBe(0);
     expect(Number.isNaN(cleanResidue(Number.NaN))).toBe(true);
+  });
+});
+
+describe('MPa', () => {
+  it('5 MPa = 5 000 000 Pa and back', () => {
+    expect(mpaToPa(5)).toBe(5e6);
+    expect(paToMpa(0.75e6)).toBeCloseTo(0.75, 12);
   });
 });

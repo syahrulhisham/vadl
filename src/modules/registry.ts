@@ -70,7 +70,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'pneumatics',
     titleKey: 'module.m08.title',
     milestone: 8,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm09-electro-pneumatics',
@@ -78,7 +78,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'electro-pneumatics',
     titleKey: 'module.m09.title',
     milestone: 8,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm10-electrohydraulics',
@@ -86,7 +86,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'electrohydraulics',
     titleKey: 'module.m10.title',
     milestone: 8,
-    status: 'planned',
+    status: 'available',
   },
 ];
 

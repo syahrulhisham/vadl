@@ -41,6 +41,26 @@ export function paToBar(p: number): number {
   return p / PA_PER_BAR;
 }
 
+/** Area: cm² → m² (hydraulics labs quote areas in cm²). */
+export function cm2ToM2(a: number): number {
+  return a * 1e-4;
+}
+
+/** Volume: cm³ → m³ (pump displacement per revolution). */
+export function cm3ToM3(v: number): number {
+  return v * 1e-6;
+}
+
+/** Pressure: MPa → Pa (hydraulics labs use MPa). */
+export function mpaToPa(p: number): number {
+  return p * 1e6;
+}
+
+/** Pressure: Pa → MPa. */
+export function paToMpa(p: number): number {
+  return p / 1e6;
+}
+
 /** Volumetric flow: L/min → m³/s. */
 export function litresPerMinToCubicMetresPerSec(q: number): number {
   return q / LPM_PER_M3S;

@@ -3,7 +3,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AppRoutes, NAV_ITEMS } from '@/app';
-import { LAB_REGIONS } from '@/features/lab-shell';
+import { LAB_REGIONS, LabShell } from '@/features/lab-shell';
+import { builtLab } from '@/modules/labs';
 import { MODULES } from '@/modules/registry';
 
 function renderAt(path: string) {
@@ -120,15 +121,16 @@ describe('module pages (FR-02)', () => {
     },
   );
 
-  it('a planned module shows its title, course reference and placeholder milestone', async () => {
-    renderAt('/modules/pneumatics');
+  it('a region without content shows its placeholder and milestone (layout used by unbuilt pages)', () => {
+    render(<LabShell placeholderMilestone={9} />);
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Pneumatics' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Course reference: Chapter 4, Parts I–II/)).toBeInTheDocument();
-    expect(
-      screen.getAllByText('This region is filled when the laboratory is built in Milestone 8.'),
+      screen.getAllByText('This region is filled when the laboratory is built in Milestone 9.'),
     ).toHaveLength(7);
+  });
+
+  it('since Milestone 8 every one of the ten modules has a built laboratory', () => {
+    expect(MODULES.filter((m) => m.status !== 'available')).toEqual([]);
+    expect(MODULES.every((m) => builtLab(m.id))).toBe(true);
   });
 
   it('the DC motor module shows its built laboratory, not placeholders', async () => {
@@ -138,9 +140,8 @@ describe('module pages (FR-02)', () => {
     expect(screen.queryByText(/This region is filled when the laboratory is built/)).toBeNull();
   });
 
-  it('never shows an invented measurement value', async () => {
-    renderAt('/modules/pneumatics');
-    await screen.findByTestId('lab-shell');
+  it('never shows an invented measurement value: the placeholder readout is a dash', () => {
+    render(<LabShell placeholderMilestone={9} />);
     for (const v of screen.getAllByTestId('measurement-value')) expect(v).toHaveTextContent('—');
   });
 
