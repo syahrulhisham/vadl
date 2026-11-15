@@ -155,7 +155,7 @@ describe('M04 and M05 question banks', () => {
             expect(Number.isFinite(inst.answer) && inst.answer > 0).toBe(true);
             expect(inst.stem).not.toMatch(/NaN|undefined|Infinity/);
             expect(markCalculation(String(inst.answer), inst).correct).toBe(true);
-          } else {
+          } else if (q.kind === 'sequence') {
             const inst = q.generate(seed);
             expect(inst.stem).not.toMatch(/NaN|undefined|Infinity/);
             const angles = inst.angles.map(String);

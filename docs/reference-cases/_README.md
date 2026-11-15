@@ -13,17 +13,19 @@ automated tests check against. Rules:
 
 `dc-motor-steady-state.md` is the worked template for every later case.
 
-| Case                                                                                            | Module   | Status                              | Test                                                           |
-| ----------------------------------------------------------------------------------------------- | -------- | ----------------------------------- | -------------------------------------------------------------- |
-| [DC motor, separately excited, steady state](dc-motor-steady-state.md)                          | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
-| [RL circuit step response (RC-ENG-01)](rl-circuit-step.md)                                      | Engine   | Hand calculation done; test passing | `tests/reference/rl-circuit.test.ts`                           |
-| [DC drive, converter-fed (RC-M01-02)](dc-drive-converter.md)                                    | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
-| [Converter averages (RC-M01-04)](dc-converter-voltages.md)                                      | M01, M03 | Test passing                        | `tests/reference/dc-converters.test.ts`                        |
-| [Tutorial 1 cases, series motor, field weakening, load law (RC-M01-03, -05)](dc-motor-other.md) | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
-| [Induction motor, circuit, control methods, V/f (RC-M02-01 … -05)](ac-motor.md)                 | M02      | Test passing                        | `tests/reference/ac-motor.test.ts`                             |
-| [Rectifiers, DC-DC converters, inverters (RC-M03-01 … -04)](power-converters.md)                | M03      | Test passing                        | `tests/reference/power-converters.test.ts`                     |
-| [Stepper motors: step angle, sequences, dynamics (RC-M04-01 … -05)](stepper-motor.md)           | M04      | Test passing                        | `tests/reference/stepper-motor.test.ts`                        |
-| [Servo: encoder, resolver, DC servo loop, metrics (RC-M05-01 … -05)](servo-motor.md)            | M05      | Test passing                        | `tests/reference/servo-motor.test.ts`                          |
+| Case                                                                                             | Module   | Status                              | Test                                                           |
+| ------------------------------------------------------------------------------------------------ | -------- | ----------------------------------- | -------------------------------------------------------------- |
+| [DC motor, separately excited, steady state](dc-motor-steady-state.md)                           | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
+| [RL circuit step response (RC-ENG-01)](rl-circuit-step.md)                                       | Engine   | Hand calculation done; test passing | `tests/reference/rl-circuit.test.ts`                           |
+| [DC drive, converter-fed (RC-M01-02)](dc-drive-converter.md)                                     | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
+| [Converter averages (RC-M01-04)](dc-converter-voltages.md)                                       | M01, M03 | Test passing                        | `tests/reference/dc-converters.test.ts`                        |
+| [Tutorial 1 cases, series motor, field weakening, load law (RC-M01-03, -05)](dc-motor-other.md)  | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
+| [Induction motor, circuit, control methods, V/f (RC-M02-01 … -05)](ac-motor.md)                  | M02      | Test passing                        | `tests/reference/ac-motor.test.ts`                             |
+| [Rectifiers, DC-DC converters, inverters (RC-M03-01 … -04)](power-converters.md)                 | M03      | Test passing                        | `tests/reference/power-converters.test.ts`                     |
+| [Stepper motors: step angle, sequences, dynamics (RC-M04-01 … -05)](stepper-motor.md)            | M04      | Test passing                        | `tests/reference/stepper-motor.test.ts`                        |
+| [Servo: encoder, resolver, DC servo loop, metrics (RC-M05-01 … -05)](servo-motor.md)             | M05      | Test passing                        | `tests/reference/servo-motor.test.ts`                          |
+| [Gear, belt and chain trains, belt tensions, lifting pulleys (RC-M06-01 … -06)](transmission.md) | M06      | Test passing                        | `tests/reference/transmission.test.ts`                         |
+| [Cam motion laws, displacement tables, profiles (RC-M07-01 … -04)](cam-follower.md)              | M07      | Test passing                        | `tests/reference/cam-follower.test.ts`                         |
 
 Of the values in that case, only the rad/s ↔ rpm conversion (175 rad/s = 1671.127 rpm) is already
 tested in Milestone 1, in `tests/unit/sim-core/units.test.ts`.

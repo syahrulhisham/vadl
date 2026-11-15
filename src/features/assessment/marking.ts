@@ -8,6 +8,7 @@ import type {
   MultipleChoiceQuestion,
   SequenceAnswer,
   SequenceInstance,
+  TableInstance,
 } from './types';
 
 export interface MarkResult {
@@ -144,5 +145,28 @@ export function emptySequenceAnswer(instance: SequenceInstance): SequenceAnswer 
   return {
     cells: instance.answer.map((row) => row.map(() => 0)),
     angles: instance.answer.map(() => ''),
+  };
+}
+
+/** Mark a numeric table: each row within max(absolute, relative·|answer|). */
+export function markTable(given: readonly string[], instance: TableInstance): MarkResult {
+  const wrong: string[] = [];
+  instance.rows.forEach((row, i) => {
+    const v = parseAnswer(given[i] ?? '');
+    const tol = Math.max(
+      instance.absoluteTolerance,
+      instance.relativeTolerance * Math.abs(row.answer),
+    );
+    if (!(Math.abs(v - row.answer) <= tol + 1e-12)) wrong.push(row.key);
+  });
+  const answers = instance.rows.map((r) => `${r.key}: ${show(r.answer)}`).join(', ');
+  const explanation = `${instance.explanation} Correct values — ${answers}.`;
+  if (wrong.length === 0) {
+    return { correct: true, feedback: 'Correct: every value is within tolerance.', explanation };
+  }
+  return {
+    correct: false,
+    feedback: `Not correct: check the value${wrong.length > 1 ? 's' : ''} at ${wrong.join(', ')}.`,
+    explanation,
   };
 }

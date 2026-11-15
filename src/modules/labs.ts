@@ -22,6 +22,12 @@ import { M04_REPORT } from './m04-stepper/results';
 import { M05_ACTIVITIES } from './m05-servo/content.en';
 import { M05_QUESTIONS } from './m05-servo/questions';
 import { M05_REPORT } from './m05-servo/results';
+import { M06_ACTIVITIES } from './m06-transmission/content.en';
+import { M06_QUESTIONS } from './m06-transmission/questions';
+import { M06_REPORT } from './m06-transmission/results';
+import { M07_ACTIVITIES } from './m07-cam-follower/content.en';
+import { M07_QUESTIONS } from './m07-cam-follower/questions';
+import { M07_REPORT } from './m07-cam-follower/results';
 import type { ModuleId } from './types';
 
 export interface BuiltLab {
@@ -61,6 +67,18 @@ export const LABS: Partial<Record<ModuleId, BuiltLab>> = {
     report: M05_REPORT,
     questions: M05_QUESTIONS,
     activityCount: M05_ACTIVITIES.length,
+  },
+  'm06-transmission': {
+    Lab: lazy(() => import('./m06-transmission/TransmissionLab')),
+    report: M06_REPORT,
+    questions: M06_QUESTIONS,
+    activityCount: M06_ACTIVITIES.length,
+  },
+  'm07-cam-follower': {
+    Lab: lazy(() => import('./m07-cam-follower/CamLab')),
+    report: M07_REPORT,
+    questions: M07_QUESTIONS,
+    activityCount: M07_ACTIVITIES.length,
   },
 };
 

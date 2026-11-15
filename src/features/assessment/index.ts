@@ -8,6 +8,7 @@ export {
   markCalculation,
   markChoice,
   markSequence,
+  markTable,
   emptySequenceAnswer,
   sequenceAnswerText,
   sequenceCellText,
@@ -17,4 +18,5 @@ export {
 } from './marking';
 export { QuestionCard, type QuestionCardProps } from './QuestionCard';
 export { SequenceTableInput, type SequenceTableInputProps } from './SequenceTableInput';
+export { NumericTableInput } from './NumericTableInput';
 export { AssessmentPanel, type AssessmentPanelProps } from './AssessmentPanel';

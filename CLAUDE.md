@@ -16,8 +16,9 @@ then `docs/srs.md` and `docs/architecture.md`.
 | 3         | Simulation engine and graphing                                            | Done and approved; tag `milestone-3`                                   |
 | 4         | DC motor laboratory (reference module), thin assessment, report, progress | Done and approved; tag `milestone-4`                                   |
 | 5         | AC motor drives (M02) and power converters (M03) laboratories             | Done and approved; tag `milestone-5`                                   |
-| 6         | Stepper motors (M04) and servo motors (M05) laboratories                  | Done on branch `milestone-6`, tag `milestone-6`; awaiting owner review |
-| 7–10      | See `docs/project-plan.md` section 6 and `docs/course-alignment.md` §5    | Not started                                                            |
+| 6         | Stepper motors (M04) and servo motors (M05) laboratories                  | Done and approved; tag `milestone-6`                                   |
+| 7         | Mechanical transmission (M06) and cam and follower (M07) laboratories     | Done on branch `milestone-7`, tag `milestone-7`; awaiting owner review |
+| 8–10      | See `docs/project-plan.md` section 6 and `docs/course-alignment.md` §5    | Not started                                                            |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
 learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the

@@ -54,7 +54,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'mechanical-transmission',
     titleKey: 'module.m06.title',
     milestone: 7,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm07-cam-follower',
@@ -62,7 +62,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'cam-and-follower',
     titleKey: 'module.m07.title',
     milestone: 7,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm08-pneumatics',

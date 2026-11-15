@@ -121,13 +121,13 @@ describe('module pages (FR-02)', () => {
   );
 
   it('a planned module shows its title, course reference and placeholder milestone', async () => {
-    renderAt('/modules/mechanical-transmission');
+    renderAt('/modules/pneumatics');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Mechanical Transmission' }),
+      await screen.findByRole('heading', { level: 1, name: 'Pneumatics' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Course reference: Chapter 3, Parts I–II/)).toBeInTheDocument();
+    expect(screen.getByText(/Course reference: Chapter 4, Parts I–II/)).toBeInTheDocument();
     expect(
-      screen.getAllByText('This region is filled when the laboratory is built in Milestone 7.'),
+      screen.getAllByText('This region is filled when the laboratory is built in Milestone 8.'),
     ).toHaveLength(7);
   });
 

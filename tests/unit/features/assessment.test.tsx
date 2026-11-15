@@ -108,7 +108,7 @@ describe('M01 question bank', () => {
 
   it('every multiple-choice question has its correct answer among the choices and explanations for wrong ones', () => {
     for (const q of M01_QUESTIONS) {
-      if (q.kind === 'calculation' || q.kind === 'sequence') continue;
+      if (!('choices' in q)) continue;
       expect(q.choices.some((c) => c.id === q.correctChoiceId)).toBe(true);
       for (const c of q.choices) {
         if (c.id !== q.correctChoiceId) expect(c.explanationIfChosen).toBeTruthy();

@@ -126,8 +126,8 @@ describe('M02 and M03 question banks', () => {
         new Set(['beginner', 'intermediate', 'advanced']),
       );
       for (const q of bank) {
-        if (q.kind === 'sequence') continue;
-        if (q.kind !== 'calculation') {
+        if (q.kind === 'sequence' || q.kind === 'table') continue;
+        if ('choices' in q) {
           expect(q.choices.some((c) => c.id === q.correctChoiceId)).toBe(true);
           for (const c of q.choices)
             if (c.id !== q.correctChoiceId) expect(c.explanationIfChosen).toBeTruthy();

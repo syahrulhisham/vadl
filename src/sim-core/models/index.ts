@@ -5,3 +5,5 @@ export * from './inductionMotor';
 export * from './powerConverter';
 export * from './stepperMotor';
 export * from './servoMotor';
+export * from './transmission';
+export * from './camFollower';

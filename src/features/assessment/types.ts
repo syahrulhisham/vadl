@@ -9,7 +9,8 @@
 /** The three learning levels (master instruction section 7). */
 export type LearningLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export type QuestionKind = 'multiple-choice' | 'calculation' | 'troubleshooting' | 'sequence';
+export type QuestionKind =
+  'multiple-choice' | 'calculation' | 'troubleshooting' | 'sequence' | 'table';
 
 interface QuestionBase {
   /** Stable identifier, unique across all modules, e.g. `m01.q-back-emf-1`. */
@@ -85,7 +86,29 @@ export interface SequenceAnswer {
   readonly angles: readonly string[];
 }
 
-export type Question = MultipleChoiceQuestion | CalculationQuestion | SequenceQuestion;
+/**
+ * A table of numeric answers, e.g. a cam displacement diagram tabulated at 30° steps
+ * (course-alignment §5.11). Each row is marked on its own.
+ */
+export interface TableInstance {
+  readonly stem: string;
+  /** Header of the given column (e.g. "Cam angle (°)") and of the answer column. */
+  readonly keyHeader: string;
+  readonly valueHeader: string;
+  readonly rows: readonly { readonly key: string; readonly answer: number }[];
+  /** A value is accepted within max(absoluteTolerance, relativeTolerance·|answer|). */
+  readonly absoluteTolerance: number;
+  readonly relativeTolerance: number;
+  readonly explanation: string;
+}
+
+export interface TableQuestion extends QuestionBase {
+  readonly kind: 'table';
+  generate(seed: number): TableInstance;
+}
+
+export type Question =
+  MultipleChoiceQuestion | CalculationQuestion | SequenceQuestion | TableQuestion;
 
 /** One recorded answer (stored under `vadl.v1.attempts.<module>`). */
 export interface Attempt {

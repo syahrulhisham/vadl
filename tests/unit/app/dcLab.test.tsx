@@ -204,6 +204,8 @@ describe('progress and reports areas', () => {
       '/reports/m03-power-converters',
       '/reports/m04-stepper',
       '/reports/m05-servo',
+      '/reports/m06-transmission',
+      '/reports/m07-cam-follower',
     ]);
   });
 });

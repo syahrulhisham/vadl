@@ -6,9 +6,11 @@ import {
   markCalculation,
   markChoice,
   markSequence,
+  markTable,
   type MarkResult,
 } from './marking';
 import { newSeed } from './rng';
+import { NumericTableInput } from './NumericTableInput';
 import { SequenceTableInput } from './SequenceTableInput';
 import type { Attempt, Question, SequenceAnswer } from './types';
 
@@ -26,12 +28,21 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
   const [seed, setSeed] = useState(() => initialSeed ?? newSeed());
   const [answer, setAnswer] = useState('');
   const [table, setTable] = useState<SequenceAnswer | null>(null);
+  const [values, setValues] = useState<string[] | null>(null);
   const [result, setResult] = useState<MarkResult | null>(null);
   const calc = question.kind === 'calculation' ? question.generate(seed) : null;
   const seq = question.kind === 'sequence' ? question.generate(seed) : null;
+  const tab = question.kind === 'table' ? question.generate(seed) : null;
   const sheet = seq ? (table ?? emptySequenceAnswer(seq)) : null;
-  const stem = calc ? calc.stem : seq ? seq.stem : 'stem' in question ? question.stem : '';
-  const ready = seq && sheet ? sheet.angles.every((a) => a.trim() !== '') : answer.trim() !== '';
+  const cells = tab ? (values ?? tab.rows.map(() => '')) : null;
+  const generated = calc ?? seq ?? tab;
+  const stem = generated ? generated.stem : 'stem' in question ? question.stem : '';
+  const ready =
+    seq && sheet
+      ? sheet.angles.every((a) => a.trim() !== '')
+      : cells
+        ? cells.every((v) => v.trim() !== '')
+        : answer.trim() !== '';
 
   function check() {
     let mark: MarkResult;
@@ -40,13 +51,16 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
     else if (seq && sheet) {
       mark = markSequence(sheet, seq);
       given = JSON.stringify(sheet);
+    } else if (tab && cells) {
+      mark = markTable(cells, tab);
+      given = JSON.stringify(cells);
     } else if (question.kind === 'multiple-choice' || question.kind === 'troubleshooting') {
       mark = markChoice(question, answer);
     } else return;
     setResult(mark);
     onAttempt({
       questionId: question.id,
-      seed: calc || seq ? seed : null,
+      seed: generated ? seed : null,
       answerGiven: given,
       correct: mark.correct,
       answeredAt: new Date().toISOString(),
@@ -57,6 +71,7 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
     setSeed(newSeed());
     setAnswer('');
     setTable(null);
+    setValues(null);
     setResult(null);
   }
 
@@ -91,6 +106,8 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
         </label>
       ) : seq && sheet ? (
         <SequenceTableInput instance={seq} value={sheet} onChange={setTable} />
+      ) : tab && cells ? (
+        <NumericTableInput instance={tab} value={cells} onChange={setValues} />
       ) : question.kind === 'multiple-choice' || question.kind === 'troubleshooting' ? (
         <fieldset>
           <legend className="sr-only">{stem}</legend>
@@ -119,7 +136,7 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
         <Button onClick={check} disabled={!ready}>
           {t('quiz.check')}
         </Button>
-        {calc || seq ? (
+        {generated ? (
           <Button variant="secondary" onClick={renumber}>
             {t('quiz.newNumbers')}
           </Button>

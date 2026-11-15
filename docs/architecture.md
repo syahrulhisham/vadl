@@ -214,7 +214,22 @@ compliance; outside the ten milestones unless added).
 - **Timing diagram:** the stepper lab draws phase currents as a stepped digital timing diagram
   (SVG), the form used in the course notes.
 
-## 13. Folder structure
+## 13. Transmission and cam laboratories (Milestone 7)
+
+- **Transmission** (`equations/transmission.ts`, `models/transmission.ts`): G = T_driven/T_driver
+  (belts D_driven/D_driver) stated once (L-9); stages of gear (with idler), open or crossed belt
+  and chain in a compound train; directions as signs; belt torque, speed and power; lifting
+  pulleys; torque through the train as an extension. Kinematic state [θ0]: every shaft angle is
+  θ0·ωk/ω0, so the drawing turns with the computed speeds.
+- **Cam** (`equations/cam.ts`, `models/camFollower.ts`): rise, dwell, return, dwell with uniform
+  velocity (course) and SHM, uniform acceleration, cycloidal (extensions); knife-edge, roller
+  and flat-faced profiles in the cam frame, checked by geometric invariants; pressure angle and
+  flat-face convexity warnings; displacement table at 30°, 45° or 22.5°.
+- **Assessment:** new question kind `table` (`TableQuestion`, `markTable`,
+  `NumericTableInput`): numeric rows each within max(absolute, relative) tolerance, used for
+  cam displacement tables (course-alignment §5.11).
+
+## 14. Folder structure
 
 ```text
 src/

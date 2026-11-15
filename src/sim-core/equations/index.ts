@@ -10,3 +10,5 @@ export * from './inductionMachine';
 export * from './waveforms';
 export * from './servo';
 export * from './stepper';
+export * from './transmission';
+export * from './cam';
