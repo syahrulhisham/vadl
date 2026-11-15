@@ -6,19 +6,19 @@ Node v24.21.0, npm 11.19.0. Plan: `docs/milestones/milestone-10.md`.
 
 ## 1. Gate
 
-| Item                                 | Evidence                                                                                                                                               | Result                |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------- |
-| Integration of all ten laboratories  | `integration.spec.ts`: each laboratory starts, runs, records a row, stops without overflow; its report shows 10 sections and the row; no console error | Pass                  |
-| Deep links to every dashboard area   | Same file, eight areas                                                                                                                                 | Pass                  |
-| Chrome (Chromium), laptop and tablet | All Playwright tests at both sizes                                                                                                                     | Pass                  |
-| Edge                                 | Integration pass, 11 tests                                                                                                                             | Pass                  |
-| Safari engine (WebKit)               | Integration pass, 11 tests                                                                                                                             | Pass                  |
-| Firefox                              | Playwright's Firefox does not launch on this machine (section 5); covered by the CI workflow, not yet run                                              | **Not verified here** |
-| Accessibility, WCAG 2.1 A/AA (axe)   | 20 pages, no serious or critical violation                                                                                                             | Pass                  |
-| Sub-folder deployment                | `/vadl/` build: deep link, navigation, assets, `404.html` fallback                                                                                     | Pass                  |
-| Guides                               | `docs/guides/`: student, lecturer, maintainer, deployment                                                                                              | Written               |
-| Hosting (D12)                        | Prepared for any static host; the host itself is the owner's choice; nothing deployed                                                                  | Open — owner          |
-| All checks                           | Section 4                                                                                                                                              | Pass, except Firefox  |
+| Item                                 | Evidence                                                                                                                                               | Result       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ |
+| Integration of all ten laboratories  | `integration.spec.ts`: each laboratory starts, runs, records a row, stops without overflow; its report shows 10 sections and the row; no console error | Pass         |
+| Deep links to every dashboard area   | Same file, eight areas                                                                                                                                 | Pass         |
+| Chrome (Chromium), laptop and tablet | All Playwright tests at both sizes                                                                                                                     | Pass         |
+| Edge                                 | Integration pass, 11 tests                                                                                                                             | Pass         |
+| Safari engine (WebKit)               | Integration pass, 11 tests                                                                                                                             | Pass         |
+| Firefox                              | Did not launch on the development machine (section 5); 11 of 11 integration tests pass in CI on Ubuntu (section 6)                                     | Pass (CI)    |
+| Accessibility, WCAG 2.1 A/AA (axe)   | 20 pages, no serious or critical violation                                                                                                             | Pass         |
+| Sub-folder deployment                | `/vadl/` build: deep link, navigation, assets, `404.html` fallback                                                                                     | Pass         |
+| Guides                               | `docs/guides/`: student, lecturer, maintainer, deployment                                                                                              | Written      |
+| Hosting (D12)                        | Prepared for any static host; the host itself is the owner's choice; nothing deployed                                                                  | Open — owner |
+| All checks                           | Sections 4 and 6                                                                                                                                       | Pass         |
 
 ## 2. What was built
 
@@ -95,7 +95,7 @@ Simulation-core gate (≥ 90 % of lines): met — engine 98.96 %, logic 98.75 %,
 equations and units 100 %. Unit tests took 49 s against 59 s in Milestone 9, with three more
 tests.
 
-## 5. Issues found and resolved, and one not resolved
+## 5. Issues found and resolved, and one environment fault
 
 | Issue                                                                             | Resolution                                                             |
 | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
@@ -115,10 +115,30 @@ means **Firefox is not verified on this machine**. The CI workflow runs the same
 on Ubuntu once the repository is pushed; checking VADL in an installed Firefox by hand is the
 alternative.
 
-## 6. Open items for the owner's review
+## 6. After the owner's approval: continuous integration
+
+The owner approved Milestone 10, merged every milestone branch into `main` and pushed it with the
+tags. The push started the CI workflow on GitHub's Ubuntu runner (run 43687894677, 15 November
+2026, 5 min 22 s, success):
+
+```text
+ Test Files  48 passed (48)
+      Tests  559 passed (559)
+  21 skipped
+  95 passed (1.7m)                        laptop and tablet
+  ✓ [firefox] (all ten laboratories and the deep-link test)
+  22 passed (1.1m)                        Firefox and WebKit
+  2 passed (4.0s)                         sub-folder build
+```
+
+**Firefox is verified** by this run: all 11 integration tests pass. The run warned that
+`actions/checkout@v4` and `actions/setup-node@v4` target the deprecated Node.js 20; the workflow
+now uses `actions/checkout@v7`, `actions/setup-node@v7` and `actions/upload-artifact@v7`, which
+run on Node.js 24.
+
+## 7. Open items for the owner's review
 
 - **D12 hosting:** choose the host; `docs/guides/deployment.md` compares the options.
-- **Firefox:** run the CI workflow (needs a push) or check by hand in Firefox.
 - **`README.md`:** still the owner's one-line file; the guides could be linked from it with the
   owner's permission.
 - **Classroom projector check:** needs the room (`docs/guides/lecturer-guide.md` §1).
