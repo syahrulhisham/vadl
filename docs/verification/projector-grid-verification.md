@@ -132,3 +132,63 @@ projector test run are the `tablet` copies of the projector and grid tests.
 | `milestone-10` tag    | Unchanged, `2f81eb0ab7793828ae6a1beafa3a0346cd84d545`             |
 | Changes recorded here | Not committed and not pushed when this record was written         |
 | Deployment, release   | None                                                              |
+
+## 8. Follow-up, 15 November 2026: overflow on Ubuntu and its correction
+
+Sections 1 to 7 describe the state when this record was first written, before the work was
+committed. They are kept as written; this section records what happened afterwards.
+
+### 8.1 Initial failure
+
+The work above was committed as `07beaa752f7e247b816495b217615d9e8b5820f4` and pushed to `main`.
+Its CI run, **43711461484**, on GitHub's Ubuntu 26.04 runner, **failed**: 18 Playwright
+measurement-grid tests failed because measurement units ran past the right edge of their meters'
+content areas, by 1 to 30 px (for example "0.004344 pulses/s", "-0.004344 mm/s",
+"-0.004344 rpm", "-0.004344 m/s"). Unit tests and all other end-to-end tests passed; the
+Firefox, WebKit and sub-folder steps did not run. The results in section 5 were obtained on
+Windows before this run and remain accurate for that machine; commit `07beaa7` itself did not
+pass CI.
+
+### 8.2 Root cause
+
+Each reading's value and unit sat in a flex row that could not wrap. The interface font is
+`system-ui`: Segoe UI on Windows, the system's sans-serif font on Ubuntu. Worked out from the CI
+overflow amounts, the Ubuntu rendering of these readings was about 21 % wider than on Windows, so
+the longest readings no longer fitted on one line. The values alone always fitted; only the units
+spilled over.
+
+### 8.3 Correction, commit `cc3ca44`
+
+`cc3ca44c71254efedb49e0e30fddd5ad0d7a33f1`, "Fix measurement wrapping across platform fonts"
+(parent `07beaa7`), changed two files:
+
+- `src/design-system/MeasurementDisplay.tsx`: `flex-wrap` added to the reading row, so a unit
+  that does not fit moves below its value. Values stay 24 px; colours, padding and spacing are
+  unchanged.
+- `tests/e2e/projector.spec.ts`: each long-reading check now runs in the page's own font and in
+  a wide stress font (Verdana, else DejaVu Sans or the system sans-serif font; Verdana measured
+  about 2-3 % wider than the Ubuntu rendering and is a stress font, not a copy of it). Added:
+  separate containment of the value and of the unit in the content area, a value/unit no-overlap
+  check, and a check that the unit wraps below the value whenever value, gap and unit are wider
+  than the content area. The whole-row checks are kept.
+
+Before the fix was built, the corrected tests failed against the old build (21 failures, all in
+the wide-font pass, on the same meters as on Ubuntu), showing that they detect the problem.
+With the fix, the local runs on Windows passed: projector tests 62 passed, full end-to-end
+suite 157 passed twice, unit tests 559/559.
+
+### 8.4 CI runs: before and after the correction
+
+| Run         | Branch                   | Commit    | Laptop and tablet                 | Firefox and WebKit | Sub-folder build | Result |
+| ----------- | ------------------------ | --------- | --------------------------------- | ------------------ | ---------------- | ------ |
+| 43711461484 | `main`                   | `07beaa7` | 139 passed, 18 failed, 83 skipped | not run            | not run          | Failed |
+| 43714396278 | `milestone-10-font-wrap` | `cc3ca44` | 157 passed, 83 skipped            | 22 passed          | 2 passed         | Passed |
+| 43715273872 | `main`                   | `cc3ca44` | 157 passed, 83 skipped            | 22 passed          | 2 passed         | Passed |
+
+`main` was fast-forwarded from `07beaa7` to `cc3ca44` (no merge commit) and pushed after the
+branch run passed. Current `main`: `cc3ca44`.
+
+### 8.5 Still outstanding
+
+Verification on the physical classroom projector remains outstanding. These CI and local runs
+are automated browser checks only. VADL has not been deployed or released.
