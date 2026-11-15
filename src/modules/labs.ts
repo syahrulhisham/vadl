@@ -10,6 +10,12 @@ import type { ReportDefinition } from '@/features/reports/definition';
 import { M01_ACTIVITIES } from './m01-dc-motor/content.en';
 import { M01_QUESTIONS } from './m01-dc-motor/questions';
 import { M01_REPORT } from './m01-dc-motor/report';
+import { M02_ACTIVITIES } from './m02-ac-motor/content.en';
+import { M02_QUESTIONS } from './m02-ac-motor/questions';
+import { M02_REPORT } from './m02-ac-motor/results';
+import { M03_ACTIVITIES } from './m03-power-converters/content.en';
+import { M03_QUESTIONS } from './m03-power-converters/questions';
+import { M03_REPORT } from './m03-power-converters/results';
 import type { ModuleId } from './types';
 
 export interface BuiltLab {
@@ -25,6 +31,18 @@ export const LABS: Partial<Record<ModuleId, BuiltLab>> = {
     report: M01_REPORT,
     questions: M01_QUESTIONS,
     activityCount: M01_ACTIVITIES.length,
+  },
+  'm02-ac-motor': {
+    Lab: lazy(() => import('./m02-ac-motor/AcMotorLab')),
+    report: M02_REPORT,
+    questions: M02_QUESTIONS,
+    activityCount: M02_ACTIVITIES.length,
+  },
+  'm03-power-converters': {
+    Lab: lazy(() => import('./m03-power-converters/PowerConverterLab')),
+    report: M03_REPORT,
+    questions: M03_QUESTIONS,
+    activityCount: M03_ACTIVITIES.length,
   },
 };
 

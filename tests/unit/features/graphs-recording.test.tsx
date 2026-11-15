@@ -50,6 +50,7 @@ describe('chart data preparation', () => {
   it('chooses ms below one second and s above', () => {
     expect(timeUnitFor(0.05)).toEqual({ unit: 'ms', scale: 1000 });
     expect(timeUnitFor(5)).toEqual({ unit: 's', scale: 1 });
+    expect(timeUnitFor(50e-6)).toEqual({ unit: 'µs', scale: 1e6 });
   });
 
   it('samples a curve evenly including both ends', () => {
@@ -125,5 +126,16 @@ describe('ResultsTable (FR-08)', () => {
     rerender(<ResultsTable rows={[row, row]} columns={columns} caption="Results" />);
     expect(screen.getAllByRole('row')).toHaveLength(3);
     expect(screen.getByRole('columnheader', { name: 'i/I∞ (%)' })).toBeInTheDocument();
+  });
+});
+
+import { formatTick } from '@/features/graphs';
+describe('formatTick', () => {
+  it('limits ticks to 4 significant figures and hides non-finite values', () => {
+    expect(formatTick(2.1165313675094044)).toBe('2.117');
+    expect(formatTick(265.606610215049)).toBe('265.6');
+    expect(formatTick(0)).toBe('0');
+    expect(formatTick(1800)).toBe('1800');
+    expect(formatTick(Number.NaN)).toBe('');
   });
 });

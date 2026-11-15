@@ -20,6 +20,8 @@ automated tests check against. Rules:
 | [DC drive, converter-fed (RC-M01-02)](dc-drive-converter.md)                                    | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
 | [Converter averages (RC-M01-04)](dc-converter-voltages.md)                                      | M01, M03 | Test passing                        | `tests/reference/dc-converters.test.ts`                        |
 | [Tutorial 1 cases, series motor, field weakening, load law (RC-M01-03, -05)](dc-motor-other.md) | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
+| [Induction motor, circuit, control methods, V/f (RC-M02-01 … -05)](ac-motor.md)                 | M02      | Test passing                        | `tests/reference/ac-motor.test.ts`                             |
+| [Rectifiers, DC-DC converters, inverters (RC-M03-01 … -04)](power-converters.md)                | M03      | Test passing                        | `tests/reference/power-converters.test.ts`                     |
 
 Of the values in that case, only the rad/s ↔ rpm conversion (175 rad/s = 1671.127 rpm) is already
 tested in Milestone 1, in `tests/unit/sim-core/units.test.ts`.

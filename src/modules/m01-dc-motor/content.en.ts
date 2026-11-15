@@ -220,12 +220,6 @@ export const M01_LABELS = {
     'Steady-state speed of the motor against torque for the present supply and field (solid), the load torque against speed (dashed), and the present operating point (dot). Steady state is where the two cross.',
   motorCurve: 'Motor',
   loadCurve: 'Load',
-  activitiesTitle: 'Experiment activities',
-  markDone: 'Mark as completed',
-  guided: 'Guided',
-  independent: 'Independent',
-  outcomesTitle: 'Learning outcomes (provisional)',
-  assumptionsTitle: 'Model assumptions',
   dataNote:
     'Machine values are textbook-typical until the UTeM laboratory nameplate data are supplied.',
   openReport: 'Open laboratory report',

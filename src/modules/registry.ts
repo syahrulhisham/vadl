@@ -22,7 +22,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'ac-motor-drives',
     titleKey: 'module.m02.title',
     milestone: 5,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm03-power-converters',
@@ -30,7 +30,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'power-converters',
     titleKey: 'module.m03.title',
     milestone: 5,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm04-stepper',

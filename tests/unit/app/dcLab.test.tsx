@@ -195,12 +195,14 @@ describe('progress and reports areas', () => {
     expect(row).toHaveTextContent('Not yet');
   });
 
-  it('reports and assessment areas link to the DC laboratory', async () => {
+  it('the reports area links to every built laboratory report', async () => {
     open('/reports');
-    expect(await screen.findByRole('link', { name: 'Open report' })).toHaveAttribute(
-      'href',
+    const links = await screen.findAllByRole('link', { name: 'Open report' });
+    expect(links.map((a) => a.getAttribute('href'))).toEqual([
       '/reports/m01-dc-motor',
-    );
+      '/reports/m02-ac-motor',
+      '/reports/m03-power-converters',
+    ]);
   });
 });
 

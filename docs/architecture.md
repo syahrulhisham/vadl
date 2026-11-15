@@ -174,7 +174,28 @@ compliance; outside the ten milestones unless added).
 - **Rendering:** live simulation re-renders run as React transitions so they never starve a
   navigation or typing.
 
-## 11. Folder structure
+## 11. AC motor and power converter laboratories (Milestone 5)
+
+- **Induction machine** (`src/sim-core/equations/inductionMachine.ts`): approximate per-phase
+  equivalent circuit in course notation (per-phase Vs, Rs, Rr', Xs, Xr', Xm; mechanical ωs =
+  4πf/p); slip, rotor current, input impedance, air-gap power, torque, Smax, Tmax, Tst.
+- **Induction motor model** (`src/sim-core/models/inductionMotor.ts`): state [ω, θslip]; control
+  methods DOL, stator voltage, rotor resistance, V/f and frequency above base; presets taken from
+  the course examples; `project` wraps the slip angle used by the rotating-field view.
+- **Waveforms** (`src/sim-core/equations/waveforms.ts`): closed-form instantaneous rectifier,
+  DC-DC and inverter waveforms (seven rectifier circuits, buck/boost/buck-boost, square wave,
+  bipolar/unipolar SPWM, six-step and three-phase SPWM); `waveStats` (midpoint rule, split at
+  supplied breakpoints), `harmonicRms`, `thd`, `rectifierBreakpoints`.
+- **Power converter model** (`src/sim-core/models/powerConverter.ts`): state [t] only; outputs
+  are the instantaneous values plus period statistics (cached per parameter set), so the scope
+  shows the true waveform at any playback rate. Playback is in periods per second.
+- **Shared laboratory parts** (`src/features/lab-shell`): `useLabRecords`, `SelectField`,
+  `RunControls`, `RecordPanel`, `ActivitiesList`, `TheoryBlock`, `OutcomesList`, constants and
+  content types. The DC laboratory was refactored onto them; each module keeps only its
+  diagram, controls and readouts.
+- **Graphs:** `formatTick` gives four-significant-figure axis ticks; `timeUnitFor` adds µs.
+
+## 12. Folder structure
 
 ```text
 src/

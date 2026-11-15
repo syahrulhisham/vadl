@@ -121,13 +121,13 @@ describe('module pages (FR-02)', () => {
   );
 
   it('a planned module shows its title, course reference and placeholder milestone', async () => {
-    renderAt('/modules/ac-motor-drives');
+    renderAt('/modules/stepper-motors');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'AC Motor Drives' }),
+      await screen.findByRole('heading', { level: 1, name: 'Stepper Motors' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Course reference: Chapter 1, Part IV/)).toBeInTheDocument();
+    expect(screen.getByText(/Course reference: Chapter 2, Part I/)).toBeInTheDocument();
     expect(
-      screen.getAllByText('This region is filled when the laboratory is built in Milestone 5.'),
+      screen.getAllByText('This region is filled when the laboratory is built in Milestone 6.'),
     ).toHaveLength(7);
   });
 

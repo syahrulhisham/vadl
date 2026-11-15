@@ -346,6 +346,11 @@ export const en = {
   'info.availableLabs': 'Available laboratories',
   'info.activitiesSuffix': 'guided and independent activities',
   'info.questionsSuffix': 'assessment questions',
+  'lab.markDone': 'Mark as completed',
+  'lab.guided': 'Guided',
+  'lab.independent': 'Independent',
+  'lab.outcomesTitle': 'Learning outcomes (provisional)',
+  'lab.assumptionsTitle': 'Model assumptions',
 } as const;
 
 export type MessageKey = keyof typeof en;

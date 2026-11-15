@@ -6,3 +6,5 @@
 export * from './circuits';
 export * from './converters';
 export * from './dcMachines';
+export * from './inductionMachine';
+export * from './waveforms';

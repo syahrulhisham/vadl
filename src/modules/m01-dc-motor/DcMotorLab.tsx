@@ -1,12 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import {
-  Button,
-  colors,
-  LinkButton,
-  MeasurementDisplay,
-  NumberControl,
-  StatusBadge,
-} from '@/design-system';
+import { useMemo, useState } from 'react';
+import { Button, colors, LinkButton, MeasurementDisplay, NumberControl } from '@/design-system';
 import { AssessmentPanel } from '@/features/assessment';
 import {
   CharacteristicChart,
@@ -15,18 +8,19 @@ import {
   toTimeRows,
   type SeriesSpec,
 } from '@/features/graphs';
-import { LabShell } from '@/features/lab-shell';
 import {
-  moduleProgress,
-  toggleActivity,
-  withModuleProgress,
-  type ProgressRecord,
-} from '@/features/progress';
-import { ResultsTable } from '@/features/recording';
-import type { ExperimentSession } from '@/features/reports';
-import { useSimulation, useStoredValue } from '@/hooks';
+  ActivitiesList,
+  LabShell,
+  OutcomesList,
+  REAL_TIME_PLAYBACK,
+  RecordPanel,
+  RunControls,
+  selectClass,
+  TheoryBlock,
+  useLabRecords,
+} from '@/features/lab-shell';
+import { useSimulation } from '@/hooks';
 import { t } from '@/i18n';
-import { PROGRESS_KEY, sessionsKey } from '@/storage';
 import {
   CONVERTER_KINDS,
   DC_LIMITS,
@@ -53,11 +47,6 @@ import { M01_RESULT_COLUMNS, numericParameters } from './results';
 
 export const M01_ID = 'm01-dc-motor';
 const WINDOW_SECONDS = 5;
-const PLAYBACK = [
-  { value: 1, key: 'run.realTime' },
-  { value: 0.5, key: 'run.half' },
-  { value: 0.1, key: 'run.tenth' },
-] as const;
 const PRESETS: readonly { name: DcPresetName; label: string }[] = [
   { name: 'separatelyExcited', label: L.presetSeparatelyExcited },
   { name: 'shunt', label: L.presetShunt },
@@ -75,9 +64,6 @@ const CURRENT_SERIES: readonly SeriesSpec[] = [
     color: colors.navy[500],
   },
 ];
-const selectClass =
-  'mt-1 block min-h-touch w-full rounded-md border border-navy-200 bg-white px-2 text-navy-900 disabled:opacity-60';
-
 /** M01 DC Motor Drives laboratory: all seven regions (FR-02). */
 export default function DcMotorLab() {
   const sim = useSimulation(dcMotorModel, {
@@ -87,26 +73,13 @@ export default function DcMotorLab() {
   });
   const [playback, setPlayback] = useState(1);
   const [issues, setIssues] = useState<Issue[]>([]);
-  const sessions = useStoredValue<ExperimentSession[]>(sessionsKey(M01_ID), []);
-  const progress = useStoredValue<ProgressRecord>(PROGRESS_KEY, {});
-  const progressLoaded = progress.loaded;
-  const updateProgress = progress.update;
-
-  useEffect(() => {
-    if (progressLoaded) {
-      updateProgress((r) =>
-        withModuleProgress(r, M01_ID, (m) => ({ ...m, lastOpened: new Date().toISOString() })),
-      );
-    }
-  }, [progressLoaded, updateProgress]);
+  const lab = useLabRecords(M01_ID);
 
   const p = sim.params;
   const out = sim.outputs;
   const locked = sim.status !== 'idle';
   const isSeries = p.motorType === 'series';
   const isConverter = p.supply === 'converter';
-  const rows = sessions.value.at(-1)?.rows ?? [];
-  const done = moduleProgress(progress.value, M01_ID).activitiesCompleted;
 
   function set<K extends keyof DcMotorParams>(key: K, value: DcMotorParams[K]) {
     setIssues(
@@ -126,29 +99,7 @@ export default function DcMotorLab() {
   }
 
   function record() {
-    const row = { time: sim.time, parameters: numericParameters(p), measurements: { ...out } };
-    sessions.update((list) => {
-      const last = list.at(-1);
-      if (!last) {
-        return [
-          {
-            id: `${M01_ID}-session-1`,
-            moduleId: M01_ID,
-            activityId: 'm01.free',
-            startedAt: new Date().toISOString(),
-            rows: [row],
-          },
-        ];
-      }
-      return [...list.slice(0, -1), { ...last, rows: [...last.rows, row] }];
-    });
-  }
-
-  function clearRows() {
-    sessions.update((list) => {
-      const last = list.at(-1);
-      return last ? [...list.slice(0, -1), { ...last, rows: [] }] : list;
-    });
+    lab.record({ time: sim.time, parameters: numericParameters(p), measurements: { ...out } });
   }
 
   // ---- graphs: data only from the model -------------------------------------
@@ -201,117 +152,43 @@ export default function DcMotorLab() {
           theory: (
             <div className="space-y-4 text-sm">
               <p>{M01_THEORY.intro}</p>
-              <details className="rounded-md border border-navy-100 px-3">
-                <summary className="min-h-touch cursor-pointer py-2 font-semibold text-navy-800">
-                  {L.outcomesTitle}
-                </summary>
-                <ul className="mt-1 list-disc space-y-1 pl-5">
-                  {M01_OUTCOMES.map((o) => (
-                    <li key={o.id}>
-                      {o.text} <span className="text-navy-600">({o.courseLo})</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="pb-2" />
-              </details>
-              <section>
-                <h3 className="font-semibold text-navy-800">{M01_THEORY.equationsTitle}</h3>
-                <ul className="mt-1 space-y-1 font-mono text-navy-900">
-                  {M01_THEORY.equations.map((e) => (
-                    <li key={e}>{e}</li>
-                  ))}
-                </ul>
-              </section>
-              <details className="rounded-md border border-navy-100 px-3">
-                <summary className="min-h-touch cursor-pointer py-2 font-semibold text-navy-800">
-                  {M01_THEORY.convertersTitle}
-                </summary>
-                <ul className="mt-1 space-y-1 font-mono text-navy-900">
-                  {M01_THEORY.converters.map((e) => (
-                    <li key={e}>{e}</li>
-                  ))}
-                </ul>
-                <div className="pb-2" />
-              </details>
-              <details className="rounded-md border border-navy-100 px-3">
-                <summary className="min-h-touch cursor-pointer py-2 font-semibold text-navy-800">
-                  {M01_THEORY.typesTitle}
-                </summary>
-                <ul className="mt-1 list-disc space-y-1 pl-5">
-                  {M01_THEORY.types.map((e) => (
-                    <li key={e}>{e}</li>
-                  ))}
-                </ul>
-                <div className="pb-2" />
-              </details>
-              <details className="rounded-md border border-navy-100 px-3">
-                <summary className="min-h-touch cursor-pointer py-2 font-semibold text-navy-800">
-                  {M01_THEORY.quadrantsTitle}
-                </summary>
+              <OutcomesList outcomes={M01_OUTCOMES} />
+              <TheoryBlock title={M01_THEORY.equationsTitle} items={M01_THEORY.equations} mono />
+              <TheoryBlock
+                title={M01_THEORY.convertersTitle}
+                items={M01_THEORY.converters}
+                mono
+                collapsible
+              />
+              <TheoryBlock title={M01_THEORY.typesTitle} items={M01_THEORY.types} collapsible />
+              <TheoryBlock title={M01_THEORY.quadrantsTitle} collapsible>
                 <p className="mt-1">{M01_THEORY.quadrants}</p>
-                <div className="pb-2" />
-              </details>
-              <details className="rounded-md border border-navy-100 px-3">
-                <summary className="min-h-touch cursor-pointer py-2 font-semibold text-navy-800">
-                  {L.assumptionsTitle}
-                </summary>
-                <ul className="mt-1 list-disc space-y-1 pl-5">
-                  {dcMotorModel.assumptions.map((a) => (
-                    <li key={a}>{a}</li>
-                  ))}
-                </ul>
-                <div className="pb-2" />
-              </details>
+              </TheoryBlock>
+              <TheoryBlock
+                title={t('lab.assumptionsTitle')}
+                items={dcMotorModel.assumptions}
+                collapsible
+              />
             </div>
           ),
 
           workspace: (
             <div className="space-y-3">
               <DcMotorDiagram params={p} outputs={out} running={sim.status === 'running'} />
-              <div className="flex flex-wrap gap-2">
-                {sim.status === 'running' ? (
-                  <Button onClick={sim.pause}>{t('run.pause')}</Button>
-                ) : (
-                  <Button
-                    onClick={sim.start}
-                    disabled={sim.status === 'stopped' || sim.status === 'finished'}
-                  >
-                    {sim.status === 'paused' ? t('run.resume') : t('run.start')}
-                  </Button>
-                )}
-                <Button
-                  variant="secondary"
-                  onClick={sim.stop}
-                  disabled={sim.status !== 'running' && sim.status !== 'paused'}
-                >
-                  {t('run.stop')}
-                </Button>
-                <Button variant="secondary" onClick={sim.reset} disabled={sim.status === 'idle'}>
-                  {t('run.reset')}
-                </Button>
-              </div>
-              <p role="status" className="text-sm text-navy-700" data-testid="run-status">
-                {t(`run.status.${sim.status}`)}
-              </p>
-              {sim.lagging ? (
-                <p className="rounded bg-status-warningBg px-2 py-1 text-sm text-status-warning">
-                  {t('run.lagging')}
-                </p>
-              ) : null}
-              <label className="block max-w-xs text-sm font-medium text-navy-800">
-                {t('run.playback')}
-                <select
-                  className={selectClass}
-                  value={playback}
-                  onChange={(e) => changePlayback(Number(e.target.value))}
-                >
-                  {PLAYBACK.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {t(o.key)}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <RunControls
+                status={sim.status}
+                lagging={sim.lagging}
+                onStart={sim.start}
+                onPause={sim.pause}
+                onStop={sim.stop}
+                onReset={sim.reset}
+                playback={playback}
+                playbackOptions={REAL_TIME_PLAYBACK.map((o) => ({
+                  value: o.value,
+                  label: t(o.label),
+                }))}
+                onPlayback={changePlayback}
+              />
             </div>
           ),
 
@@ -703,16 +580,11 @@ export default function DcMotorLab() {
                   {L.conductionBlocked}
                 </p>
               ) : null}
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={record}>{t('lab.record')}</Button>
-                <Button variant="ghost" onClick={clearRows} disabled={rows.length === 0}>
-                  {t('lab.clear')}
-                </Button>
-              </div>
-              <ResultsTable
-                rows={rows}
+              <RecordPanel
+                rows={lab.rows}
                 columns={M01_RESULT_COLUMNS}
-                caption={t('lab.tableCaption')}
+                onRecord={record}
+                onClear={lab.clear}
               />
             </div>
           ),
@@ -785,40 +657,11 @@ export default function DcMotorLab() {
           ),
 
           instructions: (
-            <div className="space-y-3 text-sm">
-              {M01_ACTIVITIES.map((a) => (
-                <details
-                  key={a.id}
-                  className="rounded-md border border-navy-100 p-3"
-                  data-activity-id={a.id}
-                >
-                  <summary className="flex min-h-touch cursor-pointer flex-wrap items-center gap-2 py-1">
-                    <span className="font-semibold text-navy-800">{a.title}</span>
-                    <StatusBadge>{t(`level.${a.level}`)}</StatusBadge>
-                    <StatusBadge tone="info">{a.guided ? L.guided : L.independent}</StatusBadge>
-                    {done.includes(a.id) ? <StatusBadge tone="info">✓</StatusBadge> : null}
-                  </summary>
-                  <ol className="mt-2 list-decimal space-y-1 pl-5">
-                    {a.steps.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ol>
-                  <label className="mt-2 flex min-h-touch items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="h-5 w-5 accent-navy-700"
-                      checked={done.includes(a.id)}
-                      onChange={() =>
-                        progress.update((r) =>
-                          withModuleProgress(r, M01_ID, (m) => toggleActivity(m, a.id)),
-                        )
-                      }
-                    />
-                    {L.markDone}
-                  </label>
-                </details>
-              ))}
-            </div>
+            <ActivitiesList
+              activities={M01_ACTIVITIES}
+              done={lab.done}
+              onToggle={lab.toggleActivity}
+            />
           ),
 
           assessment: <AssessmentPanel moduleId={M01_ID} questions={M01_QUESTIONS} />,

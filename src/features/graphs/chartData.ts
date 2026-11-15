@@ -46,11 +46,12 @@ export function toTimeRows(
   });
 }
 
-/** Pick a display time unit for a run lasting `duration` seconds. */
+/** Pick a display time unit for a span of `duration` seconds: µs, ms or s. */
 export function timeUnitFor(duration: number): {
-  readonly unit: 'ms' | 's';
+  readonly unit: 'µs' | 'ms' | 's';
   readonly scale: number;
 } {
+  if (duration < 1e-3) return { unit: 'µs', scale: 1e6 };
   return duration < 1 ? { unit: 'ms', scale: 1000 } : { unit: 's', scale: 1 };
 }
 

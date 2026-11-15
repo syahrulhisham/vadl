@@ -14,8 +14,9 @@ then `docs/srs.md` and `docs/architecture.md`.
 | 1         | Requirements, architecture, project structure                             | Done and approved; tag `milestone-1`                                   |
 | 2         | Dashboard, navigation, design system                                      | Done and approved; tag `milestone-2`                                   |
 | 3         | Simulation engine and graphing                                            | Done and approved; tag `milestone-3`                                   |
-| 4         | DC motor laboratory (reference module), thin assessment, report, progress | Done on branch `milestone-4`, tag `milestone-4`; awaiting owner review |
-| 5–10      | See `docs/project-plan.md` section 6 and `docs/course-alignment.md` §5    | Not started                                                            |
+| 4         | DC motor laboratory (reference module), thin assessment, report, progress | Done and approved; tag `milestone-4`                                   |
+| 5         | AC motor drives (M02) and power converters (M03) laboratories             | Done on branch `milestone-5`, tag `milestone-5`; awaiting owner review |
+| 6–10      | See `docs/project-plan.md` section 6 and `docs/course-alignment.md` §5    | Not started                                                            |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
 learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the

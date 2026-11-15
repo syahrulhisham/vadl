@@ -10,6 +10,7 @@ import {
   YAxis,
 } from 'recharts';
 import { colors } from '@/design-system';
+import { formatTick } from './formatTick';
 
 type Point = { readonly x: number; readonly y: number };
 
@@ -53,6 +54,7 @@ export function CharacteristicChart({
           type="number"
           domain={['dataMin', 'dataMax']}
           stroke={colors.navy[600]}
+          tickFormatter={formatTick}
           label={{ value: xLabel, position: 'insideBottom', offset: -12, fill: colors.navy[700] }}
         />
         <YAxis
@@ -60,6 +62,7 @@ export function CharacteristicChart({
           domain={yDomain ? [yDomain[0], yDomain[1]] : ['auto', 'auto']}
           allowDataOverflow={yDomain !== undefined}
           stroke={colors.navy[600]}
+          tickFormatter={formatTick}
           label={{ value: yLabel, angle: -90, position: 'insideLeft', fill: colors.navy[700] }}
         />
         <Tooltip />

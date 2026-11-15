@@ -11,3 +11,4 @@ export {
   type SeriesSpec,
   type ChartRow,
 } from './chartData';
+export { formatTick } from './formatTick';

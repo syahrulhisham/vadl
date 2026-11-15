@@ -9,6 +9,7 @@ import {
   YAxis,
 } from 'recharts';
 import { colors } from '@/design-system';
+import { formatTick } from './formatTick';
 import type { ChartRow, SeriesSpec } from './chartData';
 
 export interface TimeTraceChartProps {
@@ -57,6 +58,7 @@ export function TimeTraceChart({
           domain={[xMin, xMax ?? 'auto']}
           allowDataOverflow
           stroke={colors.navy[600]}
+          tickFormatter={formatTick}
           label={{
             value: `Time (${timeUnit})`,
             position: 'insideBottom',
@@ -66,6 +68,7 @@ export function TimeTraceChart({
         />
         <YAxis
           stroke={colors.navy[600]}
+          tickFormatter={formatTick}
           label={{ value: yLabel, angle: -90, position: 'insideLeft', fill: colors.navy[700] }}
         />
         <Tooltip />
