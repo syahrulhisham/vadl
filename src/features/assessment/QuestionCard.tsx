@@ -1,9 +1,16 @@
 import { useId, useState } from 'react';
 import { Button, StatusBadge } from '@/design-system';
 import { t } from '@/i18n';
-import { markCalculation, markChoice, type MarkResult } from './marking';
+import {
+  emptySequenceAnswer,
+  markCalculation,
+  markChoice,
+  markSequence,
+  type MarkResult,
+} from './marking';
 import { newSeed } from './rng';
-import type { Attempt, Question } from './types';
+import { SequenceTableInput } from './SequenceTableInput';
+import type { Attempt, Question, SequenceAnswer } from './types';
 
 export interface QuestionCardProps {
   readonly question: Question;
@@ -18,23 +25,29 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
   const id = useId();
   const [seed, setSeed] = useState(() => initialSeed ?? newSeed());
   const [answer, setAnswer] = useState('');
+  const [table, setTable] = useState<SequenceAnswer | null>(null);
   const [result, setResult] = useState<MarkResult | null>(null);
-  const instance = question.kind === 'calculation' ? question.generate(seed) : null;
-  const stem = instance ? instance.stem : question.kind !== 'calculation' ? question.stem : '';
+  const calc = question.kind === 'calculation' ? question.generate(seed) : null;
+  const seq = question.kind === 'sequence' ? question.generate(seed) : null;
+  const sheet = seq ? (table ?? emptySequenceAnswer(seq)) : null;
+  const stem = calc ? calc.stem : seq ? seq.stem : 'stem' in question ? question.stem : '';
+  const ready = seq && sheet ? sheet.angles.every((a) => a.trim() !== '') : answer.trim() !== '';
 
   function check() {
-    const mark =
-      question.kind === 'calculation' && instance
-        ? markCalculation(answer, instance)
-        : question.kind !== 'calculation'
-          ? markChoice(question, answer)
-          : null;
-    if (!mark) return;
+    let mark: MarkResult;
+    let given = answer;
+    if (calc) mark = markCalculation(answer, calc);
+    else if (seq && sheet) {
+      mark = markSequence(sheet, seq);
+      given = JSON.stringify(sheet);
+    } else if (question.kind === 'multiple-choice' || question.kind === 'troubleshooting') {
+      mark = markChoice(question, answer);
+    } else return;
     setResult(mark);
     onAttempt({
       questionId: question.id,
-      seed: question.kind === 'calculation' ? seed : null,
-      answerGiven: answer,
+      seed: calc || seq ? seed : null,
+      answerGiven: given,
       correct: mark.correct,
       answeredAt: new Date().toISOString(),
     });
@@ -43,6 +56,7 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
   function renumber() {
     setSeed(newSeed());
     setAnswer('');
+    setTable(null);
     setResult(null);
   }
 
@@ -59,11 +73,11 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
         <StatusBadge>{t(`level.${question.level}`)}</StatusBadge>
         <StatusBadge tone="info">{t(`quiz.kind.${question.kind}`)}</StatusBadge>
       </div>
-      <p className="mb-3 text-navy-900">{stem}</p>
+      <p className="mb-3 whitespace-pre-line text-navy-900">{stem}</p>
 
-      {question.kind === 'calculation' && instance ? (
+      {calc ? (
         <label className="block text-sm font-medium text-navy-800">
-          {t('quiz.answerLabel', { unit: instance.unit })}
+          {t('quiz.answerLabel', { unit: calc.unit })}
           <input
             type="text"
             inputMode="decimal"
@@ -75,7 +89,9 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
             className="mt-1 block min-h-touch w-48 rounded-md border border-navy-200 px-2 text-navy-900"
           />
         </label>
-      ) : question.kind !== 'calculation' ? (
+      ) : seq && sheet ? (
+        <SequenceTableInput instance={seq} value={sheet} onChange={setTable} />
+      ) : question.kind === 'multiple-choice' || question.kind === 'troubleshooting' ? (
         <fieldset>
           <legend className="sr-only">{stem}</legend>
           <div className="space-y-1">
@@ -100,10 +116,10 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
       ) : null}
 
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button onClick={check} disabled={answer.trim() === ''}>
+        <Button onClick={check} disabled={!ready}>
           {t('quiz.check')}
         </Button>
-        {question.kind === 'calculation' ? (
+        {calc || seq ? (
           <Button variant="secondary" onClick={renumber}>
             {t('quiz.newNumbers')}
           </Button>
@@ -121,7 +137,7 @@ export function QuestionCard({ question, number, onAttempt, initialSeed }: Quest
           >
             {result.feedback}
           </p>
-          <p className="text-sm text-navy-700">
+          <p className="whitespace-pre-line text-sm text-navy-700">
             <span className="font-semibold">{t('quiz.explanation')}: </span>
             {result.explanation}
           </p>

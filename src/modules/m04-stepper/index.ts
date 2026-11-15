@@ -1,6 +1,6 @@
 /**
- * Laboratory module: Stepper Motors.
- * Built in Milestone 6. Will contain definition.ts, theory.tsx, Workspace.tsx,
- * activities.ts and questions.ts (docs/architecture.md, folder structure).
+ * Laboratory module: Stepper Motors. Built in Milestone 6: content.en.ts,
+ * questions.ts, results.ts, StepperDiagram.tsx and StepperLab.tsx, registered
+ * in src/modules/labs.ts.
  */
 export {};

@@ -90,3 +90,13 @@ export function formatSignificant(value: number, sigFigs = 4): string {
   }
   return value.toExponential(sigFigs - 1);
 }
+
+/**
+ * Replace numerical residue by exact zero: |v| < floor → 0. A settled
+ * integration leaves values such as 6e−13 rad or cos 90° = 6e−17 that are
+ * rounding noise, far below any physical resolution. The default floor (1e−9 in
+ * the SI unit of the quantity) is below every meaningful value in VADL.
+ */
+export function cleanResidue(value: number, floor = 1e-9): number {
+  return Math.abs(value) < floor ? 0 : value;
+}

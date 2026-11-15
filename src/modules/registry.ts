@@ -38,7 +38,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'stepper-motors',
     titleKey: 'module.m04.title',
     milestone: 6,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm05-servo',
@@ -46,7 +46,7 @@ export const MODULES: readonly ModuleSummary[] = [
     slug: 'servo-motors',
     titleKey: 'module.m05.title',
     milestone: 6,
-    status: 'planned',
+    status: 'available',
   },
   {
     id: 'm06-transmission',

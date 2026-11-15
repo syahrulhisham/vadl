@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  cleanResidue,
   barToPa,
   cubicMetresPerSecToLitresPerMin,
   degToRad,
@@ -108,5 +109,15 @@ describe('formatSignificant', () => {
   it('rejects an invalid significant-figure count', () => {
     expect(() => formatSignificant(1, 0)).toThrow(RangeError);
     expect(() => formatSignificant(1, 2.5)).toThrow(RangeError);
+  });
+});
+
+describe('cleanResidue', () => {
+  it('turns integration residue below 1e-9 into exact zero and keeps real values', () => {
+    expect(cleanResidue(1.066e-14)).toBe(0);
+    expect(cleanResidue(-6.1e-13)).toBe(0);
+    expect(cleanResidue(2e-6)).toBe(2e-6);
+    expect(cleanResidue(5e-4, 1e-3)).toBe(0);
+    expect(Number.isNaN(cleanResidue(Number.NaN))).toBe(true);
   });
 });

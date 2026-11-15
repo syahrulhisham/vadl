@@ -195,7 +195,26 @@ compliance; outside the ten milestones unless added).
   diagram, controls and readouts.
 - **Graphs:** `formatTick` gives four-significant-figure axis ticks; `timeUnitFor` adds µs.
 
-## 12. Folder structure
+## 12. Stepper and servo laboratories (Milestone 6)
+
+- **Stepper** (`src/sim-core/equations/stepper.ts`, `models/stepperMotor.ts`): course step angle
+  Sa = (Ns − Nr)/(Ns·Nr) × 360° with validation, phase sequences (wave, normal, half, micro) for
+  VR and two-phase motors, sinusoidal torque–angle law. Pulses are discrete events: the state
+  holds the pulse phase q, and `project` turns q ≥ 1 into a step (k ± 1). Ideal rotor by
+  default; rotor dynamics as an option. `stepperSequenceTable` feeds both the lab table and
+  the sequence questions.
+- **Servo** (`equations/servo.ts`, `models/servoMotor.ts`): DC servo plant in a closed loop with
+  Ve = Vcs − Vfc, amplifier limit, PI/PD extension with anti-windup; quadrature encoder and
+  resolver functions; `responseMetrics` measures rise, overshoot and settling from a trace.
+- **Residue display:** `cleanResidue` (units) turns integration residue below 1e−9 into 0 in
+  model outputs, so a settled loop reads 0 V rather than 1e−14 V.
+- **Assessment:** new question kind `sequence` (`SequenceQuestion`, `markSequence`,
+  `SequenceTableInput`): a table of phase states and angles, cells marked exactly, angles to
+  ±0.5° (course-alignment §5.11).
+- **Timing diagram:** the stepper lab draws phase currents as a stepped digital timing diagram
+  (SVG), the form used in the course notes.
+
+## 13. Folder structure
 
 ```text
 src/

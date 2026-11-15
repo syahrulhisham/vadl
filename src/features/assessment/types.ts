@@ -9,7 +9,7 @@
 /** The three learning levels (master instruction section 7). */
 export type LearningLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export type QuestionKind = 'multiple-choice' | 'calculation' | 'troubleshooting';
+export type QuestionKind = 'multiple-choice' | 'calculation' | 'troubleshooting' | 'sequence';
 
 interface QuestionBase {
   /** Stable identifier, unique across all modules, e.g. `m01.q-back-emf-1`. */
@@ -55,14 +55,44 @@ export interface CalculationQuestion extends QuestionBase {
   generate(seed: number): CalculationInstance;
 }
 
-export type Question = MultipleChoiceQuestion | CalculationQuestion;
+/**
+ * A phase-sequence table instance (course-alignment §5.11: pulse-sequence tables are
+ * examined every year). The student fills one row per step: the state of each
+ * phase and the rotor angle.
+ */
+export interface SequenceInstance {
+  readonly stem: string;
+  readonly phaseLabels: readonly string[];
+  /** 'on-off': a phase is off (0) or on (1). 'polarity': current 0, + (1) or − (−1). */
+  readonly cellKind: 'on-off' | 'polarity';
+  /** Correct cell values, one array per row, computed by the sim-core sequence function. */
+  readonly answer: readonly (readonly number[])[];
+  /** Correct rotor angle of each row [degrees]. */
+  readonly angles: readonly number[];
+  /** Accepted angle error [degrees] (§5.11: ±0.5°). */
+  readonly angleTolerance: number;
+  readonly explanation: string;
+}
+
+export interface SequenceQuestion extends QuestionBase {
+  readonly kind: 'sequence';
+  generate(seed: number): SequenceInstance;
+}
+
+/** What the student entered in a sequence table. */
+export interface SequenceAnswer {
+  readonly cells: readonly (readonly number[])[];
+  readonly angles: readonly string[];
+}
+
+export type Question = MultipleChoiceQuestion | CalculationQuestion | SequenceQuestion;
 
 /** One recorded answer (stored under `vadl.v1.attempts.<module>`). */
 export interface Attempt {
   readonly questionId: string;
-  /** Seed used to generate a calculation instance; `null` for fixed questions. */
+  /** Seed used to generate a calculation or sequence instance; `null` for fixed questions. */
   readonly seed: number | null;
-  /** Choice id, or the numeric answer given, as entered. */
+  /** Choice id, the numeric answer as entered, or a sequence table as JSON. */
   readonly answerGiven: string;
   readonly correct: boolean;
   /** ISO 8601 timestamp. */

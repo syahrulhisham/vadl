@@ -3,7 +3,12 @@
  * the result. Tolerances follow docs/course-alignment.md §5.11: relative ±2 % on
  * derived values unless a question states otherwise.
  */
-import type { CalculationInstance, MultipleChoiceQuestion } from './types';
+import type {
+  CalculationInstance,
+  MultipleChoiceQuestion,
+  SequenceAnswer,
+  SequenceInstance,
+} from './types';
 
 export interface MarkResult {
   readonly correct: boolean;
@@ -85,5 +90,59 @@ export function markChoice(question: MultipleChoiceQuestion, choiceId: string): 
     correct: false,
     feedback: `Not correct.${chosen.explanationIfChosen ? ` ${chosen.explanationIfChosen}` : ''} The correct answer is: ${right?.text ?? ''}`,
     explanation: question.explanation,
+  };
+}
+
+/** Cell symbol as written in the course tables. */
+export function sequenceCellText(v: number, kind: SequenceInstance['cellKind']): string {
+  if (kind === 'on-off') return v ? 'on' : 'off';
+  return v > 0 ? '+' : v < 0 ? '−' : '0';
+}
+
+/** The correct table as text, one row per line: "Step 1: A on, B off, C off — 0°". */
+export function sequenceAnswerText(instance: SequenceInstance): string {
+  return instance.answer
+    .map(
+      (row, r) =>
+        `Step ${r + 1}: ${row
+          .map(
+            (v, j) => `${instance.phaseLabels[j] ?? ''} ${sequenceCellText(v, instance.cellKind)}`,
+          )
+          .join(', ')} — ${show(instance.angles[r] ?? Number.NaN)}°`,
+    )
+    .join('\n');
+}
+
+/**
+ * Mark a phase-sequence table: every cell exactly, every angle within the
+ * instance tolerance (course-alignment §5.11). Feedback names the wrong rows.
+ */
+export function markSequence(given: SequenceAnswer, instance: SequenceInstance): MarkResult {
+  const wrongCells: number[] = [];
+  const wrongAngles: number[] = [];
+  instance.answer.forEach((row, r) => {
+    const g = given.cells[r];
+    if (!g || row.some((v, j) => (g[j] ?? 0) !== v)) wrongCells.push(r + 1);
+    const a = parseAnswer(given.angles[r] ?? '');
+    const target = instance.angles[r] ?? Number.NaN;
+    if (!(Math.abs(a - target) <= instance.angleTolerance + 1e-9)) wrongAngles.push(r + 1);
+  });
+  const explanation = [instance.explanation, sequenceAnswerText(instance)].join('\n');
+  if (wrongCells.length === 0 && wrongAngles.length === 0) {
+    return { correct: true, feedback: 'Correct: every step and angle matches.', explanation };
+  }
+  const parts: string[] = [];
+  if (wrongCells.length > 0) parts.push(`phase pattern wrong in step ${wrongCells.join(', ')}`);
+  if (wrongAngles.length > 0) {
+    parts.push(`angle wrong (±${instance.angleTolerance}°) in step ${wrongAngles.join(', ')}`);
+  }
+  return { correct: false, feedback: `Not correct: ${parts.join('; ')}.`, explanation };
+}
+
+/** An empty answer for a sequence instance: every phase off, no angles. */
+export function emptySequenceAnswer(instance: SequenceInstance): SequenceAnswer {
+  return {
+    cells: instance.answer.map((row) => row.map(() => 0)),
+    angles: instance.answer.map(() => ''),
   };
 }

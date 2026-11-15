@@ -22,6 +22,8 @@ automated tests check against. Rules:
 | [Tutorial 1 cases, series motor, field weakening, load law (RC-M01-03, -05)](dc-motor-other.md) | M01      | Test passing                        | `tests/reference/dc-motor.test.ts`, `dc-motor-dynamic.test.ts` |
 | [Induction motor, circuit, control methods, V/f (RC-M02-01 … -05)](ac-motor.md)                 | M02      | Test passing                        | `tests/reference/ac-motor.test.ts`                             |
 | [Rectifiers, DC-DC converters, inverters (RC-M03-01 … -04)](power-converters.md)                | M03      | Test passing                        | `tests/reference/power-converters.test.ts`                     |
+| [Stepper motors: step angle, sequences, dynamics (RC-M04-01 … -05)](stepper-motor.md)           | M04      | Test passing                        | `tests/reference/stepper-motor.test.ts`                        |
+| [Servo: encoder, resolver, DC servo loop, metrics (RC-M05-01 … -05)](servo-motor.md)            | M05      | Test passing                        | `tests/reference/servo-motor.test.ts`                          |
 
 Of the values in that case, only the rad/s ↔ rpm conversion (175 rad/s = 1671.127 rpm) is already
 tested in Milestone 1, in `tests/unit/sim-core/units.test.ts`.

@@ -99,7 +99,8 @@ test('deep links to module pages work after a reload', async ({ page }) => {
 test('measurement values are at least 20 px and show no invented number (NFR-04)', async ({
   page,
 }) => {
-  await page.goto('/modules/stepper-motors');
+  // A planned module: its sample readout must show a dash, never a number.
+  await page.goto('/modules/mechanical-transmission');
   const value = page.getByTestId('measurement-value').first();
   await expect(value).toHaveText('—');
   const px = await value.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));

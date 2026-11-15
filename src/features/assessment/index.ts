@@ -7,9 +7,14 @@ export { mulberry32, randInt, randStep, pick, newSeed, type Rng } from './rng';
 export {
   markCalculation,
   markChoice,
+  markSequence,
+  emptySequenceAnswer,
+  sequenceAnswerText,
+  sequenceCellText,
   parseAnswer,
   withinTolerance,
   type MarkResult,
 } from './marking';
 export { QuestionCard, type QuestionCardProps } from './QuestionCard';
+export { SequenceTableInput, type SequenceTableInputProps } from './SequenceTableInput';
 export { AssessmentPanel, type AssessmentPanelProps } from './AssessmentPanel';

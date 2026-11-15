@@ -202,6 +202,8 @@ describe('progress and reports areas', () => {
       '/reports/m01-dc-motor',
       '/reports/m02-ac-motor',
       '/reports/m03-power-converters',
+      '/reports/m04-stepper',
+      '/reports/m05-servo',
     ]);
   });
 });

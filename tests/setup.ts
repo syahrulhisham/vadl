@@ -4,8 +4,9 @@ import { configure } from '@testing-library/dom';
 import { afterEach } from 'vitest';
 
 // Pages are lazily loaded chunks. Under the parallel coverage run a cold import
-// can take over the 1 s default, so `findBy…` queries wait up to 5 s.
-configure({ asyncUtilTimeout: 5_000 });
+// of a laboratory (five of them since Milestone 6) can take several seconds, so
+// `findBy…` queries wait up to 15 s (still well inside the 30 s test timeout).
+configure({ asyncUtilTimeout: 15_000 });
 
 // Vitest globals are off, so Testing Library cannot register its own cleanup.
 // Unmount rendered trees after each test so tests stay independent.

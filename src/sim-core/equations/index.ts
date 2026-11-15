@@ -8,3 +8,5 @@ export * from './converters';
 export * from './dcMachines';
 export * from './inductionMachine';
 export * from './waveforms';
+export * from './servo';
+export * from './stepper';

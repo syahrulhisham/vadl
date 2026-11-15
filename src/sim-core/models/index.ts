@@ -3,3 +3,5 @@ export * from './rlCircuit';
 export * from './dcMotor';
 export * from './inductionMotor';
 export * from './powerConverter';
+export * from './stepperMotor';
+export * from './servoMotor';
