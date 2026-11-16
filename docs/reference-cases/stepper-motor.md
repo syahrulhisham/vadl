@@ -1,4 +1,4 @@
-# Reference cases RC-M04-01 to RC-M04-05: stepper motors
+# Reference cases RC-M04-01 to RC-M04-06: stepper motors
 
 | Field            | Value                                                                                              |
 | ---------------- | -------------------------------------------------------------------------------------------------- |
@@ -83,6 +83,18 @@ Default VR 6/4 motor (typical values, assumed): Tpk 0.2 N·m, J 2×10⁻⁵ kg·
 1.8° motor with 1/16 microstepping: angle per pulse 1.8/16 = **0.1125°**, **3200** pulses per
 revolution; at 3200 pulses/s the speed is 0.1125·3200/6 = **60 rpm**. Coil currents at microstep
 k: iA = cos(k·90°/16), iB = sin(k·90°/16); at k = 4: iA = **0.92388**, iB = **0.38268**.
+
+## RC-M04-06 — two-phase hybrid step angle from rotor teeth (extension, Milestone 11)
+
+A two-phase hybrid motor moves one rotor tooth pitch (360°/Nr) in four full steps, so
+**Sa = 360°/(4·Nr)** and full steps per revolution = 4·Nr. The course formula
+Sa = (Ns − Nr)/(Ns·Nr) × 360° is for variable-reluctance motors and does not apply (L-15).
+
+- Nr = 50: Sa = 360°/200 = **1.8°**; **200** full steps per revolution (the common 1.8° motor).
+- Nr = 100: Sa = 360°/400 = **0.9°**; **400** full steps per revolution.
+- A 200 steps/rev hybrid has Nr = 200/4 = **50** rotor teeth.
+- Why the VR formula is wrong here: with 8 stator poles and Nr = 50 it would give
+  |8 − 50|/(8 × 50) × 360° = 42/400 × 360° = **37.8°**, not 1.8°.
 
 ## Tolerances
 

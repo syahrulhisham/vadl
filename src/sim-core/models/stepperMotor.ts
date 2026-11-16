@@ -17,6 +17,7 @@
 import {
   electricalCycles,
   equilibriumAngle,
+  hybridRotorTeeth,
   phaseCurrents,
   pulsesPerRevolution,
   stepAngleFromSteps,
@@ -97,6 +98,8 @@ export interface StepperOutputs {
   readonly coilAbar: number;
   readonly coilB: number;
   readonly coilBbar: number;
+  /** Two-phase hybrid: rotor teeth Nr = steps/4 (NaN for other families). */
+  readonly hybridRotorTeeth: number;
 }
 
 export const STEPPER_LIMITS = {
@@ -423,6 +426,7 @@ export const stepperMotorModel: SimModel<StepperParams, StepperOutputs> = {
       coilAbar: Math.max(0, -(i[0] ?? 0)),
       coilB: Math.max(0, i[1] ?? 0),
       coilBbar: Math.max(0, -(i[1] ?? 0)),
+      hybridRotorTeeth: p.family === 'hybrid' ? hybridRotorTeeth(p.stepsPerRev) : Number.NaN,
     };
   },
 };

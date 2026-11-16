@@ -1,4 +1,4 @@
-# Reference cases RC-M05-01 to RC-M05-05: servo motors and position sensors
+# Reference cases RC-M05-01 to RC-M05-08: servo motors and position sensors
 
 | Field            | Value                                                                                         |
 | ---------------- | --------------------------------------------------------------------------------------------- |
@@ -66,6 +66,53 @@ Va = Kp·Vcs = 100 V is demanded: the amplifier **saturates at 24 V**.
 Samples of the analytic response y(t) = 1 − e^{−t/τ} with τ = 0.1 s (first order, no overshoot):
 rise time 10–90 % = τ·ln 9 = **0.219 72 s**; overshoot **0 %**; 2 % settling time τ·ln 50 =
 **0.391 20 s**; steady-state error **0**.
+
+## RC-M05-06 — encoder decoding X1, X2 and X4 (Milestone 11)
+
+A quadrature decoder can count one edge of A per line (X1), both edges of A (X2) or every edge
+of A and B (X4, the course's "4 counts per line"). Counts per revolution = m·L and resolution =
+360°/(m·L), with m = 1, 2 or 4.
+
+500-line encoder at θ = 1 rad (57.2958°): line phase = 500 × 1/(2π) = 79.5775 lines.
+
+| Decoding | Counts per rev | Resolution | Count at 1 rad      | Reported angle           |
+| -------- | -------------- | ---------- | ------------------- | ------------------------ |
+| X1       | 500            | 0.72°      | ⌊79.5775⌋ = **79**  | 79 × 0.72° = **56.88°**  |
+| X2       | 1000           | 0.36°      | ⌊159.155⌋ = **159** | 159 × 0.36° = **57.24°** |
+| X4       | 2000           | 0.18°      | ⌊318.310⌋ = **318** | 318 × 0.18° = **57.24°** |
+
+## RC-M05-07 — resolver-to-digital converter (Milestone 11)
+
+An n-bit resolver-to-digital converter (RDC) reports the angle as a count of 2ⁿ per revolution:
+count = ⌊θ·2ⁿ/(2π)⌋, resolution = 360°/2ⁿ.
+
+At θ = 1 rad (1/(2π) = 0.1591549 rev):
+
+- 12 bits: 2¹² = 4096; 0.1591549 × 4096 = 651.899 → count **651**; resolution 360°/4096 =
+  **0.087890625°**; reported angle 651 × 0.087890625° = **57.216797°**.
+- 14 bits: 2¹⁴ = 16384; 0.1591549 × 16384 = 2607.59 → count **2607**; resolution
+  **0.02197266°**; reported angle 2607 × 0.02197266° = **57.28271°**.
+
+## RC-M05-08 — AC two-phase servo motor (extension, Milestone 11)
+
+Linearised two-phase servo motor (straight, parallel torque–speed lines, the usual textbook
+model): **Td = Kc·Vc − Kω·ω**, with Kc = Tst/Vmax (stall torque Tst at rated control voltage
+Vmax) and Kω = Tst/ω0 (no-load speed ω0 at rated control voltage). The sign of Vc is the control
+phase: in phase (0°) drives clockwise, 180° drives anticlockwise.
+
+Assumed values: Tst 0.12 N·m, Vmax 24 V, ω0 300 rad/s, J 1×10⁻⁴ kg·m², B 1×10⁻⁴ N·m·s/rad.
+
+- Kc = 0.12/24 = **0.005 N·m/V**; Kω = 0.12/300 = **4×10⁻⁴ N·m·s/rad**.
+- Position servo, Kp 5, Kfb 1 V/rad: J·θ″ + (B + Kω)·θ′ + K·θ = K·θref with
+  K = Kc·Kp·Kfb = 0.005 × 5 × 1 = **0.025 N·m/rad**.
+  - ωn = √(K/J) = √(0.025/1×10⁻⁴) = √250 = **15.8114 rad/s**.
+  - ζ = (B + Kω)/(2√(K·J)) = 5×10⁻⁴/(2 × √(2.5×10⁻⁶)) = 5×10⁻⁴/3.16228×10⁻³ = **0.158114**.
+- Holding a load TL = 0.01 N·m: Kc·Kp·Kfb·e = TL → e = 0.01/0.025 = **0.4 rad** (22.918°);
+  control voltage Vc = Kp·Kfb·e = **2 V** (below the 24 V limit).
+- Speed servo, Kp 20, tachometer Kt 0.05 V·s/rad, reference 100 rad/s (Vcs = 5 V), no load:
+  Kc·Kp·(Vcs − Kt·ω) = (B + Kω)·ω → ω = Kc·Kp·Vcs/(Kc·Kp·Kt + B + Kω)
+  = (0.005 × 20 × 5)/(0.005 × 20 × 0.05 + 5×10⁻⁴) = 0.5/0.0055 = **90.9091 rad/s**;
+  Vc = 20 × (5 − 0.05 × 90.9091) = **9.0909 V** (below the limit).
 
 ## Tolerances
 

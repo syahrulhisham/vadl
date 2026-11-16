@@ -344,6 +344,20 @@ const LONG_READINGS: Readonly<Record<string, Readonly<Record<string, readonly st
     'Input power': S,
     'Output power': S,
     Efficiency: N,
+    // Drive waveform view (Milestone 11). Averages, the back-emf and the instantaneous
+    // values take either sign (inversion, overhauling load, dual converter); rms and
+    // angles do not.
+    'Back-emf used': S,
+    'Average armature voltage': S,
+    'Average armature current': S,
+    'RMS armature current': N,
+    'Minimum armature current': S,
+    'Maximum armature current': S,
+    'Conduction angle': N,
+    'Extinction angle': N,
+    'Average converter power': S,
+    'Armature voltage at cursor': S,
+    'Armature current at cursor': S,
   },
   'ac-motor-drives': {
     Time: N,
@@ -407,6 +421,12 @@ const LONG_READINGS: Readonly<Record<string, Readonly<Record<string, readonly st
     'Resolver sine output': S,
     'Resolver cosine output': S,
     'Resolver quadrant': ['4'],
+    // Milestone 11 sensors: resolutions are positive; the converter count and the
+    // measured position follow the shaft, so they are signed (the count is an integer).
+    'Encoder resolution': N,
+    'Resolver converter count': ['-88888'],
+    'Resolver resolution': N,
+    'Measured position': S,
     'Rise time 10–90 %': N,
     Overshoot: N,
     'Settling time (±2 %)': N,
@@ -617,7 +637,8 @@ for (const size of SIZES) {
 }
 
 /**
- * Measurement grid: the 13 meter grids of the ten laboratories (2 columns from 640 px,
+ * Measurement grid: the 14 meter grids of the ten laboratories (13 from the first
+ * correction plus the DC laboratory's drive-waveform view, Milestone 11) (2 columns from 640 px,
  * 3 from 1280 px, 4 from 1536 px) at four window sizes, with fixed long readings.
  * Grids that are not on the page when a laboratory opens are reached through the
  * laboratory's own controls, as a student would: Transmission's "Belt tensions" and
@@ -645,9 +666,9 @@ const FONT_PASSES = [
   { name: 'wide stress font', font: 'Verdana, "DejaVu Sans", sans-serif' },
 ] as const;
 
-/** Meter grids per laboratory (13 in all); the test fails if it reaches fewer or more. */
+/** Meter grids per laboratory (14 in all); the test fails if it reaches fewer or more. */
 const GRIDS_PER_LAB: Readonly<Record<string, number>> = {
-  'dc-motor-drives': 1,
+  'dc-motor-drives': 2,
   'ac-motor-drives': 1,
   'power-converters': 1,
   'stepper-motors': 1,
@@ -757,6 +778,15 @@ for (const { width, height, columns } of GRID_SIZES) {
         }
 
         // Grids that appear only after a student action, reached through the real UI.
+        if (slug === 'dc-motor-drives') {
+          const view = page.getByRole('button', { name: 'Drive waveforms', exact: true });
+          await view.click();
+          await expect(view).toHaveAttribute('aria-pressed', 'true');
+          await expect(page.getByTestId('drive-scope')).toBeVisible();
+          for (const g of await checkMeterGrids(page, slug, width, columns, 'drive waveforms')) {
+            grids.add(g);
+          }
+        }
         if (slug === 'mechanical-transmission') {
           for (const view of ['Belt tensions', 'Lifting pulleys']) {
             const button = page.getByRole('button', { name: view, exact: true });
@@ -768,7 +798,7 @@ for (const { width, height, columns } of GRID_SIZES) {
           }
         }
         if (slug === 'servo-motors') {
-          const metrics = page.getByRole('region', {
+          const metrics = page.getByRole('group', {
             name: 'Step-response measurements (extension)',
           });
           await expect(metrics).toHaveCount(0);

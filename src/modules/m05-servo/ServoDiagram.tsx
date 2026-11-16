@@ -11,13 +11,24 @@ const fmt = (v: number) => formatSignificant(v, 3);
 export function ServoDiagram({
   params: p,
   outputs: o,
+  highlight = null,
 }: {
   readonly params: ServoParams;
   readonly outputs: ServoOutputs;
+  /** Part chosen in the explorer: summing, amplifier, motor or sensor. */
+  readonly highlight?: string | null;
 }) {
+  const mark = (id: string) =>
+    highlight === id ? { stroke: colors.status.danger, strokeWidth: 5 } : {};
   const wire = colors.navy[800];
   const pos = p.mode === 'position';
-  const sensor = pos ? (p.feedback === 'encoder' ? 'Encoder' : 'Potentiometer') : 'Tachometer';
+  const sensor = pos
+    ? p.feedback === 'encoder'
+      ? 'Encoder'
+      : p.feedback === 'resolver'
+        ? 'Resolver'
+        : 'Potentiometer'
+    : 'Tachometer';
   const desc = `Servo loop: Vcs ${fmt(o.vcs)} V minus Vfc ${fmt(o.vfc)} V gives the drive signal ${fmt(o.driveSignal)} V; the amplifier applies ${fmt(o.armatureVoltage)} V to the motor${o.saturated ? ' (saturated)' : ''}.`;
   return (
     <svg
@@ -26,6 +37,7 @@ export function ServoDiagram({
       role="img"
       aria-label={desc}
       data-testid="servo-diagram"
+      data-highlight={highlight ?? ''}
     >
       <defs>
         <marker
@@ -49,10 +61,18 @@ export function ServoDiagram({
         <polyline points="220,160 110,160 110,86" />
       </g>
       <g stroke={wire} strokeWidth={2.5} fill={colors.white}>
-        <circle cx="110" cy="70" r="14" />
-        <rect x="180" y="40" width="110" height="60" rx="6" fill={colors.lightblue[50]} />
-        <rect x="340" y="40" width="110" height="60" rx="6" />
-        <rect x="220" y="135" width="110" height="50" rx="6" />
+        <circle cx="110" cy="70" r="14" {...mark('summing')} />
+        <rect
+          x="180"
+          y="40"
+          width="110"
+          height="60"
+          rx="6"
+          fill={colors.lightblue[50]}
+          {...mark('amplifier')}
+        />
+        <rect x="340" y="40" width="110" height="60" rx="6" {...mark('motor')} />
+        <rect x="220" y="135" width="110" height="50" rx="6" {...mark('sensor')} />
       </g>
       <g
         fontFamily="system-ui, sans-serif"

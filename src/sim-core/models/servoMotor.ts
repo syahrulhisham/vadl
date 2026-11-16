@@ -11,23 +11,36 @@
  * saturated and the error would drive it further (anti-windup by clamping).
  * The course amplifier is proportional; Ki and Kd are an extension (L-16).
  *
+ * Milestone 11 extensions: the position sensor can be a quadrature encoder decoded
+ * X1, X2 or X4, or a resolver with an n-bit converter; and the motor can be a
+ * linearised AC two-phase servo motor, Td = Kc·Vc − Kω·ω, where the amplifier
+ * output is the control-winding voltage Vc (its sign is the 0°/180° control phase)
+ * and there is no armature circuit (the Ia state stays at zero).
+ *
  * Model document: docs/simulation-models/m05-servo-motor.md.
  * Reference cases: docs/reference-cases/servo-motor.md.
  */
 import {
-  encoderAngle,
+  acServoConstants,
+  encoderAngleDecoded,
   encoderChannels,
-  encoderCount,
+  encoderCountDecoded,
+  encoderResolutionDecoded,
   resolverAngle,
+  resolverDigitalAngle,
+  resolverDigitalCount,
+  resolverDigitalResolution,
   resolverOutputs,
   resolverQuadrant,
+  type EncoderDecoding,
 } from '../equations/servo';
 import type { Issue, SimModel } from '../types';
 import { cleanResidue, radPerSecToRpm, radToDeg } from '../units';
 
 export type ServoMode = 'position' | 'speed';
 export type ServoReference = 'step' | 'ramp' | 'sine';
-export type ServoFeedback = 'potentiometer' | 'encoder';
+export type ServoFeedback = 'potentiometer' | 'encoder' | 'resolver';
+export type ServoMotorKind = 'dc' | 'ac';
 
 export interface ServoParams {
   readonly mode: ServoMode;
@@ -59,6 +72,16 @@ export interface ServoParams {
   readonly feedback: ServoFeedback;
   /** Encoder lines per revolution. */
   readonly encoderLines: number;
+  /** Quadrature decoding: counts per line (X1, X2 or X4). */
+  readonly encoderDecoding: EncoderDecoding;
+  /** Resolver-to-digital converter word length [bits]. */
+  readonly resolverBits: number;
+  /** Motor: DC (course model) or linearised AC two-phase servo (extension). */
+  readonly motor: ServoMotorKind;
+  /** AC servo: stall torque at the rated control voltage Vmax [N·m]. */
+  readonly stallTorque: number;
+  /** AC servo: no-load speed at the rated control voltage Vmax [rad/s]. */
+  readonly noLoadSpeed: number;
 }
 
 export interface ServoOutputs {
@@ -88,6 +111,15 @@ export interface ServoOutputs {
   readonly resolverCos: number;
   readonly resolverAngleDeg: number;
   readonly resolverQuadrant: number;
+  /** Angle of one decoded encoder count [deg]. */
+  readonly encoderResolutionDeg: number;
+  /** Resolver-to-digital converter count and the angle of one count [deg]. */
+  readonly resolverCount: number;
+  readonly resolverResolutionDeg: number;
+  /** Position the loop measures with the selected sensor [deg]. */
+  readonly measuredDeg: number;
+  /** AC servo: control-winding phase, 0° or 180° (NaN for the DC servo). */
+  readonly controlPhaseDeg: number;
 }
 
 export const SERVO_LIMITS = {
@@ -107,6 +139,9 @@ export const SERVO_LIMITS = {
   positionGain: { min: 0.1, max: 10 },
   tachGain: { min: 0.01, max: 1 },
   encoderLines: { min: 1, max: 10_000 },
+  resolverBits: { min: 10, max: 16 },
+  stallTorque: { min: 0.001, max: 5 },
+  noLoadSpeed: { min: 10, max: 1000 },
 } as const;
 
 const MOTOR = {
@@ -120,6 +155,11 @@ const MOTOR = {
   tachGain: 0.05,
   feedback: 'potentiometer',
   encoderLines: 500,
+  encoderDecoding: 4,
+  resolverBits: 12,
+  motor: 'dc',
+  stallTorque: 0.12,
+  noLoadSpeed: 300,
   referenceRate: 2,
   referenceFrequency: 1,
   loadTorque: 0,
@@ -176,6 +216,15 @@ export const SERVO_PRESETS = {
     referenceValue: 100,
     kp: 20,
   },
+  /** AC two-phase servo, position step 90°, Kp 5 (RC-M05-08: ωn 15.81 rad/s, ζ 0.158). */
+  acPosition: {
+    ...MOTOR,
+    motor: 'ac',
+    mode: 'position',
+    reference: 'step',
+    referenceValue: Math.PI / 2,
+    kp: 5,
+  },
 } satisfies Record<string, ServoParams>;
 
 export type ServoPresetName = keyof typeof SERVO_PRESETS;
@@ -185,6 +234,14 @@ export function servoReference(p: ServoParams, t: number): number {
   if (p.reference === 'step') return p.referenceValue;
   if (p.reference === 'ramp') return p.referenceRate * t;
   return p.referenceValue * Math.sin(2 * Math.PI * p.referenceFrequency * t);
+}
+
+/** Position the loop measures with the selected sensor [rad]. */
+export function servoMeasuredAngle(p: ServoParams, theta: number): number {
+  if (p.feedback === 'encoder')
+    return encoderAngleDecoded(theta, p.encoderLines, p.encoderDecoding);
+  if (p.feedback === 'resolver') return resolverDigitalAngle(theta, p.resolverBits);
+  return theta;
 }
 
 /** Control quantities at (t, state): signals in volts and the limited amplifier output. */
@@ -197,7 +254,7 @@ export function servoControl(p: ServoParams, t: number, s: readonly number[]) {
   let vfc: number;
   let demand: number;
   if (p.mode === 'position') {
-    const measured = p.feedback === 'encoder' ? encoderAngle(theta, p.encoderLines) : theta;
+    const measured = servoMeasuredAngle(p, theta);
     vcs = p.positionGain * ref;
     vfc = p.positionGain * measured;
     demand = p.kp * (vcs - vfc) + p.ki * z - p.kd * p.positionGain * omega;
@@ -233,9 +290,10 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
   defaults: SERVO_PRESETS.position,
   stateLabels: ['Ia [A]', 'ω [rad/s]', 'θ [rad]', '∫Ve [V·s]'],
   assumptions: [
-    'Armature-controlled DC servo with a fixed field (separately excited, as in the course): linear motor constant kφ, no armature reaction or brush drop.',
+    'DC servo (default): armature-controlled with a fixed field (separately excited, as in the course): linear motor constant kφ, no armature reaction or brush drop.',
     'The servo amplifier is a voltage source limited to ±Vmax; its own delay is neglected. Integral and derivative action are a VADL extension, not course content.',
-    'Ideal sensors: the potentiometer and tachometer are exact; the encoder option quantises the measured angle to one quadrature count.',
+    'Ideal sensors: the potentiometer and tachometer are exact; the encoder option quantises the measured angle to one decoded count (X1, X2 or X4) and the resolver option to one count of its n-bit converter, with no noise or tracking lag.',
+    'AC two-phase servo option (extension): linearised motor Td = Kc·Vc − Kω·ω with straight, parallel torque–speed lines; the amplifier output is the control-winding voltage and its sign is the control phase (0° or 180°). Single-phasing, winding dynamics and the non-linear torque–speed curve are not modelled.',
     'Viscous friction only and a constant load torque against positive rotation; no backlash, Coulomb friction or shaft compliance.',
     'Motor values are typical for a small DC servo (assumed, not bench data).',
     'Continuous-time controller; a real digital servo drive samples at a finite rate.',
@@ -263,6 +321,18 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
     range(issues, 'positionGain', p.positionGain, 'Position sensor gain Kfb', 'V/rad');
     range(issues, 'tachGain', p.tachGain, 'Tachometer gain Kt', 'V/(rad/s)');
     range(issues, 'encoderLines', p.encoderLines, 'Encoder lines', '');
+    range(issues, 'resolverBits', p.resolverBits, 'Resolver converter bits', 'bits');
+    if (!Number.isInteger(p.resolverBits)) {
+      issues.push({
+        parameter: 'resolverBits',
+        severity: 'error',
+        message: 'A resolver-to-digital converter has a whole number of bits.',
+      });
+    }
+    if (p.motor === 'ac') {
+      range(issues, 'stallTorque', p.stallTorque, 'Stall torque', 'N·m');
+      range(issues, 'noLoadSpeed', p.noLoadSpeed, 'No-load speed', 'rad/s');
+    }
     if (!Number.isInteger(p.encoderLines)) {
       issues.push({
         parameter: 'encoderLines',
@@ -270,7 +340,15 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
         message: 'An encoder disc has a whole number of lines.',
       });
     }
-    if (issues.length === 0 && p.loadTorque > p.kphi * (p.vMax / p.ra)) {
+    if (issues.length === 0 && p.motor === 'ac' && p.loadTorque > p.stallTorque) {
+      issues.push({
+        parameter: 'loadTorque',
+        severity: 'warning',
+        message:
+          'The load torque exceeds the stall torque of the AC servo motor at full control voltage: the motor cannot hold the load.',
+      });
+    }
+    if (issues.length === 0 && p.motor === 'dc' && p.loadTorque > p.kphi * (p.vMax / p.ra)) {
       issues.push({
         parameter: 'loadTorque',
         severity: 'warning',
@@ -297,15 +375,32 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
     const omega = s[1] as number;
     const c = servoControl(p, t, s);
     const windingUp = c.saturated && Math.sign(c.ve) === Math.sign(c.demand);
+    const integral = p.ki > 0 && !windingUp ? c.ve : 0;
+    if (p.motor === 'ac') {
+      // No armature circuit: Ia stays at zero; Td = Kc·Vc − Kω·ω.
+      const k = acServoConstants(p.stallTorque, p.vMax, p.noLoadSpeed);
+      const torque = k.torquePerVolt * c.va - k.damping * omega;
+      return [0, (torque - p.friction * omega - p.loadTorque) / p.inertia, omega, integral];
+    }
     return [
       (c.va - p.ra * ia - p.kphi * omega) / p.la,
       (p.kphi * ia - p.friction * omega - p.loadTorque) / p.inertia,
       omega,
-      p.ki > 0 && !windingUp ? c.ve : 0,
+      integral,
     ];
   },
 
   fastestTimeConstant(p) {
+    if (p.motor === 'ac') {
+      const k = acServoConstants(p.stallTorque, p.vMax, p.noLoadSpeed);
+      const sensor = p.mode === 'position' ? p.positionGain : p.tachGain;
+      const loop = k.torquePerVolt * p.kp * sensor;
+      const mechanical = (p.friction + k.damping + (p.mode === 'speed' ? loop : 0)) / p.inertia;
+      const derivative = (k.torquePerVolt * p.kd * p.positionGain) / p.inertia;
+      const position = p.mode === 'position' ? Math.sqrt(loop / p.inertia) : 0;
+      const integralRate = Math.cbrt((k.torquePerVolt * p.ki * sensor) / p.inertia);
+      return 1 / Math.max(mechanical + derivative, position, integralRate, 1);
+    }
     const loopGain = p.mode === 'position' ? p.kd * p.positionGain : p.kp * p.tachGain;
     const electromechanical = Math.sqrt(
       (p.ra * p.friction + p.kphi * (p.kphi + loopGain)) / (p.la * p.inertia),
@@ -328,6 +423,8 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
     const r0 = resolverOutputs(theta, 1);
     const res = { sin: cleanResidue(r0.sin), cos: cleanResidue(r0.cos) };
     const error = pos ? c.ref - theta : c.ref - omega;
+    const ac = p.motor === 'ac';
+    const kAc = acServoConstants(p.stallTorque, p.vMax, p.noLoadSpeed);
     const raw: ServoOutputs = {
       reference: c.ref,
       position: theta,
@@ -344,9 +441,9 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
       driveSignal: c.ve,
       armatureVoltage: c.va,
       saturated: c.saturated ? 1 : 0,
-      armatureCurrent: ia,
-      torque: p.kphi * ia,
-      encoderCount: encoderCount(theta, p.encoderLines),
+      armatureCurrent: ac ? Number.NaN : ia,
+      torque: ac ? kAc.torquePerVolt * c.va - kAc.damping * omega : p.kphi * ia,
+      encoderCount: encoderCountDecoded(theta, p.encoderLines, p.encoderDecoding),
       encoderA: ch.a,
       encoderB: ch.b,
       encoderZ: ch.z,
@@ -354,6 +451,11 @@ export const servoMotorModel: SimModel<ServoParams, ServoOutputs> = {
       resolverCos: res.cos,
       resolverAngleDeg: radToDeg(resolverAngle(res.sin, res.cos)),
       resolverQuadrant: resolverQuadrant(res.sin, res.cos),
+      encoderResolutionDeg: radToDeg(encoderResolutionDecoded(p.encoderLines, p.encoderDecoding)),
+      resolverCount: resolverDigitalCount(theta, p.resolverBits),
+      resolverResolutionDeg: radToDeg(resolverDigitalResolution(p.resolverBits)),
+      measuredDeg: radToDeg(servoMeasuredAngle(p, theta)),
+      controlPhaseDeg: ac ? (c.va >= 0 ? 0 : 180) : Number.NaN,
     };
     // Settled values carry integration residue (e.g. 1e−14 V); show it as 0.
     const cleaned: Record<string, number> = {};

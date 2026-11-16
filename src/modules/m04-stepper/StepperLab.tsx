@@ -13,6 +13,7 @@ import {
   ActivitiesList,
   LabShell,
   OutcomesList,
+  PartsExplorer,
   REAL_TIME_PLAYBACK,
   RecordPanel,
   RunControls,
@@ -24,6 +25,8 @@ import { useSimulation } from '@/hooks';
 import { t } from '@/i18n';
 import {
   formatSignificant,
+  hybridRotorTeeth,
+  hybridStepsPerRev,
   MICROSTEP_OPTIONS,
   radPerSecToRpm,
   radToDeg,
@@ -87,6 +90,7 @@ function cellText(i: number, vr: boolean): string {
 export default function StepperLab() {
   const sim = useSimulation(stepperMotorModel, { timeScale: 1, recorderCapacity: 6000 });
   const lab = useLabRecords(M04_ID);
+  const [part, setPart] = useState<string | null>(null);
   const [playback, setPlayback] = useState(1);
   const [issues, setIssues] = useState<Issue[]>([]);
   const p = sim.params;
@@ -194,9 +198,16 @@ export default function StepperLab() {
             <div className="space-y-3">
               <figure>
                 <figcaption className="text-sm font-medium text-navy-800">{L.diagram}</figcaption>
-                <StepperDiagram params={p} outputs={out} />
+                <StepperDiagram params={p} outputs={out} highlight={part} />
                 {!vr ? <p className="text-xs text-navy-600">{L.diagramTwoPhase}</p> : null}
               </figure>
+              <PartsExplorer
+                title={L.partsTitle}
+                hint={L.partsHint}
+                parts={L.parts}
+                selected={part}
+                onSelect={setPart}
+              />
               <div
                 aria-label={L.phasesLit}
                 role="group"
@@ -283,16 +294,35 @@ export default function StepperLab() {
                   />
                 </>
               ) : (
-                <NumberControl
-                  label={L.stepsPerRev}
-                  value={p.stepsPerRev}
-                  min={lim.stepsPerRev.min}
-                  max={lim.stepsPerRev.max}
-                  step={4}
-                  unit="—"
-                  disabled={locked}
-                  onChange={(v) => set('stepsPerRev', v)}
-                />
+                <>
+                  <NumberControl
+                    label={L.stepsPerRev}
+                    value={p.stepsPerRev}
+                    min={lim.stepsPerRev.min}
+                    max={lim.stepsPerRev.max}
+                    step={4}
+                    unit="—"
+                    disabled={locked}
+                    onChange={(v) => set('stepsPerRev', v)}
+                  />
+                  {p.family === 'hybrid' ? (
+                    <>
+                      <NumberControl
+                        label={L.hybridTeeth}
+                        value={hybridRotorTeeth(p.stepsPerRev)}
+                        min={hybridRotorTeeth(lim.stepsPerRev.min)}
+                        max={hybridRotorTeeth(lim.stepsPerRev.max)}
+                        step={1}
+                        unit="—"
+                        disabled={locked}
+                        onChange={(v) => set('stepsPerRev', hybridStepsPerRev(v))}
+                      />
+                      <p className="text-sm text-navy-600" data-testid="hybrid-note">
+                        {L.hybridNote}
+                      </p>
+                    </>
+                  ) : null}
+                </>
               )}
               <SelectField<StepMode>
                 label={L.mode}

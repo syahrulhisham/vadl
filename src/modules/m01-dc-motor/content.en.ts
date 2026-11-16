@@ -224,3 +224,192 @@ export const M01_LABELS = {
     'Machine values are textbook-typical until the UTeM laboratory nameplate data are supplied.',
   openReport: 'Open laboratory report',
 };
+
+/** Workspace views (Milestone 11). */
+export const M01_VIEWS = {
+  legend: 'View',
+  circuit: 'Drive circuit',
+  principle: 'Operating principle',
+  scope: 'Drive waveforms',
+};
+
+/** Operating-principle sequence and construction explorer (Milestone 11). */
+export const M01_PRINCIPLE = {
+  title: 'How a DC motor turns: step by step',
+  note: 'Illustrative drawing: a two-pole machine seen from the commutator end, not to scale. The drawing is not a measurement. The "From the model now" line shows values from the running laboratory model.',
+  previous: 'Previous step',
+  next: 'Next step',
+  play: 'Play sequence',
+  pause: 'Pause sequence',
+  stepOf: 'Step {n} of {total}',
+  live: 'From the model now',
+  stagesLabel: 'Steps',
+  stages: [
+    {
+      id: 'field-current',
+      title: '1. Field current',
+      text: 'The field winding is connected to its supply, so a field current If flows: If = Vf/Rf. In a shunt motor the field is across the armature supply; in a separately excited motor it has its own supply.',
+    },
+    {
+      id: 'flux',
+      title: '2. Field flux',
+      text: 'If magnetises the poles. Flux crosses the air gap from the north pole, through the armature, to the south pole and returns through the yoke. The flux is fixed to the stator: it does not rotate.',
+    },
+    {
+      id: 'armature-current',
+      title: '3. Armature current',
+      text: 'Armature current Ia enters at the positive brush, passes through the commutator into the armature winding and leaves at the negative brush. Conductors under the north pole carry current into the page (×); those under the south pole carry it out of the page (•).',
+    },
+    {
+      id: 'force',
+      title: '4. Force on the conductors',
+      text: 'Each current-carrying conductor in the flux feels a force F = B·I·L (Fleming\u2019s left-hand rule). The two sides of a coil carry opposite currents under opposite poles, so the forces are equal and opposite: a force couple.',
+    },
+    {
+      id: 'torque',
+      title: '5. Torque',
+      text: 'The forces on all the conductors add up to a torque about the shaft: Td = Kv·If·Ia. The torque acts in one direction.',
+    },
+    {
+      id: 'rotation',
+      title: '6. Rotation',
+      text: 'The torque accelerates the armature: Td = J·dω/dt + B·ω + TL. The armature core, winding, commutator and shaft turn together; the yoke, poles, field winding and brushes stay still.',
+    },
+    {
+      id: 'commutation',
+      title: '7. Commutation',
+      text: 'As a coil passes the neutral axis between the poles, its commutator segments move from one brush to the other and the current in that coil reverses. Conductors under the north pole therefore always carry current into the page, so the torque never reverses.',
+    },
+    {
+      id: 'back-emf',
+      title: '8. Back-emf',
+      text: 'The turning conductors cut the flux and generate a back-emf Eg = Kv·If·ω that opposes the supply. The armature current falls to Ia = (Va − Eg)/Ra as the speed rises, until the torque balances the load.',
+    },
+  ],
+  partsTitle: 'Construction',
+  partsHint: 'Choose a part to highlight it in the drawing.',
+  parts: [
+    {
+      id: 'yoke',
+      label: 'Yoke (frame)',
+      text: 'The steel frame. It holds the poles and carries the flux back from one pole to the other.',
+    },
+    {
+      id: 'poles',
+      label: 'Poles',
+      text: 'Iron cores with curved shoes that spread the flux evenly over the air gap. One is north (N), the other south (S).',
+    },
+    {
+      id: 'field',
+      label: 'Field winding',
+      text: 'Coils around the poles. The field current If in them produces the flux.',
+    },
+    {
+      id: 'core',
+      label: 'Armature core',
+      text: 'A laminated iron cylinder on the shaft. Its slots hold the armature winding; laminations reduce eddy-current loss.',
+    },
+    {
+      id: 'winding',
+      label: 'Armature winding',
+      text: 'Conductors in the slots, connected to the commutator. They carry the armature current Ia and produce the torque.',
+    },
+    {
+      id: 'commutator',
+      label: 'Commutator',
+      text: 'Copper segments on the shaft, insulated from each other. With the brushes it reverses the current in each coil as it passes the neutral axis.',
+    },
+    {
+      id: 'brushes',
+      label: 'Brushes',
+      text: 'Carbon blocks pressed on the commutator by springs. They connect the turning armature to the stationary supply terminals.',
+    },
+    {
+      id: 'shaft',
+      label: 'Shaft',
+      text: 'Carries the armature and delivers the torque to the load.',
+    },
+    {
+      id: 'gap',
+      label: 'Air gap',
+      text: 'The small space between the pole shoes and the armature. The flux crosses it; a smaller gap needs less field current.',
+    },
+  ],
+};
+
+/** Drive waveform view (Milestone 11 extension). */
+export const M01_SCOPE = {
+  title: 'Armature voltage and current over one supply cycle',
+  note: 'Extension: the course gives the average voltages. This view assumes the speed, and so the back-emf, is constant over the supply cycle, with ideal switches. It uses the supply voltage, Ra + Rst and La of this laboratory.',
+  topology: 'Armature converter',
+  topologies: {
+    'half-wave': 'Half-wave (1 SCR, freewheeling diode)',
+    semi: 'Semi-converter (2 SCRs, 2 diodes)',
+    full: 'Full converter (4 SCRs)',
+    'dual-noncirculating': 'Dual converter, non-circulating current',
+    'dual-circulating': 'Dual converter, circulating current',
+  },
+  alpha: 'Firing angle α (α1 for a dual converter)',
+  frequency: 'Supply frequency',
+  emfSource: 'Back-emf Eg',
+  emfSources: { lab: 'From the laboratory model (present speed)', manual: 'Set by hand' },
+  manualEmf: 'Back-emf Eg (negative: the load drives the motor in reverse)',
+  activeConverter: 'Converter enabled',
+  activeConverters: { '1': 'Converter 1 (forward current)', '2': 'Converter 2 (reverse current)' },
+  reactor: 'Circulating-current reactor Lr',
+  cursor: 'Cursor angle',
+  continuous: 'Continuous conduction: the armature current never falls to zero.',
+  discontinuous:
+    'Discontinuous conduction: the current falls to zero before the next firing, and the armature voltage equals Eg while no device conducts.',
+  notConverged:
+    'No steady state: with these values the current does not settle to a repeating waveform.',
+  quadrants: {
+    '0': 'No torque or no speed: not in a quadrant.',
+    '1': 'Quadrant I: forward motoring (speed +, torque +).',
+    '2': 'Quadrant II: forward braking (speed +, torque −).',
+    '3': 'Quadrant III: reverse motoring (speed −, torque −).',
+    '4': 'Quadrant IV: reverse braking (speed −, torque +).',
+  },
+  regenerating: 'Average power is negative: energy flows back to the supply (regeneration).',
+  voltageTitle: 'Supply and armature voltage',
+  voltageDesc: 'Supply voltage vs and armature voltage va against supply angle.',
+  currentTitle: 'Armature current',
+  currentDesc:
+    'Armature current ia (and the circulating current of a dual converter) against supply angle.',
+  angleAxis: 'Supply angle θ (°)',
+  series: {
+    supply: 'Supply vs',
+    voltage: 'Armature va',
+    current: 'Armature ia',
+    circulating: 'Circulating ir',
+  },
+  conductionTitle: 'Conduction and gate pulses',
+  conductionDesc: 'Bars show which devices conduct; triangles mark the firing instants.',
+  paths: {
+    none: 'No device',
+    T1: 'T1',
+    freewheel: 'Freewheeling',
+    'T1+D2': 'T1 + D2',
+    'T2+D1': 'T2 + D1',
+    'T1+T2': 'T1 + T2',
+    'T3+T4': 'T3 + T4',
+    'C2:T1+T2': 'Converter 2: T1 + T2',
+    'C2:T3+T4': 'Converter 2: T3 + T4',
+    both: 'Both converters',
+  },
+  atCursor: 'Conducting at the cursor',
+  meters: {
+    averageVoltage: 'Average armature voltage',
+    averageCurrent: 'Average armature current',
+    rmsCurrent: 'RMS armature current',
+    minCurrent: 'Minimum armature current',
+    maxCurrent: 'Maximum armature current',
+    conductionAngle: 'Conduction angle',
+    extinctionAngle: 'Extinction angle',
+    power: 'Average converter power',
+    peakCirculating: 'Peak circulating current',
+    cursorVoltage: 'Armature voltage at cursor',
+    cursorCurrent: 'Armature current at cursor',
+    backEmf: 'Back-emf used',
+  },
+};

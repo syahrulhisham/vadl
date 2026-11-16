@@ -55,7 +55,10 @@ As listed in `servoMotorModel.assumptions` (shown on screen and in the report).
 - Ideal potentiometer and tachometer; the encoder option quantises the angle only.
 - No backlash, Coulomb friction or compliance; constant load torque.
 - Continuous-time controller; amplifier without its own dynamics.
-- Typical assumed motor values (D4). AC two-phase servos are described in the theory only.
+- Typical assumed motor values (D4).
+- AC two-phase servo option (Milestone 11): the linearised textbook model Td = Kc·Vc − Kω·ω only;
+  no winding dynamics, single-phasing or curved torque–speed characteristic.
+- Encoder and resolver options quantise the angle only: no noise, edge jitter or converter lag.
 
 ## 6. Parameters and valid ranges
 
@@ -87,19 +90,23 @@ steady-state error are computed from the recorded trace by `responseMetrics`.
 
 ## 9. Verification
 
-| Case      | Expected                                         | Tolerance    | Test file                             |
-| --------- | ------------------------------------------------ | ------------ | ------------------------------------- |
-| RC-M05-01 | 11 counts; 2000/500 counts; 0.18°; resolver 210° | exact / 1e−6 | `tests/reference/servo-motor.test.ts` |
-| RC-M05-02 | 0.2 rad, 0.5 A, 1 V; PI → 0                      | 1e−4         | same                                  |
-| RC-M05-03 | Mp 15.526 %, tp 0.073045 s                       | 0.5 %        | same                                  |
-| RC-M05-04 | 90.7441 rad/s, 9.2559 V, saturation at start     | 1e−4         | same                                  |
-| RC-M05-05 | rise 0.21972 s, settling 0.39120 s               | 1 ms         | same                                  |
+| Case      | Expected                                                             | Tolerance    | Test file                                  |
+| --------- | -------------------------------------------------------------------- | ------------ | ------------------------------------------ |
+| RC-M05-01 | 11 counts; 2000/500 counts; 0.18°; resolver 210°                     | exact / 1e−6 | `tests/reference/servo-motor.test.ts`      |
+| RC-M05-02 | 0.2 rad, 0.5 A, 1 V; PI → 0                                          | 1e−4         | same                                       |
+| RC-M05-03 | Mp 15.526 %, tp 0.073045 s                                           | 0.5 %        | same                                       |
+| RC-M05-04 | 90.7441 rad/s, 9.2559 V, saturation at start                         | 1e−4         | same                                       |
+| RC-M05-05 | rise 0.21972 s, settling 0.39120 s                                   | 1 ms         | same                                       |
+| RC-M05-06 | X1/X2/X4: 79, 159, 318 counts; 0.72°, 0.36°, 0.18°                   | exact / 1e−9 | `tests/reference/servo-sensors-ac.test.ts` |
+| RC-M05-07 | RDC 12-bit: 651, 57.216797°; 14-bit: 2607                            | exact / 1e−6 | same                                       |
+| RC-M05-08 | AC servo: Kc 0.005, ωn 15.8114, ζ 0.158114, e 0.4 rad, 90.9091 rad/s | 1e−4         | same                                       |
 
 Also checked (unit tests): ramp following error 0.0408 rad = ω·(B + kφ²/Ra)/K; anti-windup;
 derivative on measurement.
 
 ## 10. Change log
 
-| Date        | Change        | By          |
-| ----------- | ------------- | ----------- |
-| 15 Nov 2026 | First version | Milestone 6 |
+| Date        | Change                                                                                                                 | By           |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------- | ------------ |
+| 15 Nov 2026 | First version                                                                                                          | Milestone 6  |
+| 16 Nov 2026 | Encoder decoding X1/X2/X4, resolver with n-bit converter as feedback, linearised AC two-phase servo motor (extensions) | Milestone 11 |

@@ -40,12 +40,16 @@ import {
   type MotorType,
   type SupplyMode,
 } from '@/sim-core';
-import { M01_ACTIVITIES, M01_LABELS as L, M01_OUTCOMES, M01_THEORY } from './content.en';
+import { M01_ACTIVITIES, M01_LABELS as L, M01_OUTCOMES, M01_THEORY, M01_VIEWS } from './content.en';
 import { DcMotorDiagram } from './DcMotorDiagram';
+import { DriveScope } from './DriveScope';
+import { OperatingPrinciple } from './OperatingPrinciple';
 import { M01_QUESTIONS } from './questions';
 import { M01_RESULT_COLUMNS, numericParameters } from './results';
 
 export const M01_ID = 'm01-dc-motor';
+type WorkspaceView = 'circuit' | 'principle' | 'scope';
+const VIEWS: readonly WorkspaceView[] = ['circuit', 'principle', 'scope'];
 const WINDOW_SECONDS = 5;
 const PRESETS: readonly { name: DcPresetName; label: string }[] = [
   { name: 'separatelyExcited', label: L.presetSeparatelyExcited },
@@ -74,6 +78,7 @@ export default function DcMotorLab() {
   const [playback, setPlayback] = useState(1);
   const [issues, setIssues] = useState<Issue[]>([]);
   const lab = useLabRecords(M01_ID);
+  const [view, setView] = useState<WorkspaceView>('circuit');
 
   const p = sim.params;
   const out = sim.outputs;
@@ -174,7 +179,28 @@ export default function DcMotorLab() {
 
           workspace: (
             <div className="space-y-3">
-              <DcMotorDiagram params={p} outputs={out} running={sim.status === 'running'} />
+              <fieldset>
+                <legend className="text-sm font-medium text-navy-800">{M01_VIEWS.legend}</legend>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {VIEWS.map((v) => (
+                    <Button
+                      key={v}
+                      variant={view === v ? 'primary' : 'secondary'}
+                      aria-pressed={view === v}
+                      onClick={() => setView(v)}
+                    >
+                      {M01_VIEWS[v]}
+                    </Button>
+                  ))}
+                </div>
+              </fieldset>
+              {view === 'circuit' ? (
+                <DcMotorDiagram params={p} outputs={out} running={sim.status === 'running'} />
+              ) : view === 'principle' ? (
+                <OperatingPrinciple outputs={out} />
+              ) : (
+                <DriveScope params={p} outputs={out} />
+              )}
               <RunControls
                 status={sim.status}
                 lagging={sim.lagging}

@@ -8,6 +8,7 @@ export * from './converters';
 export * from './dcMachines';
 export * from './inductionMachine';
 export * from './waveforms';
+export * from './driveWaveforms';
 export * from './servo';
 export * from './stepper';
 export * from './transmission';

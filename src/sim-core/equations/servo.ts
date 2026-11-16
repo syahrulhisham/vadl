@@ -26,6 +26,105 @@ export function encoderAngle(theta: number, lines: number): number {
   return encoderCount(theta, lines) * encoderResolution(lines);
 }
 
+/** Quadrature decoding: counts per encoder line (X1, X2 or X4). */
+export type EncoderDecoding = 1 | 2 | 4;
+
+/**
+ * Encoder count with X1, X2 or X4 decoding: count = ⌊m·L·θ/2π⌋, m counts per
+ * line (X1: one edge of A; X2: both edges of A; X4: every edge of A and B, the
+ * course's "4 counts per line"). Signed. θ [rad], L lines per revolution.
+ * Assumes ideal edges (no jitter). Extension of LN Ch2 Part II p25.
+ * Verification: RC-M05-06.
+ */
+export function encoderCountDecoded(
+  theta: number,
+  lines: number,
+  decoding: EncoderDecoding,
+): number {
+  return Math.floor((decoding * lines * theta) / TWO_PI + EPS);
+}
+
+/** Angle of one decoded count, 2π/(m·L) [rad]. Verification: RC-M05-06. */
+export function encoderResolutionDecoded(lines: number, decoding: EncoderDecoding): number {
+  return TWO_PI / (decoding * lines);
+}
+
+/** Angle reported by the decoder: count × resolution [rad]. Verification: RC-M05-06. */
+export function encoderAngleDecoded(
+  theta: number,
+  lines: number,
+  decoding: EncoderDecoding,
+): number {
+  return encoderCountDecoded(theta, lines, decoding) * encoderResolutionDecoded(lines, decoding);
+}
+
+/**
+ * Resolver-to-digital converter (RDC) with n bits: count = ⌊θ·2ⁿ/2π⌋, signed and
+ * counted over several turns (a tracking converter with a turn counter).
+ * θ [rad]. Assumes an ideal converter (no tracking lag or noise).
+ * Verification: RC-M05-07.
+ */
+export function resolverDigitalCount(theta: number, bits: number): number {
+  return Math.floor((theta * 2 ** bits) / TWO_PI + EPS);
+}
+
+/** Angle of one RDC count, 2π/2ⁿ [rad]. Verification: RC-M05-07. */
+export function resolverDigitalResolution(bits: number): number {
+  return TWO_PI / 2 ** bits;
+}
+
+/** Angle reported by the RDC: count × resolution [rad]. Verification: RC-M05-07. */
+export function resolverDigitalAngle(theta: number, bits: number): number {
+  return resolverDigitalCount(theta, bits) * resolverDigitalResolution(bits);
+}
+
+/**
+ * Linearised AC two-phase servo motor (extension; LN Ch2 Part II describes the
+ * motor qualitatively): Td = Kc·Vc − Kω·ω, with Kc = Tst/Vmax [N·m/V] and
+ * Kω = Tst/ω0 [N·m·s/rad]. Tst: stall torque at the rated control voltage Vmax
+ * [N·m]; ω0: no-load speed at Vmax [rad/s]. A negative Vc is a control voltage
+ * 180° out of phase (reverse torque). Assumes straight, parallel torque–speed
+ * lines and a fixed reference-winding voltage. Verification: RC-M05-08.
+ */
+export function acServoConstants(stallTorque: number, vMax: number, noLoadSpeed: number) {
+  return { torquePerVolt: stallTorque / vMax, damping: stallTorque / noLoadSpeed };
+}
+
+/** Torque of the linearised AC servo motor [N·m]. Verification: RC-M05-08. */
+export function acServoTorque(
+  controlVoltage: number,
+  omega: number,
+  stallTorque: number,
+  vMax: number,
+  noLoadSpeed: number,
+): number {
+  const k = acServoConstants(stallTorque, vMax, noLoadSpeed);
+  return k.torquePerVolt * controlVoltage - k.damping * omega;
+}
+
+/**
+ * Proportional position servo with the AC motor:
+ * J·θ″ + (B + Kω)·θ′ + K·θ = K·θref, K = Kc·Kp·Kfb. Returns ωn = √(K/J) and
+ * ζ = (B + Kω)/(2√(K·J)). Verification: RC-M05-08.
+ */
+export function acPositionServoSecondOrder(
+  kp: number,
+  kfb: number,
+  stallTorque: number,
+  vMax: number,
+  noLoadSpeed: number,
+  inertia: number,
+  friction: number,
+) {
+  const c = acServoConstants(stallTorque, vMax, noLoadSpeed);
+  const k = c.torquePerVolt * kp * kfb;
+  return {
+    stiffness: k,
+    naturalFrequency: Math.sqrt(k / inertia),
+    dampingRatio: (friction + c.damping) / (2 * Math.sqrt(k * inertia)),
+  };
+}
+
 /**
  * Channel levels (0 or 1) at shaft angle θ. A is high for the first half of each
  * line period; B is the same signal 90° (electrical) later, so A leads B when

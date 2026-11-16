@@ -102,6 +102,7 @@ reversal with negative Va.
 
 ## 10. Change log
 
-| Date        | Change        | By     |
-| ----------- | ------------- | ------ |
-| 15 Nov 2026 | First version | Claude |
+| Date        | Change                                                                                                                 | By           |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------- | ------------ |
+| 15 Nov 2026 | First version                                                                                                          | Claude       |
+| 16 Nov 2026 | Added the drive-waveform view as a separate computed model (`m01-drive-waveforms.md`); this dynamic model is unchanged | Milestone 11 |

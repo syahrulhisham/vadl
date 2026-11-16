@@ -16,6 +16,8 @@ export interface TimeTraceChartProps {
   readonly rows: readonly ChartRow[];
   readonly series: readonly SeriesSpec[];
   readonly timeUnit: string;
+  /** X-axis title when the axis is not time, e.g. "Supply angle (°)". Default "Time (unit)". */
+  readonly xLabel?: string;
   readonly yLabel: string;
   /** Fixed x-axis end so the axis does not rescale while a run progresses. */
   readonly xMax?: number;
@@ -42,6 +44,7 @@ export function TimeTraceChart({
   rows,
   series,
   timeUnit,
+  xLabel,
   yLabel,
   xMax,
   xMin = 0,
@@ -60,7 +63,7 @@ export function TimeTraceChart({
           stroke={colors.navy[600]}
           tickFormatter={formatTick}
           label={{
-            value: `Time (${timeUnit})`,
+            value: xLabel ?? `Time (${timeUnit})`,
             position: 'insideBottom',
             offset: -12,
             fill: colors.navy[700],

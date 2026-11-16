@@ -24,6 +24,27 @@ export function vrPhaseCount(statorTeeth: number, rotorTeeth: number): number {
   return statorTeeth / (statorTeeth - rotorTeeth);
 }
 
+/**
+ * Full-step angle of a two-phase hybrid motor from its rotor teeth:
+ * Sa = 360°/(4·Nr) [rad]. One tooth pitch (360°/Nr) is covered in four full
+ * steps. Nr: rotor teeth. Applies to two-phase hybrids only; the VR formula
+ * (stepAngleFromTeeth) does not apply to a hybrid (L-15). Extension: the course
+ * gives hybrid motors by their step angle. Verification: RC-M04-06.
+ */
+export function hybridStepAngle(rotorTeeth: number): number {
+  return TWO_PI / (4 * rotorTeeth);
+}
+
+/** Full steps per revolution of a two-phase hybrid, 4·Nr. Verification: RC-M04-06. */
+export function hybridStepsPerRev(rotorTeeth: number): number {
+  return 4 * rotorTeeth;
+}
+
+/** Rotor teeth of a two-phase hybrid with the given full steps per revolution, steps/4. */
+export function hybridRotorTeeth(stepsPerRev: number): number {
+  return stepsPerRev / 4;
+}
+
 /** Step angle from steps (pulses) per revolution, Sa = 360°/PPR [rad]. */
 export function stepAngleFromSteps(stepsPerRev: number): number {
   return TWO_PI / stepsPerRev;

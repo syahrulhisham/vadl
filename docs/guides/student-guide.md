@@ -40,6 +40,16 @@ workspace (diagram and graphs), measurements, and activities with questions.
 5. Work through the **activities** and answer the **questions**. Calculation questions use your
    generated numbers; the assessment centre draws new numbers each time it creates a set.
 
+### Extra views in some laboratories
+
+- **DC motor drives:** the workspace has three views. _Operating principle_ walks through how the
+  motor turns in eight steps, with a construction explorer. _Drive waveforms_ shows the armature
+  voltage and current of a converter over one supply cycle and which devices conduct.
+- **Stepper and servo motors:** choose a part under the diagram to highlight it and read what it
+  does. The servo laboratory also shows the encoder and resolver with their decoders.
+- The operating-principle drawing is an illustration, not a measurement. Record readings from the
+  measurement panels.
+
 ## 4. Questions and marking
 
 - Multiple-choice, troubleshooting, sequence, table and calculation questions are marked at once.

@@ -154,6 +154,34 @@ export const M04_LABELS = {
   statorTeeth: 'Stator poles Ns',
   rotorTeeth: 'Rotor teeth Nr',
   stepsPerRev: 'Full steps per revolution',
+  partsTitle: 'Construction',
+  partsHint: 'Choose a part to highlight it in the diagram.',
+  parts: [
+    {
+      id: 'stator',
+      label: 'Stator frame',
+      text: 'The stationary iron frame. It carries the stator poles and completes the magnetic path.',
+    },
+    {
+      id: 'poles',
+      label: 'Stator poles and windings',
+      text: 'Each pole carries a coil. Opposite poles belong to the same phase; energising a phase magnetises its poles. A filled pole is energised.',
+    },
+    {
+      id: 'rotor',
+      label: 'Rotor',
+      text: 'The rotating part on the shaft. In a VR motor it is toothed soft iron; in PM and hybrid motors it is magnetised. Its teeth line up with the energised poles.',
+    },
+    {
+      id: 'marker',
+      label: 'Rotor marker',
+      text: 'The dark tooth and line show the rotor position, so each step can be followed.',
+    },
+    { id: 'shaft', label: 'Shaft', text: 'Delivers the stepped motion to the load.' },
+  ],
+  hybridTeeth: 'Hybrid rotor teeth Nr',
+  hybridNote:
+    'Two-phase hybrid (extension): Sa = 360°/(4·Nr), so full steps per revolution = 4·Nr. The course formula Sa = (Ns − Nr)/(Ns·Nr) × 360° is for variable-reluctance motors and does not apply to a hybrid.',
   mode: 'Drive mode',
   modes: {
     wave: 'Wave (full step, one phase on)',

@@ -100,12 +100,14 @@ one tenth of a pulse period late. A loaded rotor starts at its load angle asin(T
 | RC-M04-03 | Lab sequence tables, CW and CCW; bipolar sequences    | exact     | same                                    |
 | RC-M04-04 | −0.8 N·m/rad; −7.5°; 30° and 26.3806°                 | 0.05°     | same                                    |
 | RC-M04-05 | 0.1125°, 3200 PPR, 60 rpm; 0.92388/0.38268            | 1e−5      | same                                    |
+| RC-M04-06 | Hybrid: Nr 50 → 1.8°, 200 steps; Nr 100 → 0.9°        | 1e−9      | same                                    |
 
 Invariant (unit tests): every step of every mode is a stable equilibrium of the torque law at
 the detent angle of equation (5).
 
 ## 10. Change log
 
-| Date        | Change        | By          |
-| ----------- | ------------- | ----------- |
-| 15 Nov 2026 | First version | Milestone 6 |
+| Date        | Change                                                                           | By           |
+| ----------- | -------------------------------------------------------------------------------- | ------------ |
+| 15 Nov 2026 | First version                                                                    | Milestone 6  |
+| 16 Nov 2026 | Two-phase hybrid step angle from rotor teeth, Sa = 360°/(4·Nr) (extension, L-15) | Milestone 11 |

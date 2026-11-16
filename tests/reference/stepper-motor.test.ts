@@ -1,9 +1,12 @@
 /**
- * RC-M04-01 to RC-M04-05. Literals from docs/reference-cases/stepper-motor.md.
+ * RC-M04-01 to RC-M04-06. Literals from docs/reference-cases/stepper-motor.md.
  */
 import { describe, expect, it } from 'vitest';
 import {
   degToRad,
+  hybridRotorTeeth,
+  hybridStepAngle,
+  hybridStepsPerRev,
   phaseCurrents,
   pulseRateForSpeed,
   pulsesForAngle,
@@ -202,5 +205,33 @@ describe('RC-M04-05 microstepping (extension)', () => {
     const [ia, ib] = phaseCurrents('hybrid', 2, 'micro', 4, 16);
     rel(ia as number, 0.92388, 1e-5);
     rel(ib as number, 0.38268, 1e-5);
+  });
+});
+
+describe('RC-M04-06 two-phase hybrid step angle from rotor teeth (Milestone 11)', () => {
+  it('Nr 50 → 1.8° and 200 steps/rev; Nr 100 → 0.9° and 400 steps/rev', () => {
+    expect(radToDeg(hybridStepAngle(50))).toBeCloseTo(1.8, 9);
+    expect(hybridStepsPerRev(50)).toBe(200);
+    expect(radToDeg(hybridStepAngle(100))).toBeCloseTo(0.9, 9);
+    expect(hybridStepsPerRev(100)).toBe(400);
+  });
+  it('a 200 steps/rev hybrid has 50 rotor teeth; the model reports it', () => {
+    expect(hybridRotorTeeth(200)).toBe(50);
+    const o = stepperMotorModel.outputs(
+      0,
+      stepperMotorModel.init(STEPPER_PRESETS.hybrid),
+      STEPPER_PRESETS.hybrid,
+    );
+    expect(o.hybridRotorTeeth).toBe(50);
+    expect(radToDeg(o.fullStepAngle)).toBeCloseTo(1.8, 9);
+    const vr = stepperMotorModel.outputs(
+      0,
+      stepperMotorModel.init(STEPPER_PRESETS.vr64),
+      STEPPER_PRESETS.vr64,
+    );
+    expect(Number.isNaN(vr.hybridRotorTeeth)).toBe(true);
+  });
+  it('the VR formula does not apply: 8 poles and 50 teeth would give 37.8°', () => {
+    expect(Math.abs(radToDeg(stepAngleFromTeeth(8, 50)))).toBeCloseTo(37.8, 9);
   });
 });

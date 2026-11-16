@@ -289,7 +289,25 @@ compliance; outside the ten milestones unless added).
   build on Ubuntu. It deploys nothing.
 - **Guides:** `docs/guides/` (student, lecturer, maintainer, deployment).
 
-## 17. Folder structure
+## 17. Concepts from the owner's earlier labs (Milestone 11)
+
+- **Drive waveforms** (`src/sim-core/equations/driveWaveforms.ts`, pure): periodic steady state of
+  a single-phase converter with an R–L–E load over one supply cycle (half-wave, semi, full, dual
+  with and without circulating current), with conduction paths, gate instants and quadrant.
+  `DriveScope.tsx` (M01) chooses the inputs and draws the result; it computes nothing.
+- **Operating principle** (`OperatingPrinciple.tsx`, M01): an eight-step illustrative drawing. It
+  is labelled as not a measurement; the values beside it are model outputs.
+- **Parts explorer** (`src/features/lab-shell/PartsExplorer.tsx`): shared by M01, M04 and M05;
+  each diagram takes a `highlight` part id.
+- **Servo** (`equations/servo.ts`, `models/servoMotor.ts`): X1/X2/X4 decoding, resolver with an
+  n-bit converter as a feedback option, and a linearised AC two-phase motor option (the Ia state
+  stays at zero). `SensorChain.tsx` draws both sensors with their decoders.
+- **Stepper** (`equations/stepper.ts`): two-phase hybrid step angle from rotor teeth.
+- M01 has three workspace views (circuit, operating principle, drive waveforms); the default view
+  and its tests are unchanged. Named groups, not sections, keep every laboratory at seven regions.
+- `TimeTraceChart` takes an optional `xLabel` for axes that are not time.
+
+## 18. Folder structure
 
 ```text
 src/

@@ -10,6 +10,7 @@ export {
   TheoryBlock,
   type RunControlsProps,
 } from './LabParts';
+export { PartsExplorer, type ExplorerPart } from './PartsExplorer';
 export { REAL_TIME_PLAYBACK, selectClass } from './labConstants';
 export { useLabRecords } from './useLabRecords';
 export type { ActivityContent, LabOutcome } from './labContent';

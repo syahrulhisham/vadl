@@ -21,10 +21,17 @@ function polar(r: number, deg: number) {
 export function StepperDiagram({
   params: p,
   outputs: o,
+  highlight = null,
 }: {
   readonly params: StepperParams;
   readonly outputs: StepperOutputs;
+  /** Part chosen in the construction explorer: stator, poles, rotor, marker or shaft. */
+  readonly highlight?: string | null;
 }) {
+  const mark = (id: string, stroke: string, width: number) =>
+    highlight === id
+      ? { stroke: colors.status.danger, strokeWidth: width + 2.5 }
+      : { stroke, strokeWidth: width };
   const vr = p.family === 'vr';
   const phases = o.phases;
   const currents = phaseCurrentsOf(o, phases);
@@ -61,14 +68,15 @@ export function StepperDiagram({
       role="img"
       aria-label={desc}
       data-testid="stepper-diagram"
+      data-highlight={highlight ?? ''}
     >
       <circle
         cx={CX}
         cy={CY}
         r={140}
         fill={colors.lightblue[50]}
-        stroke={colors.navy[800]}
-        strokeWidth={3}
+        {...mark('stator', colors.navy[800], 3)}
+        data-part="stator"
       />
       <circle
         cx={CX}
@@ -88,8 +96,7 @@ export function StepperDiagram({
             rx={3}
             fill={pole.level > 0 ? colors.lightblue[400] : colors.white}
             fillOpacity={pole.level > 0 ? 0.35 + 0.65 * pole.level : 1}
-            stroke={colors.navy[800]}
-            strokeWidth={2}
+            {...mark('poles', colors.navy[800], 2)}
             data-energised={pole.level > 0 ? 'true' : 'false'}
           />
         </g>
@@ -111,8 +118,7 @@ export function StepperDiagram({
           cy={CY}
           r={40}
           fill={colors.navy[100]}
-          stroke={colors.navy[700]}
-          strokeWidth={2}
+          {...mark('rotor', colors.navy[700], 2)}
         />
         {Array.from({ length: rotorTeeth }, (_, i) => (
           <rect
@@ -123,13 +129,18 @@ export function StepperDiagram({
             height={22}
             transform={`rotate(${(i * 360) / rotorTeeth} ${CX} ${CY})`}
             fill={i === 0 ? colors.navy[500] : colors.navy[200]}
-            stroke={colors.navy[700]}
-            strokeWidth={1}
+            {...mark(i === 0 ? 'marker' : 'rotor', colors.navy[700], 1)}
           />
         ))}
         <line x1={CX} y1={CY} x2={CX} y2={CY - 36} stroke={colors.navy[900]} strokeWidth={3} />
       </g>
-      <circle cx={CX} cy={CY} r={4} fill={colors.navy[900]} />
+      <circle
+        cx={CX}
+        cy={CY}
+        r={highlight === 'shaft' ? 8 : 4}
+        fill={colors.navy[900]}
+        {...mark('shaft', colors.navy[900], 0)}
+      />
       <text x={8} y={292} fontSize="12" fill={colors.navy[700]} fontFamily="system-ui, sans-serif">
         θ = {fmt(theta)}°
       </text>

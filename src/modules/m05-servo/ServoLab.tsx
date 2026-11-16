@@ -6,6 +6,7 @@ import {
   ActivitiesList,
   LabShell,
   OutcomesList,
+  PartsExplorer,
   REAL_TIME_PLAYBACK,
   RecordPanel,
   RunControls,
@@ -25,8 +26,10 @@ import {
   SERVO_PRESETS,
   servoMotorModel,
   type Issue,
+  type EncoderDecoding,
   type ServoFeedback,
   type ServoMode,
+  type ServoMotorKind,
   type ServoParams,
   type ServoPresetName,
   type ServoReference,
@@ -34,6 +37,7 @@ import {
 import { M05_ACTIVITIES, M05_LABELS as L, M05_OUTCOMES, M05_THEORY } from './content.en';
 import { M05_QUESTIONS } from './questions';
 import { M05_RESULT_COLUMNS, numericParameters } from './results';
+import { SensorChain } from './SensorChain';
 import { ServoDial, ServoDiagram } from './ServoDiagram';
 
 export const M05_ID = 'm05-servo';
@@ -44,6 +48,7 @@ const PRESETS: readonly ServoPresetName[] = [
   'positionPi',
   'tracking',
   'speed',
+  'acPosition',
 ];
 const lim = SERVO_LIMITS;
 
@@ -55,6 +60,7 @@ export default function ServoLab() {
     recorderCapacity: 10_000,
   });
   const lab = useLabRecords(M05_ID);
+  const [part, setPart] = useState<string | null>(null);
   const [playback, setPlayback] = useState(1);
   const [issues, setIssues] = useState<Issue[]>([]);
   const p = sim.params;
@@ -73,8 +79,10 @@ export default function ServoLab() {
     apply({ ...p, [key]: value }, key);
   }
   function setMode(mode: ServoMode) {
-    apply(mode === 'position' ? SERVO_PRESETS.position : SERVO_PRESETS.speed);
+    const base = mode === 'position' ? SERVO_PRESETS.position : SERVO_PRESETS.speed;
+    apply({ ...base, motor: p.motor, stallTorque: p.stallTorque, noLoadSpeed: p.noLoadSpeed });
   }
+  const ac = p.motor === 'ac';
   function changePlayback(v: number) {
     setPlayback(v);
     sim.setTimeScale(v);
@@ -166,8 +174,15 @@ export default function ServoLab() {
             <div className="space-y-3">
               <figure>
                 <figcaption className="text-sm font-medium text-navy-800">{L.diagram}</figcaption>
-                <ServoDiagram params={p} outputs={out} />
+                <ServoDiagram params={p} outputs={out} highlight={part} />
               </figure>
+              <PartsExplorer
+                title={L.partsTitle}
+                hint={L.partsHint}
+                parts={L.parts}
+                selected={part}
+                onSelect={setPart}
+              />
               <div className="flex flex-wrap items-center gap-4">
                 <figure className="flex items-center gap-2">
                   <ServoDial outputs={out} position={pos} />
@@ -198,6 +213,14 @@ export default function ServoLab() {
                   {L.saturated}
                 </p>
               ) : null}
+              {ac ? <p className="text-sm text-navy-700">{L.acNote}</p> : null}
+              <figure>
+                <figcaption className="text-sm font-medium text-navy-800">
+                  {L.chain.title}
+                </figcaption>
+                <SensorChain params={p} outputs={out} />
+                <p className="text-xs text-navy-600">{L.chain.caption}</p>
+              </figure>
               <RunControls
                 status={sim.status}
                 lagging={sim.lagging}
@@ -231,6 +254,16 @@ export default function ServoLab() {
                   ))}
                 </div>
               </fieldset>
+              <SelectField<ServoMotorKind>
+                label={L.motorKind}
+                value={p.motor}
+                disabled={locked}
+                options={(['dc', 'ac'] as const).map((m) => ({
+                  value: m,
+                  label: L.motorKinds[m],
+                }))}
+                onChange={(v) => set('motor', v)}
+              />
               <SelectField<ServoMode>
                 label={L.mode}
                 value={p.mode}
@@ -334,7 +367,7 @@ export default function ServoLab() {
                 <SelectField<ServoFeedback>
                   label={L.feedback}
                   value={p.feedback}
-                  options={(['potentiometer', 'encoder'] as const).map((f) => ({
+                  options={(['potentiometer', 'encoder', 'resolver'] as const).map((f) => ({
                     value: f,
                     label: L.feedbacks[f],
                   }))}
@@ -349,6 +382,24 @@ export default function ServoLab() {
                 step={1}
                 unit="lines"
                 onChange={(v) => set('encoderLines', v)}
+              />
+              <SelectField<'1' | '2' | '4'>
+                label={L.encoderDecoding}
+                value={String(p.encoderDecoding) as '1' | '2' | '4'}
+                options={(['1', '2', '4'] as const).map((d) => ({
+                  value: d,
+                  label: L.decodings[d],
+                }))}
+                onChange={(v) => set('encoderDecoding', Number(v) as EncoderDecoding)}
+              />
+              <NumberControl
+                label={L.resolverBits}
+                value={p.resolverBits}
+                min={lim.resolverBits.min}
+                max={lim.resolverBits.max}
+                step={1}
+                unit="bits"
+                onChange={(v) => set('resolverBits', v)}
               />
 
               <details className="rounded-md border border-navy-100 p-3">
@@ -365,6 +416,8 @@ export default function ServoLab() {
                       ['friction', L.friction, 0.00001, 'N·m·s/rad'],
                       ['positionGain', L.positionGain, 0.1, 'V/rad'],
                       ['tachGain', L.tachGain, 0.01, 'V·s/rad'],
+                      ['stallTorque', L.stallTorque, 0.01, 'N·m'],
+                      ['noLoadSpeed', L.noLoadSpeed, 10, 'rad/s'],
                     ] as const
                   ).map(([key, label, step, unit]) => (
                     <NumberControl
@@ -508,9 +561,37 @@ export default function ServoLab() {
                   value={out.resolverQuadrant}
                   unit=""
                 />
+                <MeasurementDisplay
+                  label={L.measurements.encoderResolution}
+                  value={out.encoderResolutionDeg}
+                  unit="°"
+                />
+                <MeasurementDisplay
+                  label={L.measurements.resolverCount}
+                  value={out.resolverCount}
+                  unit=""
+                />
+                <MeasurementDisplay
+                  label={L.measurements.resolverResolution}
+                  value={out.resolverResolutionDeg}
+                  unit="°"
+                />
+                <MeasurementDisplay
+                  label={L.measurements.measured}
+                  symbol="θm"
+                  value={out.measuredDeg}
+                  unit="°"
+                />
+                {ac ? (
+                  <MeasurementDisplay
+                    label={L.measurements.controlPhase}
+                    value={out.controlPhaseDeg}
+                    unit="°"
+                  />
+                ) : null}
               </div>
               {metrics ? (
-                <section aria-label={L.metricsTitle} className="space-y-2">
+                <div role="group" aria-label={L.metricsTitle} className="space-y-2">
                   <h3 className="text-sm font-semibold text-navy-800">{L.metricsTitle}</h3>
                   <p className="text-xs text-navy-600">{L.metricsNote}</p>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
@@ -539,7 +620,7 @@ export default function ServoLab() {
                       unit={pos ? '°' : 'rpm'}
                     />
                   </div>
-                </section>
+                </div>
               ) : null}
               <RecordPanel
                 rows={lab.rows}
