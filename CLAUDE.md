@@ -9,19 +9,19 @@ then `docs/srs.md` and `docs/architecture.md`.
 
 ## Current status
 
-| Milestone | Scope                                                                         | Status                                               |
-| --------- | ----------------------------------------------------------------------------- | ---------------------------------------------------- |
-| 1         | Requirements, architecture, project structure                                 | Done and approved; tag `milestone-1`                 |
-| 2         | Dashboard, navigation, design system                                          | Done and approved; tag `milestone-2`                 |
-| 3         | Simulation engine and graphing                                                | Done and approved; tag `milestone-3`                 |
-| 4         | DC motor laboratory (reference module), thin assessment, report, progress     | Done and approved; tag `milestone-4`                 |
-| 5         | AC motor drives (M02) and power converters (M03) laboratories                 | Done and approved; tag `milestone-5`                 |
-| 6         | Stepper motors (M04) and servo motors (M05) laboratories                      | Done and approved; tag `milestone-6`                 |
-| 7         | Mechanical transmission (M06) and cam and follower (M07) laboratories         | Done and approved; tag `milestone-7`                 |
-| 8         | Pneumatics (M08), electro-pneumatics (M09), electrohydraulics (M10)           | Done and approved; tag `milestone-8`                 |
-| 9         | Assessment centre, student progress, report generation (all ten labs)         | Done and approved; tag `milestone-9`                 |
-| 10        | Integration testing, documentation, deployment                                | Done and approved; tag `milestone-10`                |
-| 11        | Concepts from the owner's earlier labs (M01 views, sensors, hybrid, AC servo) | Done on branch `milestone-11`; awaiting owner review |
+| Milestone | Scope                                                                         | Status                                |
+| --------- | ----------------------------------------------------------------------------- | ------------------------------------- |
+| 1         | Requirements, architecture, project structure                                 | Done and approved; tag `milestone-1`  |
+| 2         | Dashboard, navigation, design system                                          | Done and approved; tag `milestone-2`  |
+| 3         | Simulation engine and graphing                                                | Done and approved; tag `milestone-3`  |
+| 4         | DC motor laboratory (reference module), thin assessment, report, progress     | Done and approved; tag `milestone-4`  |
+| 5         | AC motor drives (M02) and power converters (M03) laboratories                 | Done and approved; tag `milestone-5`  |
+| 6         | Stepper motors (M04) and servo motors (M05) laboratories                      | Done and approved; tag `milestone-6`  |
+| 7         | Mechanical transmission (M06) and cam and follower (M07) laboratories         | Done and approved; tag `milestone-7`  |
+| 8         | Pneumatics (M08), electro-pneumatics (M09), electrohydraulics (M10)           | Done and approved; tag `milestone-8`  |
+| 9         | Assessment centre, student progress, report generation (all ten labs)         | Done and approved; tag `milestone-9`  |
+| 10        | Integration testing, documentation, deployment                                | Done and approved; tag `milestone-10` |
+| 11        | Concepts from the owner's earlier labs (M01 views, sensors, hybrid, AC servo) | Done and approved; tag `milestone-11` |
 
 Course materials (D2) were examined on 14 Nov 2026: see `docs/course-alignment.md` for the
 learning outcomes, the notation VADL adopts, the approved plan changes (§5, which override `docs/project-plan.md` where they differ) and the
